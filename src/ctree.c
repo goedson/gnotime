@@ -165,6 +165,26 @@ toggle_timer_for_row (ProjTreeWindow *ptw, ProjTreeNode *ptn)
 	}
 }
 
+void 
+ctree_start_timer (GttProject *prj)
+{
+	ProjTreeNode *ptn;
+	if (!prj) return;
+	ptn = gtt_project_get_private_data (prj);
+	if (!ptn) return;
+	start_timer_for_row (ptn->ptw, ptn);
+}
+
+void 
+ctree_stop_timer (GttProject *prj)
+{
+	ProjTreeNode *ptn;
+	if (!prj) return;
+	ptn = gtt_project_get_private_data (prj);
+	if (!ptn) return;
+	stop_timer_for_row (ptn->ptw, ptn);
+}
+
 /* ============================================================== */
 
 GttProject *
@@ -1270,6 +1290,9 @@ ctree_new(void)
 
 
 /* ========================================================= */
+/* This routine runs once, to set up the state of the ctree
+ * widget infrastructure.
+ */
 
 void
 ctree_setup (ProjTreeWindow *ptw)
@@ -1306,6 +1329,8 @@ ctree_setup (ProjTreeWindow *ptw)
 		ProjTreeNode *ptn;
 
 		ptn = gtt_project_get_private_data (cur_proj);
+		
+		gtk_ctree_select (tree_w, ptn->ctnode);  /* to set initial focus row */
 		start_timer_for_row (ptn->ptw, ptn);
 		parent = gtt_project_get_parent (cur_proj);
 		while (parent) 
@@ -1517,32 +1542,6 @@ ctree_update_label(ProjTreeWindow *ptw, GttProject *p)
 
 	ctree_update_row (ptw, ptn);
 	update_status_bar();
-}
-
-/* ============================================================== */
-
-void 
-ctree_unselect (ProjTreeWindow *ptw, GttProject *p)
-{
-	ProjTreeNode *ptn;
-	if (!ptw || !p) return;
-	ptn = gtt_project_get_private_data (p);
-	if (!ptn) return;
-
-	gtk_ctree_unselect(ptw->ctree, ptn->ctnode);
-printf ("duude unselect\n");
-}
-
-void 
-ctree_select (ProjTreeWindow *ptw, GttProject *p)
-{
-	ProjTreeNode *ptn;
-	if (!ptw || !p) return;
-	ptn = gtt_project_get_private_data (p);
-	if (!ptn) return;
-
-	gtk_ctree_select(ptw->ctree, ptn->ctnode);
-printf ("duude select\n");
 }
 
 /* ============================================================== */

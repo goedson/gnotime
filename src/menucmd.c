@@ -271,7 +271,7 @@ menu_start_timer(GtkWidget *w, gpointer data)
 {
 	GttProject *prj;
 	prj = ctree_get_focus_project (global_ptw);
-	cur_proj_set (prj);
+	ctree_start_timer (prj);
 }
 
 
@@ -279,7 +279,7 @@ menu_start_timer(GtkWidget *w, gpointer data)
 void
 menu_stop_timer(GtkWidget *w, gpointer data)
 {
-	cur_proj_set (NULL);
+	ctree_stop_timer (cur_proj);
 }
 
 
