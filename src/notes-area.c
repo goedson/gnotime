@@ -33,9 +33,44 @@ struct NotesArea_s
 
 	GtkEntry *proj_title;
 	GtkEntry *proj_desc;
+	GtkTextView *proj_notes;
+	
+	GtkEntry *task_memo;
+	GtkTextView *task_notes;
 
 	GttProject *proj;
+	gboolean ignore_events;
 };
+
+/* ============================================================== */
+
+static void
+task_memo_changed (GtkEntry *entry, NotesArea *na)
+{
+	GttTask *tsk;
+	const char * str;
+	if (NULL == na->proj) return;
+	if (na->ignore_events) return;
+	
+	str = gtk_entry_get_text (entry);
+	tsk = gtt_project_get_first_task (na->proj);
+	gtt_task_set_memo (tsk, str);
+}
+
+/* ============================================================== */
+
+static void
+task_notes_changed (GtkTextView *entry, NotesArea *na)
+{
+	GttTask *tsk;
+	const char * str;
+	if (NULL == na->proj) return;
+	if (na->ignore_events) return;
+	
+	str = xxxgtk_textview_get_text (entry);
+	tsk = gtt_project_get_first_task (na->proj);
+	gtt_task_set_notes (tsk, str);
+}
 
 /* ============================================================== */
 
@@ -44,6 +79,7 @@ proj_title_changed (GtkEntry *entry, NotesArea *na)
 {
 	const char * str;
 	if (NULL == na->proj) return;
+	if (na->ignore_events) return;
 	
 	str = gtk_entry_get_text (entry);
 	gtt_project_set_title (na->proj, str);
@@ -57,6 +93,7 @@ proj_desc_changed (GtkEntry *entry, NotesArea *na)
 {
 	const char * str;
 	if (NULL == na->proj) return;
+	if (na->ignore_events) return;
 	
 	str = gtk_entry_get_text (entry);
 	gtt_project_set_desc (na->proj, str);
@@ -65,11 +102,34 @@ proj_desc_changed (GtkEntry *entry, NotesArea *na)
 
 /* ============================================================== */
 
-#define CONNECT_ENTRY(GLADE_NAME,OBJ_FIELD,CB)  {                 \
-	dlg->OBJ_FIELD = GTK_ENTRY(glade_xml_get_widget (gtxml, GLADE_NAME)); \
-	g_signal_connect (G_OBJECT (dlg->OBJ_FIELD), "changed",        \
-	                G_CALLBACK (CB), dlg);                         \
+static void
+proj_notes_changed (GtkTextView *entry, NotesArea *na)
+{
+	const char * str;
+	if (NULL == na->proj) return;
+	if (na->ignore_events) return;
+	
+	str = xxxgtk_textview_get_text (entry);
+	gtt_project_set_notes (na->proj, str);
 }
+
+/* ============================================================== */
+
+#define CONNECT_ENTRY(GLADE_NAME,CB)  ({                           \
+	GtkEntry * entry;                                               \
+	entry = GTK_ENTRY(glade_xml_get_widget (gtxml, GLADE_NAME));    \
+	g_signal_connect (G_OBJECT (entry), "changed",                  \
+	                G_CALLBACK (CB), dlg);                          \
+   entry; })
+
+#define CONNECT_TEXT(GLADE_NAME,CB)  ({                            \
+	GtkTextView *tv;                                                \
+	GtkTextBuffer *buff;                                            \
+	tv = GTK_TEXT_VIEW(glade_xml_get_widget (gtxml, GLADE_NAME));   \
+	buff = gtk_text_view_get_buffer (tv);                           \
+	g_signal_connect (G_OBJECT (buff), "changed",                   \
+	                G_CALLBACK (CB), dlg);                          \
+   tv; })
 
 
 NotesArea *
@@ -86,34 +146,62 @@ notes_area_new (void)
 	dlg->vpane = GTK_PANED(glade_xml_get_widget (gtxml, "notes vpane"));
 	dlg->ctree_holder = GTK_CONTAINER(glade_xml_get_widget (gtxml, "ctree holder"));
 
-	CONNECT_ENTRY ("proj title entry", proj_title, proj_title_changed);
-	CONNECT_ENTRY ("proj desc entry", proj_desc,  proj_desc_changed);
+	dlg->proj_title = CONNECT_ENTRY ("proj title entry", proj_title_changed);
+	dlg->proj_desc = CONNECT_ENTRY ("proj desc entry", proj_desc_changed);
+	dlg->task_memo = CONNECT_ENTRY ("diary entry", task_memo_changed);
+
+	dlg->proj_notes = CONNECT_TEXT ("proj notes textview", proj_notes_changed);
+	dlg->task_notes = CONNECT_TEXT ("diary notes textview", task_notes_changed);
 	
 	gtk_widget_show (GTK_WIDGET(dlg->vpane));
 
 	dlg->proj = NULL;
+	dlg->ignore_events = FALSE;
 
 	return dlg;
 }
 
 /* ============================================================== */
+/* This routine copies data from the data engine, and pushes it 
+ * into the GUI.  
+ */ 
 
 static void
 notes_area_do_set_project (NotesArea *na, GttProject *proj)
 {
 	const char * str;
+	GttTask *tsk;
 	
 	if (!na) return;
 
 	if (!proj) return; // xxx should clear fields instead
 
+	/* Calling gtk_entry_set_text makes 'changed' events happen,
+	 * which causes us to get the entry text, which exposes a gtk
+	 * bug.  So we work around the bug and save cpu time by ignoring
+	 * change events during a mass update. */
+	na->ignore_events = TRUE;
+	
 	na->proj = proj;
 	
+	/* Fetch data from the data engine, stuff it into the GUI. */
 	str = gtt_project_get_title (proj);
 	gtk_entry_set_text (na->proj_title, str);
 	
 	str = gtt_project_get_desc (proj);
 	gtk_entry_set_text (na->proj_desc, str);
+
+	str = gtt_project_get_notes (proj);
+	xxxgtk_textview_set_text (na->proj_notes, str);
+
+	tsk = gtt_project_get_first_task (proj);
+	str = gtt_task_get_memo (tsk);
+	gtk_entry_set_text (na->task_memo, str);
+	
+	str = gtt_task_get_notes (tsk);
+	xxxgtk_textview_set_text (na->task_notes, str);
+
+	na->ignore_events = FALSE;
 }
 
 /* ============================================================== */
