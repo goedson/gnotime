@@ -196,7 +196,11 @@ cur_proj_set(GttProject *proj)
 
 	/* update GUI elements */
 	menu_set_states();
-	if (proj) prop_dialog_set_project(proj);
+	if (proj) 
+	{
+		prop_dialog_set_project(proj);
+		notes_area_set_project (global_na, proj);
+	}
 	update_status_bar();
 }
 

@@ -25,6 +25,9 @@ typedef struct NotesArea_s NotesArea;
 
 NotesArea * notes_area_new (void);
 
+/* bind a project to the notes area */
+void notes_area_set_project (NotesArea *na, GttProject *proj);
+
 /* returns the vpaned widget at the top of the notes area heirarchy */
 GtkWidget * notes_area_get_widget (NotesArea *na);
 

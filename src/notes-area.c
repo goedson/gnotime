@@ -21,6 +21,7 @@
 #include <glade/glade.h>
 #include <gnome.h>
 
+#include "proj.h"
 #include "notes-area.h"
 #include "util.h"
 
@@ -31,19 +32,45 @@ struct NotesArea_s
 	GtkContainer *ctree_holder;   /* scrolled widget that holds ctree */
 
 	GtkEntry *proj_title;
+	GtkEntry *proj_desc;
 
+	GttProject *proj;
 };
 
 /* ============================================================== */
 
 static void
-entry_changed (GtkEntry *entry, NotesArea *na)
+proj_title_changed (GtkEntry *entry, NotesArea *na)
 {
-	printf ("duude text \n");
+	const char * str;
+	if (NULL == na->proj) return;
+	
+	str = gtk_entry_get_text (entry);
+	gtt_project_set_title (na->proj, str);
 }
 
 
 /* ============================================================== */
+
+static void
+proj_desc_changed (GtkEntry *entry, NotesArea *na)
+{
+	const char * str;
+	if (NULL == na->proj) return;
+	
+	str = gtk_entry_get_text (entry);
+	gtt_project_set_desc (na->proj, str);
+}
+
+
+/* ============================================================== */
+
+#define CONNECT_ENTRY(GLADE_NAME,OBJ_FIELD,CB)  {                 \
+	dlg->OBJ_FIELD = GTK_ENTRY(glade_xml_get_widget (gtxml, GLADE_NAME)); \
+	g_signal_connect (G_OBJECT (dlg->OBJ_FIELD), "changed",        \
+	                G_CALLBACK (CB), dlg);                         \
+}
+
 
 NotesArea *
 notes_area_new (void)
@@ -59,14 +86,53 @@ notes_area_new (void)
 	dlg->vpane = GTK_PANED(glade_xml_get_widget (gtxml, "notes vpane"));
 	dlg->ctree_holder = GTK_CONTAINER(glade_xml_get_widget (gtxml, "ctree holder"));
 
-
-	dlg->proj_title = GTK_ENTRY(glade_xml_get_widget (gtxml, "proj title entry"));
-	g_signal_connect (G_OBJECT (dlg->proj_title), "changed",
-	                G_CALLBACK (entry_changed), &dlg);
+	CONNECT_ENTRY ("proj title entry", proj_title, proj_title_changed);
+	CONNECT_ENTRY ("proj desc entry", proj_desc,  proj_desc_changed);
 	
 	gtk_widget_show (GTK_WIDGET(dlg->vpane));
 
+	dlg->proj = NULL;
+
 	return dlg;
+}
+
+/* ============================================================== */
+
+static void
+notes_area_do_set_project (NotesArea *na, GttProject *proj)
+{
+	const char * str;
+	
+	if (!na) return;
+
+	if (!proj) return; // xxx should clear fields instead
+
+	na->proj = proj;
+	
+	str = gtt_project_get_title (proj);
+	gtk_entry_set_text (na->proj_title, str);
+	
+	str = gtt_project_get_desc (proj);
+	gtk_entry_set_text (na->proj_desc, str);
+}
+
+/* ============================================================== */
+
+static void
+redraw (GttProject *prj, gpointer data)
+{
+	NotesArea *na = data;
+	notes_area_do_set_project (na, prj);
+}
+
+/* ============================================================== */
+
+void
+notes_area_set_project (NotesArea *na, GttProject *proj)
+{
+	gtt_project_remove_notifier (na->proj, redraw, na);
+	notes_area_do_set_project (na, proj);
+	gtt_project_add_notifier (proj, redraw, na);
 }
 
 /* ============================================================== */

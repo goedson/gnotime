@@ -398,6 +398,15 @@ prop_dialog_new (void)
 
 /* ============================================================== */
 
+static void 
+redraw (GttProject *prj, gpointer data)
+{
+	PropDlg *dlg = data;
+	do_set_project(prj, dlg);
+}
+
+/* ============================================================== */
+
 static PropDlg *dlog = NULL;
 
 void 
@@ -405,7 +414,9 @@ prop_dialog_show(GttProject *proj)
 {
 	if (!dlog) dlog = prop_dialog_new();
  
+	gtt_project_remove_notifier (dlog->proj, redraw, dlog);
 	do_set_project(proj, dlog);
+	gtt_project_add_notifier (proj, redraw, dlog);
 	gtk_widget_show(GTK_WIDGET(dlog->dlg));
 }
 
@@ -414,7 +425,9 @@ prop_dialog_set_project(GttProject *proj)
 {
 	if (!dlog) return;
  
+	gtt_project_remove_notifier (dlog->proj, redraw, dlog);
 	do_set_project(proj, dlog);
+	gtt_project_add_notifier (proj, redraw, dlog);
 }
 
 /* ==================== END OF FILE ============================= */
