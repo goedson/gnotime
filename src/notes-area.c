@@ -60,14 +60,14 @@ task_memo_changed (GtkEntry *entry, NotesArea *na)
 /* ============================================================== */
 
 static void
-task_notes_changed (GtkTextView *entry, NotesArea *na)
+task_notes_changed (GtkTextBuffer *entry, NotesArea *na)
 {
 	GttTask *tsk;
 	const char * str;
 	if (NULL == na->proj) return;
 	if (na->ignore_events) return;
 	
-	str = xxxgtk_textview_get_text (entry);
+	str = xxxgtk_textview_get_text (na->task_notes);
 	tsk = gtt_project_get_first_task (na->proj);
 	gtt_task_set_notes (tsk, str);
 }
@@ -103,13 +103,13 @@ proj_desc_changed (GtkEntry *entry, NotesArea *na)
 /* ============================================================== */
 
 static void
-proj_notes_changed (GtkTextView *entry, NotesArea *na)
+proj_notes_changed (GtkTextBuffer *entry, NotesArea *na)
 {
 	const char * str;
 	if (NULL == na->proj) return;
 	if (na->ignore_events) return;
 	
-	str = xxxgtk_textview_get_text (entry);
+	str = xxxgtk_textview_get_text (na->proj_notes);
 	gtt_project_set_notes (na->proj, str);
 }
 
