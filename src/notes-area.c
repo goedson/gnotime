@@ -189,16 +189,20 @@ notes_area_do_set_project (NotesArea *na, GttProject *proj)
 	gtk_entry_set_text (na->proj_title, str);
 	
 	str = gtt_project_get_desc (proj);
+	if (!str) str = "";
 	gtk_entry_set_text (na->proj_desc, str);
 
 	str = gtt_project_get_notes (proj);
+	if (!str) str = "";
 	xxxgtk_textview_set_text (na->proj_notes, str);
 
 	tsk = gtt_project_get_first_task (proj);
 	str = gtt_task_get_memo (tsk);
+	if (!str) str = "";
 	gtk_entry_set_text (na->task_memo, str);
 	
 	str = gtt_task_get_notes (tsk);
+	if (!str) str = "";
 	xxxgtk_textview_set_text (na->task_notes, str);
 
 	na->ignore_events = FALSE;
