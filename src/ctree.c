@@ -216,7 +216,8 @@ widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
 			return TRUE;
 		case GDK_Up:
 		case GDK_Down:
-printf ("duude up/down\n");
+			rownode = get_focus_row(ctree);
+			gtk_ctree_select (ctree, rownode);
 			return TRUE;
 		case GDK_Left:
 			rownode = get_focus_row(ctree);
@@ -277,14 +278,15 @@ widget_button_event(GtkCList *clist, GdkEvent *event, gpointer data)
 static void
 tree_select_row(GtkCTree *ctree, GtkCTreeNode* rownode, gint column)
 {
-		  /*
-			* xxxxxxxxxxxxxxxx
 	ProjTreeNode *ptn;
 	ptn = gtk_ctree_node_get_row_data(ctree, rownode);
-	cur_proj_set(ptn->prj);
-	gtt_project_timer_update (ptn->prj);
-	ctree_update_label (ptn->ptw, ptn->prj);
-	*/
+	
+	/* Make sure that the blue of the select doesn't clobber
+	 * the active color */
+	if ((ptn->prj == cur_proj) && timer_is_running())
+	{
+		gtk_ctree_unselect (ctree, ptn->ctnode);
+	}
 }
 
 
@@ -292,14 +294,7 @@ tree_select_row(GtkCTree *ctree, GtkCTreeNode* rownode, gint column)
 static void
 tree_unselect_row(GtkCTree *ctree, GtkCTreeNode* rownode, gint column)
 {
-		  /*
-	ProjTreeNode *ptn;
-	ptn = gtk_ctree_node_get_row_data(ctree, rownode);
-	if (ptn->prj != cur_proj) return;
-	cur_proj_set(NULL);
-	gtt_project_timer_update (ptn->prj);
-	ctree_update_label (ptn->ptw, ptn->prj);
-	*/
+	/* nothing in this incarnation */
 }
 
 static void 
@@ -1311,7 +1306,6 @@ ctree_setup (ProjTreeWindow *ptw)
 		ProjTreeNode *ptn;
 
 		ptn = gtt_project_get_private_data (cur_proj);
-		/* xxxx gtk_ctree_select(tree_w, ptn->ctnode); */
 		start_timer_for_row (ptn->ptw, ptn);
 		parent = gtt_project_get_parent (cur_proj);
 		while (parent) 
