@@ -115,6 +115,7 @@ timer_func(gpointer data)
 	{
 		int idle_time;
 		idle_time = now - poll_last_activity (idt);
+printf ("duude idle for =%d\n", idle_time);
 		if (idle_time > config_idle_timeout) 
 		{
 			time_t stop;
