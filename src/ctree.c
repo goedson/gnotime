@@ -1143,12 +1143,12 @@ ctree_new(void)
       GtkTreeViewColumn *col;
 		GtkCellRenderer *renderer;
 		
-		col = gtk_tree_view_column_new();
-		gtk_tree_view_column_set_title (col, ptw->col_titles[i]);
-
 		renderer = gtk_cell_renderer_text_new ();
-		gtk_tree_view_column_add_attribute (col, renderer, "text", i);
-		
+
+		col = gtk_tree_view_column_new_with_attributes (
+							 ptw->col_titles[i],
+							 renderer, "text", i, NULL);
+
 		gtk_tree_view_insert_column (ptw->ctree, col, i);
 
 		/* XXX
@@ -1156,8 +1156,8 @@ ctree_new(void)
 			i, ptw->col_justify[i]);
 		*/
 	}
+
 	/* XXX
-	gtk_clist_column_titles_active(GTK_CLIST(w));
 	gtk_clist_set_selection_mode(GTK_CLIST(w), GTK_SELECTION_SINGLE);
 	*/
 
@@ -1368,15 +1368,15 @@ ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkCTreeNode *parent)
 		gtt_project_add_notifier (p, redraw, ptn);
 	}
 	ctree_col_values (ptn, FALSE);
+
+	/* Add the project to the tail end of the list */
 	gtk_tree_store_append (ptw->treestore, &tail, NULL);
-	
 	for (i=0; i<ptw->ncols; i++)
 	{
-		GValue val;
-	 	g_value_init(&val, G_TYPE_STRING);
+		GValue val = {G_TYPE_STRING};
+	 	// g_value_init(&val, G_TYPE_STRING);
 		g_value_set_string (&val, ptn->col_values[i]);
 		gtk_tree_store_set_value (ptw->treestore, &tail, i, &val);
-		
 	}
 	
 #if XXX
