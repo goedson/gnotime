@@ -111,10 +111,28 @@ static ProjTreeNode *
 get_ptn_from_row (ProjTreeWindow *ptw, GtkTreeIter *iter)
 {
 	GValue val =  {G_TYPE_INVALID};
-	ProjTreeNode * ptn;
+	ProjTreeNode *ptn;
 
 	gtk_tree_model_get_value (GTK_TREE_MODEL(ptw->treestore), 
 	                iter, ptw->ncols, &val);
+	ptn = (ProjTreeNode *) g_value_get_pointer (&val);
+	return ptn;
+}
+
+static ProjTreeNode *
+get_ptn_from_path (ProjTreeWindow *ptw, GtkTreePath *path)
+{
+	GValue val =  {G_TYPE_INVALID};
+	ProjTreeNode *ptn;
+	GtkTreeIter iter;
+	gboolean rc;
+
+	rc = gtk_tree_model_get_iter (GTK_TREE_MODEL(ptw->treestore),
+	                &iter, path);					 
+printf ("duuude iter for path=%d\n", rc);
+	if (FALSE == rc) return NULL;
+	gtk_tree_model_get_value (GTK_TREE_MODEL(ptw->treestore), 
+	                &iter, ptw->ncols, &val);
 	ptn = (ProjTreeNode *) g_value_get_pointer (&val);
 	return ptn;
 }
@@ -298,7 +316,6 @@ GttProject *
 ctree_get_focus_project (ProjTreeWindow *ptw)
 {
 	GttProject * proj = NULL;
-	GtkCTreeNode *rownode;
 	if (!ptw) return NULL;
 
 #if XXX
@@ -310,6 +327,15 @@ ctree_get_focus_project (ProjTreeWindow *ptw)
 		if (ptn) proj = ptn->prj;
 	}
 #endif
+	{
+		ProjTreeNode *ptn;
+	GtkTreePath *path;
+	GtkTreeViewColumn *col;
+	gtk_tree_view_get_cursor (ptw->treeview, &path, &col);
+	printf ("duuude path is %s\n", gtk_tree_path_to_string(path));
+ptn = get_ptn_from_path (ptw, path);
+		if (ptn) proj = ptn->prj;
+	}
 
 	return proj;
 }
@@ -1298,6 +1324,7 @@ ctree_new(void)
 	g_signal_connect (G_OBJECT (ptw->selection), "changed", 
 		                G_CALLBACK (tree_selection_changed_cb), ptw);
 
+	
 	gtk_signal_connect(GTK_OBJECT(w), "button_press_event",
 			   GTK_SIGNAL_FUNC(widget_button_event), ptw);
 	gtk_signal_connect(GTK_OBJECT(w), "key_release_event",
@@ -1623,7 +1650,6 @@ ctree_remove(ProjTreeWindow *ptw, GttProject *p)
 void
 ctree_update_label(ProjTreeWindow *ptw, GttProject *p)
 {
-	int i;
 	ProjTreeNode *ptn;
 	if (!ptw || !p) return;
 	ptn = gtt_project_get_private_data (p);
