@@ -730,6 +730,7 @@ ctree_update_column_visibility (ProjTreeWindow *ptw)
 	/* set column visibility */
 	for (i=0; NULL_COL != ptw->cols[i]; i++)
 	{
+		GtkTreeViewColumn *col = gtk_tree_view_get_column (ptw->ctree, i);
 		switch (ptw->cols[i])
 		{
 		case TITLE_COL:
@@ -737,83 +738,83 @@ ctree_update_column_visibility (ProjTreeWindow *ptw)
 			break;
 		case TIME_EVER_COL:
 			default_col_width (ptw, i, "-00:00:00");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree), 
-				i, config_show_title_ever);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_ever);
 			break;
 		case TIME_CURRENT_COL:
 			default_col_width (ptw, i, "-00:00:00");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_current);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_current);
 			break;
 		case TIME_TODAY_COL:
 			default_col_width (ptw, i, "-00:00:00");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				 i, config_show_title_day);
+			gtk_tree_view_column_set_visible (col,
+				 config_show_title_day);
 			break;
 		case TIME_WEEK_COL:
 			default_col_width (ptw, i, "-00:00:00");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_week);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_week);
 			break;
 		case TIME_MONTH_COL:
 			default_col_width (ptw, i, "-00:00:00");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree), 
-				i, config_show_title_month);
+			gtk_tree_view_column_set_visible (col, 
+				config_show_title_month);
 			break;
 		case TIME_YEAR_COL:
 			default_col_width (ptw, i, "-00:00:00");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_year);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_year);
 			break;
 		case DESC_COL:
 			default_col_width (ptw, i, "Not too long");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree), 
-				i, config_show_title_desc);
+			gtk_tree_view_column_set_visible (col, 
+				config_show_title_desc);
 			break;
 		case TASK_COL:
 			default_col_width (ptw, i, "Some longer string");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_task);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_task);
 			break;
 		case START_COL:
 			default_col_width (ptw, i, "-00:00:00");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_estimated_start);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_estimated_start);
 			break;
 		case END_COL:
 			default_col_width (ptw, i, "-00:00:00");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_estimated_end);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_estimated_end);
 			break;
 		case DUE_COL:
 			default_col_width (ptw, i, "-00:00:00");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_due_date);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_due_date);
 			break;
 		case SIZING_COL:
 			default_col_width (ptw, i, "XXX.XX");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_sizing);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_sizing);
 			break;
 		case PERCENT_COL:
 			default_col_width (ptw, i, "100%");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_percent_complete);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_percent_complete);
 			break;
 		case URGENCY_COL:
 			default_col_width (ptw, i, "X");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_urgency);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_urgency);
 			break;
 		case IMPORTANCE_COL:
 			default_col_width (ptw, i, "XXX");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_importance);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_importance);
 			break;
 		case STATUS_COL:
 			default_col_width (ptw, i, "abcedfg");
-			gtk_clist_set_column_visibility (GTK_CLIST(ptw->ctree),
-				i, config_show_title_status);
+			gtk_tree_view_column_set_visible (col,
+				config_show_title_status);
 			break;
 		case NULL_COL:
 			break;
