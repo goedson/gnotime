@@ -1,6 +1,6 @@
-/*   GtkCTree display of projects for the GTimeTracker - a time tracker
+/*   GtkTreeView display of projects for the GTimeTracker - a time tracker
  *   Copyright (C) 1997,98 Eckehard Berns
- *   Copyright (C) 2001 Linas Vepstas
+ *   Copyright (C) 2001,2002 Linas Vepstas
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,10 +30,6 @@
 #include "props-proj.h"
 #include "timer.h"
 #include "util.h"
-
-/* There is a bug in clist which makes all but the last column headers
- * 0 pixels wide. This hack fixes this. */
-// #define CLIST_HEADER_HACK 1
 
 /* column types */
 typedef enum {
@@ -1104,6 +1100,9 @@ ctree_get_widget (ProjTreeWindow *ptw)
 	return (GTK_WIDGET (ptw->ctree));
 }
 
+static void xxx_cb (GtkTreeSelection *selection, gpointer data) { 
+		  printf ("bogus duuude \n"); }
+
 ProjTreeWindow *
 ctree_new(void)
 {
@@ -1157,10 +1156,6 @@ ctree_new(void)
 		*/
 	}
 
-	/* XXX
-	gtk_clist_set_selection_mode(GTK_CLIST(w), GTK_SELECTION_SINGLE);
-	*/
-
 	/* some columns are quite narrow, so put tooltips over them. */
 	/* XXX
 	for (i=0; i<ptw->ncols; i++)
@@ -1188,6 +1183,16 @@ ctree_new(void)
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_widget_show_all (sw);
 
+	/* Only one row can be highlighted at a time */
+	{
+		GtkTreeSelection *select;
+		select = gtk_tree_view_get_selection (ptw->ctree);
+		gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
+		// g_signal_connect (G_OBJECT (select), "changed", G_CALLBACK (xxx_cb), NULL);
+	}
+	gtk_signal_connect(GTK_OBJECT(w),"row_activated", G_CALLBACK (xxx_cb), NULL);
+
+#if XXX
 	gtk_signal_connect(GTK_OBJECT(w), "button_press_event",
 			   GTK_SIGNAL_FUNC(widget_button_event), ptw);
 	gtk_signal_connect(GTK_OBJECT(w), "key_release_event",
@@ -1208,9 +1213,11 @@ ctree_new(void)
 
 	gtk_signal_connect(GTK_OBJECT(w), "drag_drop",
 			   GTK_SIGNAL_FUNC(drag_drop), ptw);
+#endif
 
 	/* allow projects to be re-arranged by dragging */
 	gtk_tree_view_set_reorderable(GTK_TREE_VIEW(w), TRUE);
+
 	/* XXX
 	gtk_clist_set_use_drag_icons (GTK_CLIST(w), TRUE);
 	gtk_ctree_set_drag_compare_func (GTK_CTREE(w), ctree_drag);
