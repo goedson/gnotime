@@ -1,5 +1,0 @@
-This template file defines a sample tab-delimited export for
-<?scm (gtt-show-project-title) ?>	<?scm (gtt-show-project-desc) ?>
-<?scm (gtt-show-export '($memo $task_time $billable 
-$billrate "Sample Column Title for the Billing Rate" 
-$value $bill_value))  ?>
