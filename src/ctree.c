@@ -101,6 +101,48 @@ struct ProjTreeWindow_s
 static void ctree_col_values (ProjTreeNode *ptn, gboolean expand);
 
 /* ============================================================== */
+/* utility function; get the project associated with this row */
+
+static ProjTreeNode *
+get_ptn_from_row (ProjTreeWindow *ptw, GtkTreeIter *iter)
+{
+	GValue val =  {G_TYPE_INVALID};
+	ProjTreeNode * ptn;
+
+	gtk_tree_model_get_value (GTK_TREE_MODEL(ptw->treestore), 
+	                iter, ptw->ncols, &val);
+	ptn = (ProjTreeNode *) g_value_get_pointer (&val);
+	return ptn;
+}
+
+/* ============================================================== */
+/* Simple functions encapsulating what happens when timer is 
+ * started and stopped.   Takes as input a pointer to the 
+ * row.
+ */
+
+static void
+start_timer_for_row (ProjTreeWindow *ptw, GtkTreeIter *iter)
+{
+	ProjTreeNode *ptn;
+	ptn = get_ptn_from_row (ptw, iter);
+	cur_proj_set(ptn->prj);
+	gtt_project_timer_update (ptn->prj);
+	ctree_update_label (ptn->ptw, ptn->prj);
+}
+
+static void
+stop_timer_for_row (ProjTreeWindow *ptw, GtkTreeIter *iter)
+{
+	ProjTreeNode *ptn;
+	ptn = get_ptn_from_row (ptw, iter);
+	if (ptn->prj != cur_proj) return;
+	cur_proj_set(NULL);
+	gtt_project_timer_update (ptn->prj);
+	ctree_update_label (ptn->ptw, ptn->prj);
+}
+
+/* ============================================================== */
 /* return value: true if we want widget to ignore this event,
  * false if we want the widget to handle it.
  */
@@ -154,32 +196,42 @@ printf ("duuude key eve\n");
 	return FALSE;
 }
 
+/* ============================================================== */
+/* This function handles raw mouse-button press events. 
+ *
+ * Here's the desired user interface behaviour:
+ * Left-click on a project starts or stops the timer for that project.
+ */ 
+
 static int
 widget_button_event(GtkTreeView *ctree, GdkEvent *event, gpointer data)
 {
 	ProjTreeWindow *ptw = data;
-	int row,column;
 	GdkEventButton *bevent = (GdkEventButton *)event;
 	GtkWidget *menu;
+	GtkTreeSelection *selection;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	gboolean have_selection;
 	
-printf ("duuude button eve\n");
+	if ((GDK_BUTTON_PRESS == event->type) && (1 == bevent->button))
+	{
+printf ("duude left button\n");
+		selection = gtk_tree_view_get_selection (ptw->ctree);
+		have_selection = gtk_tree_selection_get_selected (selection, &model, &iter);
+		if (have_selection)
+		{
+			stop_timer_for_row (ptw, &iter);
+			gtk_tree_selection_unselect_all (selection);
+			
+			/* Don't let GtkTreeSelection get its mits on this one. */
+			return TRUE;   
+		}
 
-{
-GtkTreeSelection      *sel;
-GtkTreeModel *mod;
-GtkTreeIter iter;
-GValue val =  {G_TYPE_POINTER};
-void * ptr;
-gboolean x;
-sel = gtk_tree_view_get_selection (ptw->ctree);
-x = gtk_tree_selection_get_selected (sel, &mod, &iter);
-printf ("duude sel=%d\n", x);
-if (x) {
-gtk_tree_model_get_value (mod, &iter, ptw->ncols, &val);
-ptr = g_value_get_pointer (&val);
-printf ("duude got ptr=%p\n", ptr);
-}
-}
+		/* Do let GtkTreeSelection do its thing with this event */
+		return FALSE;
+	}
+printf ("duuude other button eve\n");
 
 #if XXX
 	/* The only button event we handle are right-mouse-button,
@@ -216,6 +268,27 @@ printf ("duude got ptr=%p\n", ptr);
 }
 
 /* ============================================================== */
+/* If the selection changed (i.e. it was a single left-mouse click)
+ * we will start the project timer.  Left-mouse clicks that stop
+ * the project are handled by the raw-button-press handler.
+ */
+
+static void 
+tree_selection_changed_cb (GtkTreeSelection *selection, gpointer data)
+{ 
+	ProjTreeWindow *ptw = data;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	gboolean have_selection;
+	
+	have_selection = gtk_tree_selection_get_selected (selection, &model, &iter);
+	if (have_selection)
+	{
+		start_timer_for_row (ptw, &iter);
+	}
+}
+
+/* ============================================================== */
 
 GttProject *
 ctree_get_focus_project (ProjTreeWindow *ptw)
@@ -238,33 +311,6 @@ ctree_get_focus_project (ProjTreeWindow *ptw)
 }
 
 /* ============================================================== */
-
-static void
-tree_select_row(GtkCTree *ctree, GtkCTreeNode* rownode, gint column)
-{
-	ProjTreeNode *ptn;
-#if XXX
-	ptn = gtk_ctree_node_get_row_data(ctree, rownode);
-	cur_proj_set(ptn->prj);
-	gtt_project_timer_update (ptn->prj);
-	ctree_update_label (ptn->ptw, ptn->prj);
-#endif
-}
-
-
-
-static void
-tree_unselect_row(GtkCTree *ctree, GtkCTreeNode* rownode, gint column)
-{
-	ProjTreeNode *ptn;
-#if XXX
-	ptn = gtk_ctree_node_get_row_data(ctree, rownode);
-	if (ptn->prj != cur_proj) return;
-	cur_proj_set(NULL);
-	gtt_project_timer_update (ptn->prj);
-	ctree_update_label (ptn->ptw, ptn->prj);
-#endif
-}
 
 static void 
 tree_expand (GtkCTree *ctree, GtkCTreeNode *row)
@@ -1125,10 +1171,6 @@ ctree_get_widget (ProjTreeWindow *ptw)
 	return (GTK_WIDGET (ptw->ctree));
 }
 
-static void xxx_cb (GtkTreeSelection *selection, gpointer data) { 
-		  printf ("bogus duuude \n"); 
-}
-
 ProjTreeWindow *
 ctree_new(void)
 {
@@ -1192,16 +1234,7 @@ ctree_new(void)
 	 * a node in the tree.
 	 */
 	{
-      GtkTreeViewColumn *col;
-		GtkCellRenderer *renderer;
-		
-		/* bogus, its not text, but we need something to place-hold */
-		renderer = gtk_cell_renderer_text_new ();
-
-		col = gtk_tree_view_column_new_with_attributes (
-							 "invisible",
-							 renderer, "text", ptw->ncols, NULL);
-
+      GtkTreeViewColumn *col = gtk_tree_view_column_new ();
 		gtk_tree_view_insert_column (ptw->ctree, col, ptw->ncols);
 	}
 	
@@ -1237,21 +1270,17 @@ ctree_new(void)
 		GtkTreeSelection *select;
 		select = gtk_tree_view_get_selection (ptw->ctree);
 		gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
-		g_signal_connect (G_OBJECT (select), "changed", G_CALLBACK (xxx_cb), NULL);
+		g_signal_connect (G_OBJECT (select), "changed", 
+		                G_CALLBACK (tree_selection_changed_cb), ptw);
 	}
-	// gtk_signal_connect(GTK_OBJECT(w),"row_activated", G_CALLBACK (xxx_cb), NULL);
 
 	gtk_signal_connect(GTK_OBJECT(w), "button_press_event",
 			   GTK_SIGNAL_FUNC(widget_button_event), ptw);
 	gtk_signal_connect(GTK_OBJECT(w), "key_release_event",
 			   GTK_SIGNAL_FUNC(widget_key_event), ptw);
 #if XXX
-	gtk_signal_connect(GTK_OBJECT(w), "tree_select_row",
-			   GTK_SIGNAL_FUNC(tree_select_row), NULL);
 	gtk_signal_connect(GTK_OBJECT(w), "click_column",
 			   GTK_SIGNAL_FUNC(click_column), ptw);
-	gtk_signal_connect(GTK_OBJECT(w), "tree_unselect_row",
-			   GTK_SIGNAL_FUNC(tree_unselect_row), NULL);
 	gtk_signal_connect(GTK_OBJECT(w), "tree_expand",
 			   GTK_SIGNAL_FUNC(tree_expand), NULL);
 	gtk_signal_connect(GTK_OBJECT(w), "tree_collapse",
@@ -1431,26 +1460,22 @@ ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkTreeIter *parent)
 	gtk_tree_store_append (ptw->treestore, &tail, parent);
 	for (i=0; i<ptw->ncols; i++)
 	{
-		GValue val = {G_TYPE_STRING};
-	 	// g_value_init(&val, G_TYPE_STRING);
+		GValue val = {G_TYPE_INVALID};
+	 	g_value_init(&val, G_TYPE_STRING);
 		g_value_set_string (&val, ptn->col_values[i]);
 		gtk_tree_store_set_value (ptw->treestore, &tail, i, &val);
 	}
 
-	/* store the back pointer to the row data in a bogus column
+	/* Store the back pointer to the row data in a bogus column
 	 * (the NULL column, which is always the last column) */
 	{
-		GValue val = {G_TYPE_POINTER};
+		GValue val = {G_TYPE_INVALID};
+	 	g_value_init(&val, G_TYPE_POINTER);
 		g_value_set_pointer (&val, ptn);
 		gtk_tree_store_set_value (ptw->treestore, &tail, ptw->ncols, &val);
 	}
-printf ("duude set %p\n", ptn);
 	
-#if XXX
-	gtk_ctree_node_set_row_data(ptw->ctree, ptn->ctnode, ptn);
-#endif
-
-	/* make sure children get moved over also */
+	/* Make sure children get moved over also */
 	for (n=gtt_project_get_children(p); n; n=n->next)
 	{
 		GttProject *sub_prj = n->data;
