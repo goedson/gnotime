@@ -83,6 +83,7 @@ typedef struct ProjTreeNode_s
 
 struct ProjTreeWindow_s 
 {
+	GtkTreeStore *treestore;
 	GtkTreeView *ctree;
 
 	/* stuff that defines the column layout */
@@ -1127,7 +1128,12 @@ ctree_new(void)
 	w = gtk_ctree_new_with_titles(ptw->ncols, i, ptw->col_titles);
 	*/
 
-	w = gtk_tree_view_new();
+	{
+		GType col_type[NCOLS];
+		for (i=0;i<ptw->ncols;i++) { col_type[i] = G_TYPE_STRING; }
+		ptw->treestore = gtk_tree_store_newv (ptw->ncols, col_type);
+	}
+	w = gtk_tree_view_new_with_model (GTK_TREE_MODEL(ptw->treestore));
 	ptw->ctree = GTK_TREE_VIEW (w);
 
 	gtk_object_set_data (GTK_OBJECT(w), "ptw", ptw);
@@ -1135,8 +1141,14 @@ ctree_new(void)
 	for (i=0; i<ptw->ncols; i++)
 	{
       GtkTreeViewColumn *col;
+		GtkCellRenderer *renderer;
+		
 		col = gtk_tree_view_column_new();
 		gtk_tree_view_column_set_title (col, ptw->col_titles[i]);
+
+		renderer = gtk_cell_renderer_text_new ();
+		gtk_tree_view_column_add_attribute (col, renderer, "text", i);
+		
 		gtk_tree_view_insert_column (ptw->ctree, col, i);
 
 		/* XXX
@@ -1341,8 +1353,10 @@ ctree_destroy (ProjTreeWindow *ptw)
 void
 ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkCTreeNode *parent)
 {
+	int i;
 	ProjTreeNode *ptn;
 	GList *n;
+	GtkTreeIter tail;
 
 	ptn = gtt_project_get_private_data (p);
 	if (!ptn)
@@ -1354,6 +1368,17 @@ ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkCTreeNode *parent)
 		gtt_project_add_notifier (p, redraw, ptn);
 	}
 	ctree_col_values (ptn, FALSE);
+	gtk_tree_store_append (ptw->treestore, &tail, NULL);
+	
+	for (i=0; i<ptw->ncols; i++)
+	{
+		GValue val;
+	 	g_value_init(&val, G_TYPE_STRING);
+		g_value_set_string (&val, ptn->col_values[i]);
+		gtk_tree_store_set_value (ptw->treestore, &tail, i, &val);
+		
+	}
+	
 #if XXX
 	ptn->ctnode = gtk_ctree_insert_node (ptw->ctree,  parent, NULL,
                                ptn->col_values, 0, NULL, NULL, NULL, NULL,
