@@ -1326,7 +1326,7 @@ ctree_new(void)
 		ptw->col_tt_w[i] = tt;
 	}
 
-	gtk_widget_set_usize(w, -1, 120);
+	gtk_widget_set_size_request (w, -1, 120);
 	ctree_update_column_visibility (ptw);
 	gtk_ctree_set_show_stub(GTK_CTREE(w), FALSE);
 
