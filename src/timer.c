@@ -78,7 +78,7 @@ static void
 restart_proj (GtkWidget *w, gpointer data)
 {
 	GttProject *prj = data;
-	cur_proj_set (prj);
+	ctree_start_timer (prj);
 }
 
 static gint 
@@ -124,7 +124,7 @@ printf ("duude idle for =%d\n", idle_time);
 			GttProject *prj = cur_proj;
 
 			/* stop the timer on the current project */
-			cur_proj_set (NULL);
+			ctree_stop_timer (cur_proj);
 
 			/* The idle timer can trip because gtt was left running
 			 * on a laptop, which was them put in suspend mode (i.e.

@@ -203,13 +203,17 @@ cut_project(GtkWidget *w, gpointer data)
 	if (!prj) return;
 	if (cutted_project)
 	{
+		/* Wipe out whatever was previously in our cut buffer. */
 		gtt_project_destroy(cutted_project);
 	}
+	
 	cutted_project = prj;
+
+	/* Clear out relevent GUI elements. */
 	prop_dialog_set_project(NULL);
 
+	if (cutted_project == cur_proj) ctree_stop_timer (cur_proj);
 	gtt_project_remove(cutted_project);
-	if (cutted_project == cur_proj) cur_proj_set(NULL);
 	ctree_remove(global_ptw, cutted_project);
 }
 
@@ -291,9 +295,9 @@ menu_toggle_timer(GtkWidget *w, gpointer data)
 
 	/* if (GTK_CHECK_MENU_ITEM(menus_get_toggle_timer())->active) { */
 	if (timer_is_running()) {
-		cur_proj_set (NULL);
+		ctree_stop_timer (cur_proj);
 	} else {
-		cur_proj_set (prj);
+		ctree_start_timer (prj);
 	}
 }
 

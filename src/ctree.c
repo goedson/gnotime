@@ -98,8 +98,12 @@ struct ProjTreeWindow_s
 	GtkCTreeNode *parent_ctree_node;
 	GtkCTreeNode *sibling_ctree_node;
 
+	/* colors to use to indicate active project */
 	GdkColor active_bgcolor;
 	GdkColor neutral_bgcolor;
+
+	/* Should the select row be shown? */
+	gboolean show_select_row;
 };
 
 static void stringify_col_values (ProjTreeNode *ptn, gboolean expand);
@@ -124,8 +128,9 @@ start_timer_for_row (ProjTreeWindow *ptw, ProjTreeNode *ptn)
 	gtk_ctree_node_set_background (ctree, ptn->ctnode, &ptw->active_bgcolor);
 	
 	/* unselect so that select color doesn't block the active color */
+	/* toggle to make it the focus row */
+	gtk_ctree_select (ctree, ptn->ctnode);
 	gtk_ctree_unselect (ctree, ptn->ctnode);
-printf ("duu start timer\n");
 }
 
 
@@ -142,7 +147,12 @@ stop_timer_for_row (ProjTreeWindow *ptw, ProjTreeNode *ptn)
 	gtt_project_timer_update (prj);
 	ctree_update_label (ptw, prj);
 	gtk_ctree_node_set_background (ctree, ptn->ctnode, &ptw->neutral_bgcolor);
-printf ("duuude stop timer\n");
+	
+	/* Use the select color, if its desired */
+	if (ptn->ptw->show_select_row)
+	{
+		gtk_ctree_select (ctree, ptn->ctnode);
+	}
 }
 
 static void
@@ -219,6 +229,7 @@ get_focus_row (GtkCTree *ctree)
 static int
 widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
 {
+	ProjTreeNode *ptn;
 	GtkCTreeNode *rownode;
 	GdkEventKey *kev = (GdkEventKey *)event;
 
@@ -229,7 +240,6 @@ widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
 			rownode = get_focus_row(ctree);
 			if (rownode)
 			{
-				ProjTreeNode *ptn;
 				ptn = gtk_ctree_node_get_row_data(ctree, rownode);
 				toggle_timer_for_row (ptn->ptw, ptn);
 			}
@@ -237,8 +247,12 @@ widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
 		case GDK_Up:
 		case GDK_Down:
 			rownode = get_focus_row(ctree);
-			gtk_ctree_select (ctree, rownode);
-			return TRUE;
+			if (rownode)
+			{
+				ptn = gtk_ctree_node_get_row_data(ctree, rownode);
+			   if (ptn->ptw->show_select_row) gtk_ctree_select (ctree, rownode);
+			}
+			return FALSE;
 		case GDK_Left:
 			rownode = get_focus_row(ctree);
 			gtk_ctree_collapse (ctree, rownode);
@@ -260,6 +274,8 @@ widget_button_event(GtkCList *clist, GdkEvent *event, gpointer data)
 	int row,column;
 	GdkEventButton *bevent = (GdkEventButton *)event;
 	GtkWidget *menu;
+	ProjTreeNode *ptn;
+	GtkCTreeNode *rownode;
 	
 	/* The only button event we handle are right-mouse-button,
 	 * end double-click-left-mouse-button. */
@@ -275,12 +291,10 @@ widget_button_event(GtkCList *clist, GdkEvent *event, gpointer data)
 	clist->focus_row = row;
 	gtk_clist_thaw(clist);
 
+	rownode = get_focus_row(ptw->ctree);
 	if (event->type == GDK_2BUTTON_PRESS) 
 	{
 		/* double-click left mouse toggles the project timer. */
-		ProjTreeNode *ptn;
-		GtkCTreeNode *rownode;
-		rownode = get_focus_row(ptw->ctree);
 		ptn = gtk_ctree_node_get_row_data(ptw->ctree, rownode);
 		toggle_timer_for_row (ptw, ptn);
 	} 
@@ -289,6 +303,7 @@ widget_button_event(GtkCList *clist, GdkEvent *event, gpointer data)
 		/* right mouse button brings up popup menu */
 		menu = menus_get_popup();
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3, bevent->time);
+	   if (ptw->show_select_row) gtk_ctree_select (GTK_CTREE(clist), rownode);
 	}
 	return TRUE;
 }
@@ -304,6 +319,12 @@ tree_select_row(GtkCTree *ctree, GtkCTreeNode* rownode, gint column)
 	/* Make sure that the blue of the select doesn't clobber
 	 * the active color */
 	if ((ptn->prj == cur_proj) && timer_is_running())
+	{
+		gtk_ctree_unselect (ctree, ptn->ctnode);
+	}
+
+	/* don't show the row no matter what, if its not desired */
+	if (FALSE == ptn->ptw->show_select_row)
 	{
 		gtk_ctree_unselect (ctree, ptn->ctnode);
 	}
@@ -1279,19 +1300,23 @@ ctree_new(void)
 
 	/* Set up background colors that will be used to mark the active
 	 * project */
-	gdk_color_parse("red", &ptw->active_bgcolor);
+	gdk_color_parse("green", &ptw->active_bgcolor);
 	gdk_color_alloc(gdk_colormap_get_system(), &ptw->active_bgcolor);
 
 	gdk_color_parse("white", &ptw->neutral_bgcolor);
 	gdk_color_alloc(gdk_colormap_get_system(), &ptw->neutral_bgcolor);
+
+	ptw->show_select_row = FALSE;
 
 	return ptw;
 }
 
 
 /* ========================================================= */
-/* This routine runs once, to set up the state of the ctree
- * widget infrastructure.
+/* The ctree_setup routine runs once, during initialization,
+ * to set up the state of the ctree widget infrastructure.
+ * It can't be run until after the project data has been
+ * read in.
  */
 
 void
@@ -1330,7 +1355,9 @@ ctree_setup (ProjTreeWindow *ptw)
 
 		ptn = gtt_project_get_private_data (cur_proj);
 		
-		gtk_ctree_select (tree_w, ptn->ctnode);  /* to set initial focus row */
+		/* Select to set initial focus row */
+		gtk_ctree_select (tree_w, ptn->ctnode);  
+		
 		start_timer_for_row (ptn->ptw, ptn);
 		parent = gtt_project_get_parent (cur_proj);
 		while (parent) 
@@ -1367,12 +1394,15 @@ ctree_setup (ProjTreeWindow *ptw)
 	{
 		ProjTreeNode *ptn;
 		ptn = gtt_project_get_private_data (cur_proj);
-		gtk_ctree_node_moveto(tree_w, ptn->ctnode, -1,
-				 0.5, 0.0);
+
+		/* Make sure that the active row is visible */
+		gtk_ctree_node_moveto(tree_w, ptn->ctnode, -1, 0.5, 0.0);
+
 		/* XXX hack alert -- we should set the focus row 
 		 * here as well */
 	}
-	gtk_widget_queue_draw(GTK_WIDGET(tree_w));
+	gtk_widget_grab_focus (GTK_WIDGET(tree_w));
+	gtk_widget_queue_draw (GTK_WIDGET(tree_w));
 }
 
 /* ========================================================= */
