@@ -28,6 +28,22 @@
  * these are some hard-coded routines that return what we need.
  */
 
+/* The following struct is returned as the result of a query.
+ * It can be directly accessed as desired; it is a read-only struct.
+ * It is a "bucket" for results.
+ */
+
+typedef struct GttBucket_s GttBucket;
+
+struct GttBucket_s
+{
+	time_t start;     /* Start time that defines this bucket */
+	time_t end;       /* End time that defines this bucket */
+	time_t total;     /* Total amount of time in the bucket */
+	GList *tasks;     /* List of GttTasks in the bucket */
+	GList *intervals; /* List of GttIntervals in the bucket */
+};
+
 
 /* The following routines are needed to implement a 
  *    calendar report in GTT.  

@@ -28,7 +28,9 @@
 
 typedef struct DayArray_s
 {
-	GArray *arr;
+	int array_len;           /* same as number of days */
+	GArray *total_time_arr;  /* holds time_t seconds */
+	GArray *buckets;         /* holds array of GttBucket */
 	int start_cday;
 } DayArray;
 
@@ -41,11 +43,12 @@ yearday_to_centuryday (int yday, int year)
 	return cd;
 }
 
+/** divide list of tasks into daily bins */
 static int
 day_bin (GttInterval *ivl, gpointer data)
 {
 	DayArray *da = data;
-	time_t start, stop, end_of_day;
+	time_t start, stop, start_of_day, end_of_day;
 	struct tm stm;
 	int century_day, arr_day;
 
@@ -62,18 +65,34 @@ day_bin (GttInterval *ivl, gpointer data)
 	stm.tm_min = 0;
 	stm.tm_hour = 0;
 
+	end_of_day = mktime (&stm);
 	while (1)
 	{
+		start_of_day = end_of_day;
 		stm.tm_mday ++;
 		end_of_day = mktime (&stm);
 		if (stop < end_of_day)
 		{
-			g_array_index (da->arr, time_t, arr_day) += stop - start;
+			if (da->total_time_arr)
+			{
+				g_array_index (da->total_time_arr, time_t, arr_day) += stop - start;
+			}
+			if (da->buckets)
+			{
+				GttBucket *bu;
+				bu = &g_array_index (da->buckets, GttBucket, arr_day);
+				bu->start = start_of_day;
+				bu->end = end_of_day;
+				
+			}
 			return 1;
 		}
 		else
 		{
-			g_array_index (da->arr, time_t, arr_day) += end_of_day - start;
+			if (da->total_time_arr)
+			{
+				g_array_index (da->total_time_arr, time_t, arr_day) += end_of_day - start;
+			}
 		}
 		arr_day ++;
 		start = end_of_day;
@@ -82,30 +101,32 @@ day_bin (GttInterval *ivl, gpointer data)
 	return 1;	  
 }
 
-GArray *
-gtt_project_get_daily_time (GttProject *proj, gboolean include_subprojects)
+/** Set up the DayArray object so that the length (in days) is known,
+ * and so that the start day is known
+ */
+static void
+count_days (DayArray *da, GttProject *proj, gboolean include_subprojects)
 {
-	DayArray da;
-	GArray *arr = NULL;
 	time_t start, stop;
 	int num_days;
 	struct tm stm;
 
-	if (!proj) return NULL;
-	
 	/* Figure out how many days in the array */
 	start = gtt_project_get_earliest_start (proj, include_subprojects);
 	stop = gtt_project_get_latest_stop (proj, include_subprojects);
 	num_days = (stop - start) / (24*3600);
 	num_days += 2; /* two midnights might be crossed */
 
-	arr = g_array_new (FALSE, TRUE, sizeof (time_t));
-	g_array_set_size (arr, num_days);
-
+	da->array_len = num_days;
+	
 	localtime_r (&start, &stm);
+	da->start_cday = yearday_to_centuryday (stm.tm_yday, stm.tm_year);
+}
 
-	da.arr = arr;
-	da.start_cday = yearday_to_centuryday (stm.tm_yday, stm.tm_year);
+
+static void
+run_daily_bins(DayArray *da, GttProject *proj, gboolean include_subprojects)
+{
 	if (include_subprojects)
 	{
 		gtt_project_foreach_subproject_interval (proj, day_bin, &da);
@@ -114,8 +135,53 @@ gtt_project_get_daily_time (GttProject *proj, gboolean include_subprojects)
 	{
 		gtt_project_foreach_interval (proj, day_bin, &da);
 	}
+}
 
-	/* Start filling in the array */
+/* ========================================================== */
+
+GArray *
+gtt_project_get_daily_time (GttProject *proj, gboolean include_subprojects)
+{
+	DayArray da;
+	GArray *arr = NULL;
+
+	if (!proj) return NULL;
+	
+	/* Figure out how many days in the array */
+	count_days (&da, proj, include_subprojects);
+
+	/* Alloc the array, fill it in, return the results */
+	arr = g_array_new (FALSE, TRUE, sizeof (time_t));
+	g_array_set_size (arr, da.array_len);
+
+	da.total_time_arr = arr;
+	da.buckets = NULL;
+	run_daily_bins (&da, proj, include_subprojects);
+
+	return arr;
+}
+
+/* ========================================================== */
+
+GArray *
+gtt_project_get_daily_buckets (GttProject *proj, gboolean include_subprojects)
+{
+	DayArray da;
+	GArray *arr = NULL;
+
+	if (!proj) return NULL;
+	
+	/* Figure out how many days in the array */
+	count_days (&da, proj, include_subprojects);
+
+	/* Alloc the array, fill it in, return the results */
+	arr = g_array_new (FALSE, TRUE, sizeof (GttBucket));
+	g_array_set_size (arr, da.array_len);
+
+	da.total_time_arr = NULL;
+	da.buckets = arr;
+	run_daily_bins (&da, proj, include_subprojects);
+
 	return arr;
 }
 
