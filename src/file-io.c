@@ -302,7 +302,7 @@ gtt_load_config (const char *fname)
 	/* get last running project */
    cur_proj_id = gnome_config_get_int(GTT_CONF"/Misc/CurrProject=-1");
 
-   config_idle_timeout = gnome_config_get_int(GTT_CONF"/Misc/IdleTimeout=-1");
+   config_idle_timeout = gnome_config_get_int(GTT_CONF"/Misc/IdleTimeout=300");
    config_autosave_period = gnome_config_get_int(GTT_CONF"/Misc/AutosavePeriod=60");
 
 	/* Reset the main window width and height to the values 
