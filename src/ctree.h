@@ -45,7 +45,7 @@ void ctree_destroy(ProjTreeWindow *ptw);
  *    defaults, then grab all data out of the top project list,
  *    and then redraw everything.
  */
-void ctree_add(ProjTreeWindow *, GttProject *p, GtkCTreeNode *parent);
+void ctree_add(ProjTreeWindow *, GttProject *p, GtkTreeIter *parent);
 void ctree_insert_before(ProjTreeWindow *, GttProject *p, GttProject *insert_before_me);
 void ctree_insert_after(ProjTreeWindow *, GttProject *p, GttProject *insert_after_me);
 

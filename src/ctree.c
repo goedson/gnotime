@@ -1351,7 +1351,7 @@ ctree_destroy (ProjTreeWindow *ptw)
 /* ============================================================== */
 
 void
-ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkCTreeNode *parent)
+ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkTreeIter *parent)
 {
 	int i;
 	ProjTreeNode *ptn;
@@ -1380,19 +1380,15 @@ ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkCTreeNode *parent)
 	}
 	
 #if XXX
-	ptn->ctnode = gtk_ctree_insert_node (ptw->ctree,  parent, NULL,
-                               ptn->col_values, 0, NULL, NULL, NULL, NULL,
-                               FALSE, FALSE);
-
 	gtk_ctree_node_set_row_data(ptw->ctree, ptn->ctnode, ptn);
+#endif
 
 	/* make sure children get moved over also */
 	for (n=gtt_project_get_children(p); n; n=n->next)
 	{
 		GttProject *sub_prj = n->data;
-		ctree_add (ptw, sub_prj, ptn->ctnode);
+		ctree_add (ptw, sub_prj, &tail);
 	}
-#endif
 }
 
 /* ============================================================== */
