@@ -1,5 +1,6 @@
 /*   GTimeTracker - a time tracker
  *   Copyright (C) 1997,98 Eckehard Berns
+ *   Copyright (C) 2003 Linas Vepstas <linas@linas.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,9 +23,11 @@
 #include <gnome.h>
 #include "ctree.h"
 #include "ctree-gnome2.h"
+#include "notes-area.h"
 #include "proj.h"
 
-extern ProjTreeWindow *global_ptw;  /* global top-level tree window */
+extern ProjTreeWindow *global_ptw;  /* global ptr to tree GUI window */
+extern NotesArea *global_na;        /* global ptr to notes GUI area */
 
 extern GtkWidget *app_window;  /* global top-level window */
 extern GtkWidget *status_bar;

@@ -31,6 +31,8 @@ struct NotesArea_s
 	GtkPaned *vpane;   /* top level pane */
 	GtkContainer *ctree_holder;   /* scrolled widget that holds ctree */
 
+	GtkPaned *hpane;   /* left-right divider */
+
 	GtkEntry *proj_title;
 	GtkEntry *proj_desc;
 	GtkTextView *proj_notes;
@@ -41,6 +43,7 @@ struct NotesArea_s
 	GttProject *proj;
 	gboolean ignore_events;
 };
+
 
 /* ============================================================== */
 
@@ -145,6 +148,7 @@ notes_area_new (void)
 	
 	dlg->vpane = GTK_PANED(glade_xml_get_widget (gtxml, "notes vpane"));
 	dlg->ctree_holder = GTK_CONTAINER(glade_xml_get_widget (gtxml, "ctree holder"));
+	dlg->hpane = GTK_PANED(glade_xml_get_widget (gtxml, "leftright hpane"));
 
 	dlg->proj_title = CONNECT_ENTRY ("proj title entry", proj_title_changed);
 	dlg->proj_desc = CONNECT_ENTRY ("proj desc entry", proj_desc_changed);
@@ -243,6 +247,22 @@ notes_area_add_ctree (NotesArea *nadlg, GtkWidget *ctree)
 
 	gtk_container_add (nadlg->ctree_holder, ctree);
 	gtk_widget_show_all (GTK_WIDGET(nadlg->ctree_holder));
+}
+
+void
+notes_area_get_pane_sizes (NotesArea *na, int *vp, int *hp)
+{
+	if (!na) return;
+	if(vp) *vp = gtk_paned_get_position (na->vpane);
+	if(hp) *hp = gtk_paned_get_position (na->hpane);
+}
+
+void
+notes_area_set_pane_sizes (NotesArea *na, int vp, int hp)
+{
+	if (!na) return;
+	gtk_paned_set_position (na->vpane, vp);
+	gtk_paned_set_position (na->hpane, hp);
 }
 
 /* ========================= END OF FILE ======================== */

@@ -1,6 +1,6 @@
 /*   file input/output handling for GTimeTracker - a time tracker
  *   Copyright (C) 1997,98 Eckehard Berns
- *   Copyright (C) 2001 Linas Vepstas
+ *   Copyright (C) 2001,2002,2003 Linas Vepstas <linas@linas.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -325,6 +325,13 @@ gtt_load_config (const char *fname)
 		gtk_window_set_default_size(GTK_WINDOW(app_window), w, h);
 	}
 
+	{
+		int vp, hp;
+		vp = gnome_config_get_int(GTT_CONF"/Geometry/VPaned=250");
+		hp = gnome_config_get_int(GTT_CONF"/Geometry/HPaned=220");
+		notes_area_set_pane_sizes (global_na, vp, hp);
+	}
+
 	config_show_secs = gnome_config_get_bool(GTT_CONF"/Display/ShowSecs=false");
 	config_show_clist_titles = gnome_config_get_bool(GTT_CONF"/Display/ShowTableHeader=false");
 	config_show_subprojects = gnome_config_get_bool(GTT_CONF"/Display/ShowSubProjects=true");
@@ -561,6 +568,12 @@ gtt_save_config(const char *fname)
 	gnome_config_set_int(GTT_CONF"/Geometry/X", x);
 	gnome_config_set_int(GTT_CONF"/Geometry/Y", y);
 
+	{
+		int vp, hp;
+		notes_area_get_pane_sizes (global_na, &vp, &hp);
+		gnome_config_set_int(GTT_CONF"/Geometry/VPaned", vp);
+		gnome_config_set_int(GTT_CONF"/Geometry/HPaned", hp);
+	}
 	/* ------------- */
 	/* save the configure dialog values */
 	gnome_config_set_bool(GTT_CONF"/Display/ShowSecs", config_show_secs);

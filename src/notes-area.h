@@ -34,4 +34,12 @@ GtkWidget * notes_area_get_widget (NotesArea *na);
 /* add the ctree widget to the appropriate location */
 void notes_area_add_ctree (NotesArea *na, GtkWidget *ctree);
 
+/* Set the position of the two divideders in the notes area:
+ * the vertical divider between the ctree and the notes,
+ * and the horiz divider between the proj on left and diary on right
+ */
+void notes_area_get_pane_sizes (NotesArea *na, int *vp, int *hp);
+void notes_area_set_pane_sizes (NotesArea *na, int vp, int hp);
+
+
 #endif /* GTT_NOTES_AREA_H */
