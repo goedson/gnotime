@@ -1,5 +1,6 @@
 /*   GTimeTracker - a time tracker
  *   Copyright (C) 1997,98 Eckehard Berns
+ *   Copyright (C) 2001,2002,2003 Linas Vepstas <linas@linas.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -172,7 +173,7 @@ run_shell_command (GttProject *proj, gboolean do_start)
 /* ============================================================= */
 
 void 
-cur_proj_set(GttProject *proj)
+cur_proj_set (GttProject *proj)
 {
 	/* Due to the way the widget callbacks work, 
 	 * we may be called recursively ... */
@@ -202,6 +203,18 @@ cur_proj_set(GttProject *proj)
 		notes_area_set_project (global_na, proj);
 	}
 	update_status_bar();
+}
+
+
+/* ============================================================= */
+
+void 
+focus_row_set (GttProject *proj)
+{
+	/* update GUI elements */
+	
+	prop_dialog_set_project(proj);
+	notes_area_set_project (global_na, proj);
 }
 
 

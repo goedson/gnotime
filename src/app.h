@@ -22,8 +22,9 @@
 #include <gnome.h>
 #include "ctree.h"
 #include "ctree-gnome2.h"
+#include "proj.h"
 
-extern ProjTreeWindow *global_ptw;
+extern ProjTreeWindow *global_ptw;  /* global top-level tree window */
 
 extern GtkWidget *app_window;  /* global top-level window */
 extern GtkWidget *status_bar;
@@ -39,6 +40,12 @@ void app_new(int argc, char *argv[], const char *geometry_string);
 void app_show(void);
 void app_quit(GtkWidget *w, gpointer data);
 		  
+/* The ctree will call 'focus_row_set' whenever the focus row changes.
+ * This is used in turn as a cheesey way  to re-distribute this event
+ * to other subsystems.  Should be replaced ultimately by g_signals.
+ */
+
+void focus_row_set (GttProject *);
 
 
 #endif /* __GTT_APP_H__ */

@@ -1,6 +1,6 @@
-/*   GtkCTree display of projects for the GTimeTracker - a time tracker
+/*   GtkCTree display of projects for GTimeTracker 
  *   Copyright (C) 1997,98 Eckehard Berns
- *   Copyright (C) 2001,2002 Linas Vepstas <linas@linas.org>
+ *   Copyright (C) 2001,2002,2003 Linas Vepstas <linas@linas.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -260,6 +260,28 @@ set_focus_project (ProjTreeWindow *ptw, GttProject *prj)
 }
 
 /* ============================================================== */
+/* Pseudo focus-row-chan ged callback */
+
+void
+focus_row_changed_cb (GtkCTree *ctree, int row)
+{
+	GtkCTreeNode *rownode;
+	GttProject *proj = NULL;
+
+	rownode = get_focus_row(ctree);
+	if (rownode)
+	{
+		ProjTreeNode *ptn;
+		ptn = gtk_ctree_node_get_row_data(ctree, rownode);
+		proj = ptn->prj;
+	}
+	
+	/* Call the event-redistributor in app.c.  This should
+	 * be replaced by g_object/g_signal for a better implementation. */
+	focus_row_set (proj);
+}
+
+/* ============================================================== */
 
 static int
 widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
@@ -282,13 +304,16 @@ widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
 			}
 			return TRUE;
 		case GDK_Up:
+		case GDK_Page_Up:
 		case GDK_Down:
+		case GDK_Page_Down:
 			rownode = get_focus_row(ctree);
 			if (rownode)
 			{
 				ptn = gtk_ctree_node_get_row_data(ctree, rownode);
 			   if (ptn->ptw->show_select_row) gtk_ctree_select (ctree, rownode);
 			}
+			focus_row_changed_cb (ctree, GTK_CLIST(ctree)->focus_row);
 			return FALSE;
 		case GDK_Left:
 			rownode = get_focus_row(ctree);
@@ -300,21 +325,23 @@ widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
 			return TRUE;
 			
 		case 'j':
-			gtk_clist_freeze(GTK_CLIST(ctree));
 			if(GTK_CLIST(ctree)->focus_row < GTK_CLIST(ctree)->rows - 1)
 			{
+				gtk_clist_freeze(GTK_CLIST(ctree));
 				GTK_CLIST(ctree)->focus_row += 1;
+				gtk_clist_thaw(GTK_CLIST(ctree));
+				focus_row_changed_cb (ctree, GTK_CLIST(ctree)->focus_row);
 			}
-			gtk_clist_thaw(GTK_CLIST(ctree));
 			return TRUE;
 
 		case 'k':
-			gtk_clist_freeze(GTK_CLIST(ctree));
 			if(GTK_CLIST(ctree)->focus_row > 0)
 			{
+				gtk_clist_freeze(GTK_CLIST(ctree));
 				GTK_CLIST(ctree)->focus_row -= 1;
+				gtk_clist_thaw(GTK_CLIST(ctree));
+				focus_row_changed_cb (ctree, GTK_CLIST(ctree)->focus_row);
 			}
-			gtk_clist_thaw(GTK_CLIST(ctree));
 			return TRUE;
 
 		case 'q':
@@ -1300,6 +1327,16 @@ redraw (GttProject *prj, gpointer data)
 
 /* ============================================================== */
 
+static void
+select_row_cb (GtkCTree *ctree, gint row, gint col, 
+					 GdkEvent *ev, ProjTreeWindow *ptw)
+{
+	/* shim to artificial callback */
+	focus_row_changed_cb (ctree, row);
+}
+
+/* ============================================================== */
+
 GtkWidget *
 ctree_get_widget (ProjTreeWindow *ptw)
 {
@@ -1380,6 +1417,9 @@ ctree_new(void)
 
 	g_signal_connect(G_OBJECT(w), "drag_drop",
 			   G_CALLBACK(drag_drop), ptw);
+
+	g_signal_connect(G_OBJECT(w), "select_row",
+			   G_CALLBACK(select_row_cb), ptw);
 
 	/* allow projects to be re-arranged by dragging */
 	gtk_clist_set_reorderable(GTK_CLIST(w), TRUE);
