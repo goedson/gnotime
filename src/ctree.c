@@ -268,7 +268,9 @@ widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
 	GtkCTreeNode *rownode;
 	GdkEventKey *kev = (GdkEventKey *)event;
 
-	if (event->type != GDK_KEY_RELEASE) return FALSE;
+	if (GDK_KEY_RELEASE != event->type) return FALSE;
+	if (FALSE == gtk_widget_is_focus (GTK_WIDGET(ctree))) return FALSE;
+	
 	switch (kev->keyval)
 	{
 		case GDK_Return:
@@ -296,6 +298,29 @@ widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
 			rownode = get_focus_row(ctree);
 			gtk_ctree_expand (ctree, rownode);
 			return TRUE;
+			
+		case 'j':
+			gtk_clist_freeze(GTK_CLIST(ctree));
+			if(GTK_CLIST(ctree)->focus_row < GTK_CLIST(ctree)->rows - 1)
+			{
+				GTK_CLIST(ctree)->focus_row += 1;
+			}
+			gtk_clist_thaw(GTK_CLIST(ctree));
+			return TRUE;
+
+		case 'k':
+			gtk_clist_freeze(GTK_CLIST(ctree));
+			if(GTK_CLIST(ctree)->focus_row > 0)
+			{
+				GTK_CLIST(ctree)->focus_row -= 1;
+			}
+			gtk_clist_thaw(GTK_CLIST(ctree));
+			return TRUE;
+
+		case 'q':
+			app_quit (NULL, NULL);
+			return TRUE;
+
 		default:
 			return FALSE;
 	}
@@ -1331,6 +1356,7 @@ ctree_new(void)
 	gtk_ctree_set_show_stub(GTK_CTREE(w), FALSE);
 
 	/* create the top-level window to hold the c-tree */
+	// xxxxxxxxxxxxxxxxxxxxxxxxxx
 	sw = gtk_scrolled_window_new (NULL, NULL);
 	gtk_container_add (GTK_CONTAINER (sw), w);
 	gtk_scrolled_window_set_policy (
@@ -1338,6 +1364,10 @@ ctree_new(void)
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_widget_show_all (sw);
 
+	/* Grab focus for hot-key events */
+	gtk_widget_grab_focus (w);
+	
+	/* connect various signals */
 	g_signal_connect(G_OBJECT(w), "button_press_event",
 			   G_CALLBACK(widget_button_event), ptw);
 	g_signal_connect(G_OBJECT(w), "key_release_event",

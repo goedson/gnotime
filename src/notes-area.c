@@ -30,7 +30,29 @@ struct NotesArea_s
 	GtkPaned *vpane;
 	GtkContainer *ctree_holder;
 
+	GtkEntry *proj_title;
+
 };
+
+/* ============================================================== */
+
+static void
+entry_insert_wrapper (GtkEntry *entry, const char *str, NotesArea *na)
+{
+	printf ("duude insert text %s\n", str);
+}
+
+static void
+entry_delete_wrapper (GtkEntry *entry, GtkDeleteType t, gint cnt, NotesArea *na)
+{
+	printf ("duude delete text\n");
+}
+
+static void
+entry_paste_wrapper (GtkEntry *entry, NotesArea *na)
+{
+	printf ("duude paste\n");
+}
 
 /* ============================================================== */
 
@@ -48,6 +70,15 @@ notes_area_new (void)
 	dlg->vpane = GTK_PANED(glade_xml_get_widget (gtxml, "notes vpane"));
 	dlg->ctree_holder = GTK_CONTAINER(glade_xml_get_widget (gtxml, "ctree viewport"));
 
+
+	dlg->proj_title = GTK_ENTRY(glade_xml_get_widget (gtxml, "proj title entry"));
+	g_signal_connect (G_OBJECT (dlg->proj_title), "insert_at_cursor",
+	                G_CALLBACK (entry_insert_wrapper), &dlg);
+	g_signal_connect (G_OBJECT (dlg->proj_title), "delete_from_cursor",
+	                G_CALLBACK (entry_delete_wrapper), &dlg);
+	g_signal_connect (G_OBJECT (dlg->proj_title), "paste_clipboard",
+	                G_CALLBACK (entry_paste_wrapper), &dlg);
+	
 	gtk_widget_show (GTK_WIDGET(dlg->vpane));
 
 	return dlg;

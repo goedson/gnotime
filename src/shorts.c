@@ -16,6 +16,8 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
+#if USE_OBSOLETEEEE
 /*
  * `shorts.c' defines the hotkey (shortcut) subsystem.
  * It was added by Sven M. Hallberg on 2000-03-22.
@@ -54,13 +56,15 @@ void
 connect_short_cuts(void)
 {
 	GtkWidget *glist = ctree_get_widget(global_ptw);
-	g_signal_connect(G_OBJECT(window), "key_press_event",
+	g_signal_connect(G_OBJECT(app_window), "key_press_event",
 			   G_CALLBACK(hotkey_press), NULL);
 	/* Focus the list when focusing the app. */
 	/* FIXME: Which event is really the right one??? */
-	g_signal_connect_object(G_OBJECT(window), "realize",
+	/*
+	g_signal_connect_object(G_OBJECT(app_window), "realize",
 				  G_CALLBACK(gtk_widget_grab_focus),
 				  GTK_OBJECT(glist), 0);
+				  */
 }
 
 static gint
@@ -121,4 +125,5 @@ hk_move_focus(guint keyval)
 	gtk_clist_thaw(GTK_CLIST(glist));
 }
 
+#endif
 /* =====================  END OF FILE ===================== */

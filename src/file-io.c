@@ -314,7 +314,7 @@ gtt_load_config (const char *fname)
 		int x, y;
 		x = gnome_config_get_int(GTT_CONF"/Geometry/X=10");
 		y = gnome_config_get_int(GTT_CONF"/Geometry/Y=10");
-		gtk_widget_set_uposition(GTK_WIDGET(window), x, y);
+		gtk_widget_set_uposition(GTK_WIDGET(app_window), x, y);
 	}
 	if (!geom_size_override)
 	{
@@ -322,7 +322,7 @@ gtt_load_config (const char *fname)
 		w = gnome_config_get_int(GTT_CONF"/Geometry/Width=442");
 		h = gnome_config_get_int(GTT_CONF"/Geometry/Height=272");
 
-		gtk_window_set_default_size(GTK_WINDOW(window), w, h);
+		gtk_window_set_default_size(GTK_WINDOW(app_window), w, h);
 	}
 
 	config_show_secs = gnome_config_get_bool(GTT_CONF"/Display/ShowSecs=false");
@@ -554,8 +554,8 @@ gtt_save_config(const char *fname)
 
 	/* ------------- */
 	/* save the window location and size */
-	gdk_window_get_origin(window->window, &x, &y);
-	gdk_window_get_size(window->window, &w, &h);
+	gdk_window_get_origin(app_window->window, &x, &y);
+	gdk_window_get_size(app_window->window, &w, &h);
 	gnome_config_set_int(GTT_CONF"/Geometry/Width", w);
 	gnome_config_set_int(GTT_CONF"/Geometry/Height", h);
 	gnome_config_set_int(GTT_CONF"/Geometry/X", x);

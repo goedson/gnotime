@@ -20,6 +20,8 @@
  * `shorts.h' declares connect_short_cuts().
  */
 
+#if 0
+// this is dead ead dead code
 #ifndef __SHORTS_H__
 #define __SHORTS_H__
 
@@ -29,3 +31,5 @@
 void connect_short_cuts(void);
 
 #endif /* __SHORTS_H__ */
+
+#endif

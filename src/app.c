@@ -47,7 +47,7 @@ GttProject *cur_proj = NULL;
 
 ProjTreeWindow *global_ptw = NULL;
 NotesArea *global_na = NULL;
-GtkWidget *window = NULL;
+GtkWidget *app_window = NULL;
 GtkWidget *status_bar = NULL;
 
 static GtkStatusbar *status_project = NULL;
@@ -210,21 +210,21 @@ void app_new(int argc, char *argv[], const char *geometry_string)
 	GtkWidget *widget;
 	GtkWidget *vpane;
 
-	window = gnome_app_new(GTT_APP_NAME, GTT_APP_TITLE " " VERSION);
-	gtk_window_set_wmclass(GTK_WINDOW(window),
+	app_window = gnome_app_new(GTT_APP_NAME, GTT_APP_TITLE " " VERSION);
+	gtk_window_set_wmclass(GTK_WINDOW(app_window),
 			       GTT_APP_NAME, GTT_APP_PROPER_NAME);
 
 	/* 485 x 272 seems to be a good size to default to */
-	gtk_window_set_default_size(GTK_WINDOW(window), 485, 272);
-	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, FALSE);
+	gtk_window_set_default_size(GTK_WINDOW(app_window), 485, 272);
+	gtk_window_set_policy(GTK_WINDOW(app_window), TRUE, TRUE, FALSE);
 	
 	/* build menus */
-	menus_create(GNOME_APP(window));
+	menus_create(GNOME_APP(app_window));
 
 	/* build toolbar */
 	widget = build_toolbar();
 	gtk_widget_show(widget);
-	gnome_app_set_toolbar(GNOME_APP(window), GTK_TOOLBAR(widget));
+	gnome_app_set_toolbar(GNOME_APP(app_window), GTK_TOOLBAR(widget));
 	
 	/* container holds status bar, main ctree widget */
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -283,19 +283,20 @@ void app_new(int argc, char *argv[], const char *geometry_string)
 
 	notes_area_add_ctree (global_na, ctree->parent);
 	
+	
 	/* we are done building it, make it visible */
 	gtk_widget_show(vbox);
-	gnome_app_set_contents(GNOME_APP(window), vbox);
+	gnome_app_set_contents(GNOME_APP(app_window), vbox);
 
 	if (!geometry_string) return;
 	
-	if (gtk_window_parse_geometry(GTK_WINDOW(window),geometry_string))
+	if (gtk_window_parse_geometry(GTK_WINDOW(app_window),geometry_string))
 	{
 		geom_size_override=TRUE;
 	}
 	else 
 	{
-		gnome_app_error(GNOME_APP(window),
+		gnome_app_error(GNOME_APP(app_window),
 			_("Couldn't understand geometry (position and size)\n"
 			  " specified on command line"));
 	}
@@ -304,9 +305,9 @@ void app_new(int argc, char *argv[], const char *geometry_string)
 void 
 app_show (void)
 {
-	if (!GTK_WIDGET_MAPPED(window)) 
+	if (!GTK_WIDGET_MAPPED(app_window)) 
 	{
-		gtk_widget_show(window);
+		gtk_widget_show(app_window);
 	}
 }
 
