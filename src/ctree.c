@@ -1120,14 +1120,6 @@ ctree_new(void)
 
 	ctree_init_cols (ptw);
 
-	/* XXXx
-	for (i=0; NULL_COL != ptw->cols[i]; i++) {
-		if (TITLE_COL == ptw->cols[i]) break;
-	}
-	i is where the expander goes ....
-	w = gtk_ctree_new_with_titles(ptw->ncols, i, ptw->col_titles);
-	*/
-
 	{
 		GType col_type[NCOLS];
 		for (i=0;i<ptw->ncols;i++) { col_type[i] = G_TYPE_STRING; }
@@ -1138,6 +1130,7 @@ ctree_new(void)
 
 	gtk_object_set_data (GTK_OBJECT(w), "ptw", ptw);
 
+	/* Set up the columns in the treeview widget */
 	for (i=0; i<ptw->ncols; i++)
 	{
       GtkTreeViewColumn *col;
@@ -1151,12 +1144,27 @@ ctree_new(void)
 
 		gtk_tree_view_insert_column (ptw->ctree, col, i);
 
+		/* Find the column into which to put the expander */
+		if (TITLE_COL == ptw->cols[i])
+		{
+			gtk_tree_view_set_expander_column (ptw->ctree, col);
+		}
 		/* XXX
 		gtk_clist_set_column_justification(GTK_CLIST(w), 
 			i, ptw->col_justify[i]);
 		*/
 	}
-
+	
+	/* Find the column into which to put the expander */
+	{
+		GtkTreeViewColumn *col;
+		for (i=0; NULL_COL != ptw->cols[i]; i++) {
+			if (TITLE_COL == ptw->cols[i]) break;
+		}
+		col = gtk_tree_view_get_column (ptw->ctree, i);
+		gtk_tree_view_set_expander_column (ptw->ctree, col);
+	}
+	
 	/* some columns are quite narrow, so put tooltips over them. */
 	/* XXX
 	for (i=0; i<ptw->ncols; i++)
