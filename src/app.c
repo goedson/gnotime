@@ -281,7 +281,7 @@ void app_new(int argc, char *argv[], const char *geometry_string)
 	gtk_box_pack_end(GTK_BOX(vbox), vpane, TRUE, TRUE, 0);
 	gtk_widget_unref (vpane);
 
-	notes_area_add_ctree (global_na, ctree->parent);
+	notes_area_add_ctree (global_na, ctree);
 	
 	
 	/* we are done building it, make it visible */

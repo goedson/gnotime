@@ -27,8 +27,8 @@
 struct NotesArea_s
 {
 	GladeXML *gtxml;
-	GtkPaned *vpane;
-	GtkContainer *ctree_holder;
+	GtkPaned *vpane;   /* top level pane */
+	GtkContainer *ctree_holder;   /* scrolled widget that holds ctree */
 
 	GtkEntry *proj_title;
 
@@ -37,22 +37,11 @@ struct NotesArea_s
 /* ============================================================== */
 
 static void
-entry_insert_wrapper (GtkEntry *entry, const char *str, NotesArea *na)
+entry_changed (GtkEntry *entry, NotesArea *na)
 {
-	printf ("duude insert text %s\n", str);
+	printf ("duude text \n");
 }
 
-static void
-entry_delete_wrapper (GtkEntry *entry, GtkDeleteType t, gint cnt, NotesArea *na)
-{
-	printf ("duude delete text\n");
-}
-
-static void
-entry_paste_wrapper (GtkEntry *entry, NotesArea *na)
-{
-	printf ("duude paste\n");
-}
 
 /* ============================================================== */
 
@@ -68,16 +57,12 @@ notes_area_new (void)
 	dlg->gtxml = gtxml;
 	
 	dlg->vpane = GTK_PANED(glade_xml_get_widget (gtxml, "notes vpane"));
-	dlg->ctree_holder = GTK_CONTAINER(glade_xml_get_widget (gtxml, "ctree viewport"));
+	dlg->ctree_holder = GTK_CONTAINER(glade_xml_get_widget (gtxml, "ctree holder"));
 
 
 	dlg->proj_title = GTK_ENTRY(glade_xml_get_widget (gtxml, "proj title entry"));
-	g_signal_connect (G_OBJECT (dlg->proj_title), "insert_at_cursor",
-	                G_CALLBACK (entry_insert_wrapper), &dlg);
-	g_signal_connect (G_OBJECT (dlg->proj_title), "delete_from_cursor",
-	                G_CALLBACK (entry_delete_wrapper), &dlg);
-	g_signal_connect (G_OBJECT (dlg->proj_title), "paste_clipboard",
-	                G_CALLBACK (entry_paste_wrapper), &dlg);
+	g_signal_connect (G_OBJECT (dlg->proj_title), "changed",
+	                G_CALLBACK (entry_changed), &dlg);
 	
 	gtk_widget_show (GTK_WIDGET(dlg->vpane));
 
@@ -98,12 +83,8 @@ notes_area_add_ctree (NotesArea *nadlg, GtkWidget *ctree)
 {
 	if (!nadlg) return;
 
-	/* For some reason, the way paned works, I can't add to the pane
-	 * any more after glade has put something in there. So we put
-	 * a scrolled window inside a scrolled window.  XXX there must
-	 * be a better way */
-	/* gtk_paned_pack1 (nadlg->vpane, ctree, TRUE, TRUE); */
 	gtk_container_add (nadlg->ctree_holder, ctree);
+	gtk_widget_show_all (GTK_WIDGET(nadlg->ctree_holder));
 }
 
 /* ========================= END OF FILE ======================== */

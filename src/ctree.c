@@ -1312,7 +1312,7 @@ ctree_new(void)
 {
 	ProjTreeWindow *ptw;
 	GtkWidget *wimg;
-	GtkWidget *w, *sw;
+	GtkWidget *w;
 	int i;
 
 	ptw = g_new0 (ProjTreeWindow, 1);
@@ -1351,20 +1351,12 @@ ctree_new(void)
 		ptw->col_tt_w[i] = tt;
 	}
 
+	/* set miinimum size, set stubbie on the tree display */
 	gtk_widget_set_size_request (w, -1, 120);
 	ctree_update_column_visibility (ptw);
 	gtk_ctree_set_show_stub(GTK_CTREE(w), FALSE);
 
-	/* create the top-level window to hold the c-tree */
-	// xxxxxxxxxxxxxxxxxxxxxxxxxx
-	sw = gtk_scrolled_window_new (NULL, NULL);
-	gtk_container_add (GTK_CONTAINER (sw), w);
-	gtk_scrolled_window_set_policy (
-		GTK_SCROLLED_WINDOW (sw),
-		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_widget_show_all (sw);
-
-	/* Grab focus for hot-key events */
+	/* Grab initial focus for hot-key events */
 	gtk_widget_grab_focus (w);
 	
 	/* connect various signals */
