@@ -63,11 +63,11 @@ typedef struct _PropDlg
 
 /* ============================================================== */
 
-#define GET_MENU(WIDGET,NAME) ({				\
-	GtkWidget *menu, *menu_item;				\
-	menu = gtk_option_menu_get_menu (WIDGET);		\
-       	menu_item = gtk_menu_get_active(GTK_MENU(menu));	\
-       	(gtk_object_get_data(GTK_OBJECT(menu_item), NAME));	\
+#define GET_MENU(WIDGET,NAME) ({                                \
+        GtkWidget *menu, *menu_item;                            \
+        menu = gtk_option_menu_get_menu (WIDGET);               \
+        menu_item = gtk_menu_get_active(GTK_MENU(menu));        \
+        (gtk_object_get_data(GTK_OBJECT(menu_item), NAME));     \
 })
 
 
