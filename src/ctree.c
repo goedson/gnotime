@@ -101,13 +101,17 @@ struct ProjTreeWindow_s
 static void ctree_col_values (ProjTreeNode *ptn, gboolean expand);
 
 /* ============================================================== */
+/* return value: true if we want widget to ignore this event,
+ * false if we want the widget to handle it.
+ */
 
 static int
-widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
+widget_key_event(GtkTreeView *ctree, GdkEvent *event, gpointer data)
 {
 	GtkCTreeNode *rownode;
 	GdkEventKey *kev = (GdkEventKey *)event;
 
+printf ("duuude key eve\n");
 #if XXX
 	if (event->type != GDK_KEY_RELEASE) return FALSE;
 	switch (kev->keyval)
@@ -151,13 +155,32 @@ widget_key_event(GtkCTree *ctree, GdkEvent *event, gpointer data)
 }
 
 static int
-widget_button_event(GtkTree *clist, GdkEvent *event, gpointer data)
+widget_button_event(GtkTreeView *ctree, GdkEvent *event, gpointer data)
 {
 	ProjTreeWindow *ptw = data;
 	int row,column;
 	GdkEventButton *bevent = (GdkEventButton *)event;
 	GtkWidget *menu;
 	
+printf ("duuude button eve\n");
+
+{
+GtkTreeSelection      *sel;
+GtkTreeModel *mod;
+GtkTreeIter iter;
+GValue val =  {G_TYPE_POINTER};
+void * ptr;
+gboolean x;
+sel = gtk_tree_view_get_selection (ptw->ctree);
+x = gtk_tree_selection_get_selected (sel, &mod, &iter);
+printf ("duude sel=%d\n", x);
+if (x) {
+gtk_tree_model_get_value (mod, &iter, ptw->ncols, &val);
+ptr = g_value_get_pointer (&val);
+printf ("duude got ptr=%p\n", ptr);
+}
+}
+
 #if XXX
 	/* The only button event we handle are right-mouse-button,
 	 * end double-click-left-mouse-button. */
@@ -189,7 +212,7 @@ widget_button_event(GtkTree *clist, GdkEvent *event, gpointer data)
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3, bevent->time);
 	}
 #endif XXX
-	return TRUE;
+	return FALSE;
 }
 
 /* ============================================================== */
@@ -728,7 +751,7 @@ ctree_update_column_visibility (ProjTreeWindow *ptw)
 	int i;
 
 	/* set column visibility */
-	for (i=0; NULL_COL != ptw->cols[i]; i++)
+	for (i=0; i <= ptw->ncols; i++)
 	{
 		GtkTreeViewColumn *col = gtk_tree_view_get_column (ptw->ctree, i);
 		switch (ptw->cols[i])
@@ -817,6 +840,7 @@ ctree_update_column_visibility (ProjTreeWindow *ptw)
 				config_show_title_status);
 			break;
 		case NULL_COL:
+			gtk_tree_view_column_set_visible (col, FALSE);
 			break;
 		}
 
@@ -1102,7 +1126,8 @@ ctree_get_widget (ProjTreeWindow *ptw)
 }
 
 static void xxx_cb (GtkTreeSelection *selection, gpointer data) { 
-		  printf ("bogus duuude \n"); }
+		  printf ("bogus duuude \n"); 
+}
 
 ProjTreeWindow *
 ctree_new(void)
@@ -1120,10 +1145,15 @@ ctree_new(void)
 
 	ctree_init_cols (ptw);
 
+	/* Set the column types.  We also need to store a bit of private
+	 * data with each tree node; we will cheat our way into this by
+	 * storing a pointer in a bogus column that is never displayed.
+	 */
 	{
 		GType col_type[NCOLS];
 		for (i=0;i<ptw->ncols;i++) { col_type[i] = G_TYPE_STRING; }
-		ptw->treestore = gtk_tree_store_newv (ptw->ncols, col_type);
+		col_type[ptw->ncols] = G_TYPE_POINTER;
+		ptw->treestore = gtk_tree_store_newv (ptw->ncols+1, col_type);
 	}
 	w = gtk_tree_view_new_with_model (GTK_TREE_MODEL(ptw->treestore));
 	ptw->ctree = GTK_TREE_VIEW (w);
@@ -1154,6 +1184,26 @@ ctree_new(void)
 			i, ptw->col_justify[i]);
 		*/
 	}
+
+	/* Set up a bogus column to hold private data;
+	 * this column is never actually drawn.
+	 * We need to do this because there is currently 
+	 * no other way to store private data together with
+	 * a node in the tree.
+	 */
+	{
+      GtkTreeViewColumn *col;
+		GtkCellRenderer *renderer;
+		
+		/* bogus, its not text, but we need something to place-hold */
+		renderer = gtk_cell_renderer_text_new ();
+
+		col = gtk_tree_view_column_new_with_attributes (
+							 "invisible",
+							 renderer, "text", ptw->ncols, NULL);
+
+		gtk_tree_view_insert_column (ptw->ctree, col, ptw->ncols);
+	}
 	
 	/* some columns are quite narrow, so put tooltips over them. */
 	/* XXX
@@ -1168,11 +1218,11 @@ ctree_new(void)
 	}
 	*/
 
-	/*   XXX
-	gtk_widget_set_usize(w, -1, 120);
+	/* Not all of the columns are visible; only some are.  Set this */
 	ctree_update_column_visibility (ptw);
-	gtk_ctree_set_show_stub(GTK_CTREE(w), FALSE);
-	*/
+	
+	/*   XXX  uhh, isn't this overriding some other geom hint?? thats bad */
+	gtk_widget_set_usize(w, -1, 120);
 
 	/* create the top-level window to hold the c-tree */
 	sw = gtk_scrolled_window_new (NULL, NULL);
@@ -1187,15 +1237,15 @@ ctree_new(void)
 		GtkTreeSelection *select;
 		select = gtk_tree_view_get_selection (ptw->ctree);
 		gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
-		// g_signal_connect (G_OBJECT (select), "changed", G_CALLBACK (xxx_cb), NULL);
+		g_signal_connect (G_OBJECT (select), "changed", G_CALLBACK (xxx_cb), NULL);
 	}
-	gtk_signal_connect(GTK_OBJECT(w),"row_activated", G_CALLBACK (xxx_cb), NULL);
+	// gtk_signal_connect(GTK_OBJECT(w),"row_activated", G_CALLBACK (xxx_cb), NULL);
 
-#if XXX
 	gtk_signal_connect(GTK_OBJECT(w), "button_press_event",
 			   GTK_SIGNAL_FUNC(widget_button_event), ptw);
 	gtk_signal_connect(GTK_OBJECT(w), "key_release_event",
 			   GTK_SIGNAL_FUNC(widget_key_event), ptw);
+#if XXX
 	gtk_signal_connect(GTK_OBJECT(w), "tree_select_row",
 			   GTK_SIGNAL_FUNC(tree_select_row), NULL);
 	gtk_signal_connect(GTK_OBJECT(w), "click_column",
@@ -1364,6 +1414,8 @@ ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkTreeIter *parent)
 	GList *n;
 	GtkTreeIter tail;
 
+	/* Setup a back-pointer between the project and the 
+	 * row widget, so that we can later find ourselves */
 	ptn = gtt_project_get_private_data (p);
 	if (!ptn)
 	{
@@ -1384,6 +1436,15 @@ ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkTreeIter *parent)
 		g_value_set_string (&val, ptn->col_values[i]);
 		gtk_tree_store_set_value (ptw->treestore, &tail, i, &val);
 	}
+
+	/* store the back pointer to the row data in a bogus column
+	 * (the NULL column, which is always the last column) */
+	{
+		GValue val = {G_TYPE_POINTER};
+		g_value_set_pointer (&val, ptn);
+		gtk_tree_store_set_value (ptw->treestore, &tail, ptw->ncols, &val);
+	}
+printf ("duude set %p\n", ptn);
 	
 #if XXX
 	gtk_ctree_node_set_row_data(ptw->ctree, ptn->ctnode, ptn);
