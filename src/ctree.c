@@ -1155,16 +1155,6 @@ ctree_new(void)
 		*/
 	}
 	
-	/* Find the column into which to put the expander */
-	{
-		GtkTreeViewColumn *col;
-		for (i=0; NULL_COL != ptw->cols[i]; i++) {
-			if (TITLE_COL == ptw->cols[i]) break;
-		}
-		col = gtk_tree_view_get_column (ptw->ctree, i);
-		gtk_tree_view_set_expander_column (ptw->ctree, col);
-	}
-	
 	/* some columns are quite narrow, so put tooltips over them. */
 	/* XXX
 	for (i=0; i<ptw->ncols; i++)
@@ -1386,7 +1376,7 @@ ctree_add (ProjTreeWindow *ptw, GttProject *p, GtkTreeIter *parent)
 	ctree_col_values (ptn, FALSE);
 
 	/* Add the project to the tail end of the list */
-	gtk_tree_store_append (ptw->treestore, &tail, NULL);
+	gtk_tree_store_append (ptw->treestore, &tail, parent);
 	for (i=0; i<ptw->ncols; i++)
 	{
 		GValue val = {G_TYPE_STRING};
