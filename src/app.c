@@ -39,11 +39,16 @@
 #include "util.h"
 
 
+/* XXX Most of the globals below should be placed into thier
+ * own top-level structure, rather than being allows to be 
+ * globals.
+ */
 GttProject *cur_proj = NULL;
 
-ProjTreeWindow *global_ptw;
-GtkWidget *window;
-GtkWidget *status_bar;
+ProjTreeWindow *global_ptw = NULL;
+NotesArea *global_na = NULL;
+GtkWidget *window = NULL;
+GtkWidget *status_bar = NULL;
 
 static GtkStatusbar *status_project = NULL;
 static GtkStatusbar *status_day_time = NULL;
@@ -203,7 +208,7 @@ void app_new(int argc, char *argv[], const char *geometry_string)
 	GtkWidget *ctree;
 	GtkWidget *vbox;
 	GtkWidget *widget;
-	gint x, y, w, h;
+	GtkWidget *vpane;
 
 	window = gnome_app_new(GTT_APP_NAME, GTT_APP_TITLE " " VERSION);
 	gtk_window_set_wmclass(GTK_WINDOW(window),
@@ -262,19 +267,22 @@ void app_new(int argc, char *argv[], const char *geometry_string)
 	/* create the main columned tree for showing projects */
 	global_ptw = ctree_new();
 	ctree = ctree_get_widget(global_ptw);
-	gtk_box_pack_end(GTK_BOX(vbox), ctree->parent, TRUE, TRUE, 0);
 
-#ifdef LATER
 	/* create the notes area */
-	// XXXX
-	notes_area_init();
-	{ GtkWidget *nar = notes_area_get_widget ();
-       gtk_widget_reparent (nar, vbox);  // ???
-	    gtk_box_pack_end(GTK_BOX(vbox), nar, TRUE, TRUE, 0);
-	}
-#endif
-	
+	global_na = notes_area_new();
+	vpane = notes_area_get_widget (global_na);
 
+	/* Need to reparent, to get rid of glade parent-window hack.
+	 * But gtk_widget_reparent (vpane); causes  a "Gtk-CRITICAL" 
+	 * to occur.  So we need a fancier move.
+	 */
+	gtk_widget_ref (vpane);
+	gtk_container_remove(GTK_CONTAINER(vpane->parent), vpane);
+	gtk_box_pack_end(GTK_BOX(vbox), vpane, TRUE, TRUE, 0);
+	gtk_widget_unref (vpane);
+
+	notes_area_add_ctree (global_na, ctree->parent);
+	
 	/* we are done building it, make it visible */
 	gtk_widget_show(vbox);
 	gnome_app_set_contents(GNOME_APP(window), vbox);

@@ -24,16 +24,17 @@
 #include "notes-area.h"
 #include "util.h"
 
-typedef struct _NotesArea_s
+struct NotesArea_s
 {
 	GladeXML *gtxml;
-	GtkWidget *vpane;
+	GtkPaned *vpane;
+	GtkContainer *ctree_holder;
 
-} NotesArea;
+};
 
 /* ============================================================== */
 
-static NotesArea *
+NotesArea *
 notes_area_new (void)
 {
 	NotesArea *dlg;
@@ -44,29 +45,34 @@ notes_area_new (void)
 	gtxml = gtt_glade_xml_new ("glade/notes.glade", "top window");
 	dlg->gtxml = gtxml;
 	
-	dlg->vpane = glade_xml_get_widget (gtxml, "notes vpane");
+	dlg->vpane = GTK_PANED(glade_xml_get_widget (gtxml, "notes vpane"));
+	dlg->ctree_holder = GTK_CONTAINER(glade_xml_get_widget (gtxml, "ctree viewport"));
 
-	gtk_widget_show (dlg->vpane);
+	gtk_widget_show (GTK_WIDGET(dlg->vpane));
 
 	return dlg;
 }
 
 /* ============================================================== */
 
-static NotesArea *nadlg = NULL;
-
-void 
-notes_area_init (void)
+GtkWidget *
+notes_area_get_widget (NotesArea *nadlg)
 {
-	if (!nadlg) nadlg = notes_area_new ();
+	if (!nadlg) return NULL;
+	return GTK_WIDGET(nadlg->vpane);
 }
 
-
-GtkWidget *
-notes_area_get_widget (void)
+void 
+notes_area_add_ctree (NotesArea *nadlg, GtkWidget *ctree)
 {
-	if (!nadlg) nadlg = notes_area_new ();
-	return nadlg->vpane;
+	if (!nadlg) return;
+
+	/* For some reason, the way paned works, I can't add to the pane
+	 * any more after glade has put something in there. So we put
+	 * a scrolled window inside a scrolled window.  XXX there must
+	 * be a better way */
+	/* gtk_paned_pack1 (nadlg->vpane, ctree, TRUE, TRUE); */
+	gtk_container_add (nadlg->ctree_holder, ctree);
 }
 
 /* ========================= END OF FILE ======================== */

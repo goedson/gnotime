@@ -16,8 +16,19 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifndef GTT_NOTES_AREA_H
+#define GTT_NOTES_AREA_H
+
 #include <gnome.h>
 
-void notes_area_init (void);
-GtkWidget * notes_area_get_widget (void);
+typedef struct NotesArea_s NotesArea;
 
+NotesArea * notes_area_new (void);
+
+/* returns the vpaned widget at the top of the notes area heirarchy */
+GtkWidget * notes_area_get_widget (NotesArea *na);
+
+/* add the ctree widget to the appropriate location */
+void notes_area_add_ctree (NotesArea *na, GtkWidget *ctree);
+
+#endif /* GTT_NOTES_AREA_H */
