@@ -1381,15 +1381,13 @@ ctree_setup (ProjTreeWindow *ptw)
 	}
 
 	/* Next, highlight the current project, and expand 
-	 * the tree branches to it, if needed */
+	 * the tree branches to it, if needed, so that its visibile. */
 	if (running_project) cur_proj_set (running_project);
 	if (cur_proj) 
 	{
 		GttProject *parent;
 		ProjTreeNode *ptn;
 
-		ptn = gtt_project_get_private_data (cur_proj);
-		gtk_tree_selection_select_iter (ptw->selection, &ptn->iter);
 		parent = gtt_project_get_parent (cur_proj);
 		while (parent) 
 		{
@@ -1401,6 +1399,9 @@ ctree_setup (ProjTreeWindow *ptw)
 			
 			parent = gtt_project_get_parent (parent);
 		}
+
+		ptn = gtt_project_get_private_data (cur_proj);
+		gtk_tree_selection_select_iter (ptw->selection, &ptn->iter);
 	}
 
 	menu_set_states();
@@ -1627,16 +1628,8 @@ ctree_update_label(ProjTreeWindow *ptw, GttProject *p)
 	if (!ptw || !p) return;
 	ptn = gtt_project_get_private_data (p);
 	g_return_if_fail (NULL != ptn);
-#if XXX
-	stringify_col_values (ptn, GTK_CTREE_ROW(ptn->ctnode)->expanded);
-
-	for (i=0; i<ptw->ncols; i++)
-	{
-		gtk_ctree_node_set_text(ptw->ctree, 
-			ptn->ctnode, i, ptn->col_values[i]);
-	}
-#endif
-
+	
+	ctree_update_row (ptw, ptn);
 	update_status_bar();
 }
 
