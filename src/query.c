@@ -29,9 +29,9 @@
 typedef struct DayArray_s
 {
 	int array_len;           /* same as number of days */
-	GArray *total_time_arr;  /* holds time_t seconds */
 	GArray *buckets;         /* holds array of GttBucket */
-	int start_cday;
+	int start_cday;          /* day since 1900 */
+	struct tm start_tm;      /* start time struct */
 } DayArray;
 
 static inline int 
@@ -43,15 +43,18 @@ yearday_to_centuryday (int yday, int year)
 	return cd;
 }
 
+/* ========================================================== */
 /** divide list of tasks into daily bins */
 static int
 day_bin (GttInterval *ivl, gpointer data)
 {
 	DayArray *da = data;
-	time_t start, stop, start_of_day, end_of_day;
+	time_t start, stop, end_of_day;
 	struct tm stm;
 	int century_day, arr_day;
+	GttTask *tsk;
 
+	tsk = gtt_interval_get_parent (ivl);
 	start = gtt_interval_get_start (ivl);
 	stop = gtt_interval_get_stop (ivl);
 
@@ -60,39 +63,31 @@ day_bin (GttInterval *ivl, gpointer data)
 	century_day = yearday_to_centuryday (stm.tm_yday, stm.tm_year);
 	arr_day = century_day - da->start_cday;
 
-	/* loop over days until last day in interval */
+	/* Loop over days until last day in interval */
 	stm.tm_sec = 0;
 	stm.tm_min = 0;
 	stm.tm_hour = 0;
 
-	end_of_day = mktime (&stm);
 	while (1)
 	{
-		start_of_day = end_of_day;
+		GttBucket *bu;
+		bu = &g_array_index (da->buckets, GttBucket, arr_day);
+		
 		stm.tm_mday ++;
 		end_of_day = mktime (&stm);
+		
 		if (stop < end_of_day)
 		{
-			if (da->total_time_arr)
-			{
-				g_array_index (da->total_time_arr, time_t, arr_day) += stop - start;
-			}
-			if (da->buckets)
-			{
-				GttBucket *bu;
-				bu = &g_array_index (da->buckets, GttBucket, arr_day);
-				bu->start = start_of_day;
-				bu->end = end_of_day;
-				
-			}
+			bu->total += stop - start;
+			bu->intervals = g_list_append (bu->intervals, ivl);
+			bu->tasks = g_list_append (bu->tasks, tsk);
 			return 1;
 		}
 		else
 		{
-			if (da->total_time_arr)
-			{
-				g_array_index (da->total_time_arr, time_t, arr_day) += end_of_day - start;
-			}
+			bu->total+= end_of_day - start;
+			bu->intervals = g_list_append (bu->intervals, ivl);
+			bu->tasks = g_list_append (bu->tasks, tsk);
 		}
 		arr_day ++;
 		start = end_of_day;
@@ -101,6 +96,7 @@ day_bin (GttInterval *ivl, gpointer data)
 	return 1;	  
 }
 
+/* ========================================================== */
 /** Set up the DayArray object so that the length (in days) is known,
  * and so that the start day is known
  */
@@ -109,7 +105,6 @@ count_days (DayArray *da, GttProject *proj, gboolean include_subprojects)
 {
 	time_t start, stop;
 	int num_days;
-	struct tm stm;
 
 	/* Figure out how many days in the array */
 	start = gtt_project_get_earliest_start (proj, include_subprojects);
@@ -119,8 +114,9 @@ count_days (DayArray *da, GttProject *proj, gboolean include_subprojects)
 
 	da->array_len = num_days;
 	
-	localtime_r (&start, &stm);
-	da->start_cday = yearday_to_centuryday (stm.tm_yday, stm.tm_year);
+	localtime_r (&start, &da->start_tm);
+	
+	da->start_cday = yearday_to_centuryday (da->start_tm.tm_yday, da->start_tm.tm_year);
 }
 
 
@@ -138,27 +134,38 @@ run_daily_bins(DayArray *da, GttProject *proj, gboolean include_subprojects)
 }
 
 /* ========================================================== */
+/** Initialize array of buckets */
 
-GArray *
-gtt_project_get_daily_time (GttProject *proj, gboolean include_subprojects)
+static void
+init_bins (DayArray *da)
 {
-	DayArray da;
-	GArray *arr = NULL;
+	time_t start_of_day, end_of_day;
+	struct tm stm;
+	int i;
 
-	if (!proj) return NULL;
-	
-	/* Figure out how many days in the array */
-	count_days (&da, proj, include_subprojects);
+	/* Use system routines to get things like day-light savings 
+	 * correct.  Otherwise, we could just have += 24*3600 */
+	stm = da->start_tm;
+	stm.tm_sec = 0;
+	stm.tm_min = 0;
+	stm.tm_hour = 0;
 
-	/* Alloc the array, fill it in, return the results */
-	arr = g_array_new (FALSE, TRUE, sizeof (time_t));
-	g_array_set_size (arr, da.array_len);
-
-	da.total_time_arr = arr;
-	da.buckets = NULL;
-	run_daily_bins (&da, proj, include_subprojects);
-
-	return arr;
+	end_of_day = mktime (&stm);
+	for (i=0; i<da->array_len; i++)
+	{
+		GttBucket *bu;
+		bu = &g_array_index (da->buckets, GttBucket, i);
+		
+		start_of_day = end_of_day;
+		stm.tm_mday ++;
+		end_of_day = mktime (&stm);
+		
+		bu->start = start_of_day;
+		bu->end = end_of_day;
+		bu->total = 0;
+		bu->tasks = NULL;
+		bu->intervals = NULL;
+	}
 }
 
 /* ========================================================== */
@@ -178,8 +185,8 @@ gtt_project_get_daily_buckets (GttProject *proj, gboolean include_subprojects)
 	arr = g_array_new (FALSE, TRUE, sizeof (GttBucket));
 	g_array_set_size (arr, da.array_len);
 
-	da.total_time_arr = NULL;
 	da.buckets = arr;
+	init_bins (&da);
 	run_daily_bins (&da, proj, include_subprojects);
 
 	return arr;
