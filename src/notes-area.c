@@ -40,6 +40,9 @@ struct NotesArea_s
 	GtkEntry *task_memo;
 	GtkTextView *task_notes;
 
+	GtkButton *close_proj;
+	GtkButton *close_task;
+
 	GttProject *proj;
 	gboolean ignore_events;
 };
@@ -117,6 +120,61 @@ proj_notes_changed (GtkTextBuffer *entry, NotesArea *na)
 }
 
 /* ============================================================== */
+/* These are some strange routines used to close off paned areas.
+ * They are weird, they need to guess at sizes to close off the
+ * panes.  This should really be a gkpaned built-in function.
+ */
+
+#define CLOSED_MARGIN 10
+
+static void
+close_proj_area (GtkButton *but, NotesArea *na)
+{
+	int hpane_width;
+	int hpane_div;
+	
+	hpane_width = GTK_WIDGET(na->hpane)->allocation.width;
+	hpane_div = gtk_paned_get_position (na->hpane);
+	
+	if (hpane_div > hpane_width -CLOSED_MARGIN)
+	{
+		int vpane_height;
+		vpane_height = GTK_WIDGET(na->vpane)->allocation.height;
+		gtk_paned_set_position (na->vpane, vpane_height);
+	}
+	else
+	{
+		gtk_paned_set_position (na->hpane, 0);
+	}
+}
+
+static void
+close_task_area (GtkButton *but, NotesArea *na)
+{
+	int hpane_width;
+	int hpane_div;
+	
+	hpane_width = GTK_WIDGET(na->hpane)->allocation.width;
+	hpane_div = gtk_paned_get_position (na->hpane);
+	
+	/* XXX we really need only the first test, but the second 
+	 * one deals iwth a freaky gtk vpaned bug that makes this 
+	 * hidden button active.  Whatever.
+	 */ 
+	if ((hpane_div < CLOSED_MARGIN) ||
+	    (hpane_div > hpane_width -CLOSED_MARGIN))
+	{
+		int vpane_height;
+		vpane_height = GTK_WIDGET(na->vpane)->allocation.height;
+		gtk_paned_set_position (na->vpane, vpane_height);
+	}
+	else
+	{
+		gtk_paned_set_position (na->hpane, hpane_width);
+	}
+}
+
+/* ============================================================== */
 
 #define CONNECT_ENTRY(GLADE_NAME,CB)  ({                           \
 	GtkEntry * entry;                                               \
@@ -149,7 +207,9 @@ notes_area_new (void)
 	dlg->vpane = GTK_PANED(glade_xml_get_widget (gtxml, "notes vpane"));
 	dlg->ctree_holder = GTK_CONTAINER(glade_xml_get_widget (gtxml, "ctree holder"));
 	dlg->hpane = GTK_PANED(glade_xml_get_widget (gtxml, "leftright hpane"));
-
+	dlg->close_proj = GTK_BUTTON(glade_xml_get_widget (gtxml, "close proj button"));
+	dlg->close_task = GTK_BUTTON(glade_xml_get_widget (gtxml, "close diary button"));
+	
 	dlg->proj_title = CONNECT_ENTRY ("proj title entry", proj_title_changed);
 	dlg->proj_desc = CONNECT_ENTRY ("proj desc entry", proj_desc_changed);
 	dlg->task_memo = CONNECT_ENTRY ("diary entry", task_memo_changed);
@@ -157,6 +217,13 @@ notes_area_new (void)
 	dlg->proj_notes = CONNECT_TEXT ("proj notes textview", proj_notes_changed);
 	dlg->task_notes = CONNECT_TEXT ("diary notes textview", task_notes_changed);
 	
+
+	g_signal_connect (G_OBJECT (dlg->close_proj), "clicked",
+	                G_CALLBACK (close_proj_area), dlg);
+
+	g_signal_connect (G_OBJECT (dlg->close_task), "clicked",
+	                G_CALLBACK (close_task_area), dlg);
+
 	gtk_widget_show (GTK_WIDGET(dlg->vpane));
 
 	dlg->proj = NULL;
