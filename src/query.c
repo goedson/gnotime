@@ -72,7 +72,7 @@ day_bin (GttInterval *ivl, gpointer data)
 	{
 		GttBucket *bu;
 		bu = &g_array_index (da->buckets, GttBucket, arr_day);
-		
+
 		stm.tm_mday ++;
 		end_of_day = mktime (&stm);
 		
@@ -125,11 +125,11 @@ run_daily_bins(DayArray *da, GttProject *proj, gboolean include_subprojects)
 {
 	if (include_subprojects)
 	{
-		gtt_project_foreach_subproject_interval (proj, day_bin, &da);
+		gtt_project_foreach_subproject_interval (proj, day_bin, da);
 	}
 	else
 	{
-		gtt_project_foreach_interval (proj, day_bin, &da);
+		gtt_project_foreach_interval (proj, day_bin, da);
 	}
 }
 
