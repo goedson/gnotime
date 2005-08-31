@@ -1,3 +1,6 @@
+Wed Aug 31, 2005 Linas Vepstas <linas@linas.org>
+	* Apply sourceforge patch 128490: gnotime-gtkhtml.patch  
+	  from 2005-04-04 17:47  abadger1999
 
 Fri Aug 20, 2004 Linas Vepstas <linas@linas.org>
 	* Change build system to use eithr the local or the system libqof
