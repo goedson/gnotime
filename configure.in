@@ -152,8 +152,9 @@ if test x"$GCONFTOOL" = xno; then
   AC_MSG_ERROR([gconftool-2 executable not found in your path - should be installed with GConf])
 fi
 
+dnl --- grr, if libgconf-devel not installed, this macro will fail
+dnl --- but what should we check for?
 AM_GCONF_SOURCE_2
-
 
 dnl **************************************************************
 dnl If QOF is found on the build system, then use it.
@@ -188,11 +189,12 @@ dnl *******************************
 dnl gtkhtml -- use 3.1 if present, else use 3.0
 dnl *******************************
 
-if $PKG_CONFIG --exists libgtkhtml-3.1; then
-	PKG_CHECK_MODULES(LIBGTKHTML, libgtkhtml-3.1 >= $LIBGTKHTML_REQUIRED)
-else
-	PKG_CHECK_MODULES(LIBGTKHTML, libgtkhtml-3.0 >= $LIBGTKHTML_REQUIRED)
-fi
+for GTKHTMLVER in 3.6 3.5 3.4 3.2 3.1 3.0 do;
+  if $PKG_CONFIG --exists libgtkhtml-$GTKHTMLVER; then
+	PKG_CHECK_MODULES(LIBGTKHTML, libgtkhtml-$GTKHTMLVER >= $LIBGTKHTML_REQUIRED)
+	break
+  fi
+done
 AC_SUBST(LIBGTKHTML_CFLAGS)
 AC_SUBST(LIBGTKHTML_LIBS)
 
