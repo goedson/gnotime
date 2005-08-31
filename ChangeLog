@@ -1,6 +1,8 @@
 Wed Aug 31, 2005 Linas Vepstas <linas@linas.org>
 	* Apply sourceforge patch 1176719 Extensible fix for gtkhtml3 building
 	  128490: gnotime-gtkhtml.patch  2005-04-04 17:47  abadger1999
+	* Apply sourceforge patch 1074458 Fix a crash when invoking help
+	  110357: gnotime-help-error.patch  2004-11-27 22:50  abadger1999
 	* Apply sourceforge patch 1038701 Fix to Activity item in popup menu
 	  103506: gnotime-popup-menus.patch  2004-10-01 13:37  abadger1999
 	* Apply sourceforge patch 1027582 Build system update for qof inclusion.
