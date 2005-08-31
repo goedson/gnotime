@@ -1,6 +1,8 @@
 Wed Aug 31, 2005 Linas Vepstas <linas@linas.org>
 	* Apply sourceforge patch 1176719 Extensible fix for gtkhtml3 building
 	  128490: gnotime-gtkhtml.patch  2005-04-04 17:47  abadger1999
+	* Apply sourceforge patch 085911 Add "-" value for status field
+	  112568: no_status.patch  2004-12-15 11:25  nfont
 	* Apply sourceforge patch 074658 Add wordwrapping to diary entry boxes
 	  110390: gnotime-wordwrap.patch  2004-11-28 08:51  abadger1999
 	* Apply sourceforge patch 1074458 Fix a crash when invoking help
