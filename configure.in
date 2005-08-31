@@ -50,6 +50,9 @@ LIBGLADE_REQUIRED=2.0.0
 LIBGTKHTML_REQUIRED=3.0.0
 LIBXML2_REQUIRED=2.0.0
 SCROLLKEEPER_BUILD_REQUIRED=0.3.5
+dnl Doesn't compile w/ qof-0.5.0
+LIBQOF_REQUIRED_MIN=0.5.2
+LIBQOF_REQUIRED_MAX=0.5.2
 
 
 dnl *******************************
@@ -160,21 +163,39 @@ dnl **************************************************************
 dnl If QOF is found on the build system, then use it.
 dnl **************************************************************
 
-LIBQOF_CFLAGS="`$PKG_CONFIG --cflags qof-0`"
-LIBQOF_LIBS="`$PKG_CONFIG --libs qof-0`"
+AC_ARG_WITH(system-qof,
+AC_HELP_STRING([--with-system-qof],
+[use installed libqof rather than the bundled one.  If not specified, configure will use the system qof if installed, otherwise its own.]),
 
-if test x$LIBQOF_LIBS = x; then
-   AC_MSG_WARN([****** QOF libs not found; build without QOF.])
-	LIBQOF_CFLAGS="-I$(top_srcdir)/lib"
-	LIBQOF_LIBS="$(top_builddir)/lib/qof/libqof.la $(top_builddir)/lib/libqofsql/libqofsql.la"
+[
+if test x$withval = "xyes"; then
+	PKG_CHECK_MODULES(LIBQOF, qof-0 >= $LIBQOF_REQUIRED_MIN qof-0 <= $LIBQOF_REQUIRED_MAX)
+	qofbuild=no
 else
-   AC_DEFINE(HAVE_QOF,,We Have Found QOF)
+	dnl Have to use static libqof instead of dynamic.
+	AC_MSG_NOTICE([Using internal libqof])
+	LIBQOF_CFLAGS='-I$(top_srcdir)/lib -I$(top_srcdir)/lib/qof'
+	LIBQOF_LIBS='$(top_builddir)/lib/qof/libqof.la $(top_builddir)/lib/libqofsql/libqofsql.la'
+	qofbuild=yes
 fi
+],
+[
+if $PKG_CONFIG --exists "qof-0 >= $LIBQOF_REQUIRED_MIN qof-0 <= $LIBQOF_REQUIRED_MAX"; then
+	PKG_CHECK_MODULES(LIBQOF, qof-0 >= $LIBQOF_REQUIRED_MIN qof-0 <= $LIBQOF_REQUIRED_MAX)
+	qofbuild=no
+else
+	dnl Have to use static libqof instead of dynamic
+	AC_MSG_NOTICE([Using internal libqof])
+	LIBQOF_CFLAGS='-I$(top_srcdir)/lib -I$(top_srcdir)/lib/qof'
+	LIBQOF_LIBS='$(top_builddir)/lib/qof/libqof.la $(top_builddir)/lib/libqofsql/libqofsql.la'
+	qofbuild=yes
+fi
+])
 
 AC_SUBST(LIBQOF_CFLAGS)
 AC_SUBST(LIBQOF_LIBS)
 
-AM_CONDITIONAL(BUILD_QOF, [test x$HAVE_QOF = x])
+AM_CONDITIONAL(BUILD_QOF, [test x$qofbuild = xyes])
 
 dnl *******************************
 dnl Gnome VFS
@@ -342,6 +363,7 @@ echo "LDFLAGS : $LDFLAGS"
 echo "X_LIBS : $X_LIBS"
 echo "GUILE_LIBS : $GUILE_LIBS"
 echo "LIBQOF_LIBS : $LIBQOF_LIBS"
+echo "LIBQOF_CFLAGS : $LIBQOF_CFLAGS"
 echo ""
 
 dnl <= Prefixes =>
