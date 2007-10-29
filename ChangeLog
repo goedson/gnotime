@@ -1,3 +1,33 @@
+2007-10-29  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/app.c (cur_proj_set): Properly use the
+	timer_arm_active_timeout and timer_arm_idle_timeout to activate
+	the right timers.
+
+	* src/timer.h: Added the new functions timer_arm_active_timeout
+	and timer_arm_idle_timeout that should be used throughout the
+	application to activate the idle and active timers.
+
+	* src/timer.c: Schedule the main timer using g_timeout_add_seconds
+	instead of gtk_timeout_add, which should make it less power
+	hungry.
+	(timer_func): handle only the time counting task. Let the idle
+	dialog and active dialog to their respective timer functions.
+
+	* src/idle-dialog.h: Added the prototypes of the new public
+	funtions idle_dialog_activate_timer and
+	idle_dialog_deactivate_timer that should be used through the rest
+	of the program to activate/deactivate the idle timer.
+
+	* src/idle-dialog.c (idle_timeout_func): rewrite of the idle
+	timeout functionality using the XScreenSaver extension to query
+	the user idle time.
+	(schedule_idle_timeout): schedule the idle timeout using the
+	g_timeout_add_seconds function, which should make it less power
+	hungry.
+
+	* configure.in, Makefile.am: Added XScreenSaver extension support
+
 2007-10-23  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* Makefile.am: Removed debian from SUBDIRS

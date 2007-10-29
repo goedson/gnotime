@@ -210,11 +210,12 @@ cur_proj_set (GttProject *proj)
 		cur_proj = proj;
 		gtt_project_timer_start (proj); 
 		run_shell_command (cur_proj, TRUE);
+		timer_arm_idle_timeout ();
 	}
 	else
 	{
 		cur_proj = NULL;
-		arm_active_dialog (act);
+		timer_arm_active_timeout ();
 	}
 	log_proj(proj);
 

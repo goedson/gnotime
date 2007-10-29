@@ -28,7 +28,6 @@
 #include "ctree-gnome2.h"
 #include "cur-proj.h"
 #include "active-dialog.h"
-#include "idle-timer.h"
 #include "proj.h"
 #include "proj-query.h"
 #include "util.h"
@@ -49,7 +48,7 @@ struct GttActiveDialog_s
 	GtkLabel    *credit_label;
 	GtkOptionMenu  *project_menu;
 	
-	IdleTimeout *idt;
+//	IdleTimeout *idt;
 	time_t      time_armed;
 };
 
@@ -191,7 +190,7 @@ active_dialog_new (void)
 	ad = g_new0 (GttActiveDialog, 1);
 	ad->armed = TRUE;
 	ad->time_armed = time(0);
-	ad->idt = idle_timeout_new ();
+//	ad->idt = idle_timeout_new ();
 	ad->gtxml = NULL;
 
 	return ad;
@@ -248,7 +247,7 @@ raise_active_dialog (GttActiveDialog *ad)
 	 * user will see it.
 	 */
 	now = time(0);
-	active_time = now - poll_last_activity (ad->idt);
+//	active_time = now - poll_last_activity (ad->idt);
 	if (15 < active_time) return;
 
 	/* The following will raise the window, and put it on the current
