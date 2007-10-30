@@ -21,7 +21,7 @@
 
 #include <glib.h>
 #include <glade/glade.h>
-#include <gdk/gdk.h>
+#include <gdk/gdkx.h>
 #include <gnome.h>
 #include <string.h>
 
@@ -69,7 +69,7 @@ struct GttIdleDialog_s
 static gboolean idle_timeout_func (gpointer data);
 
 static void
-schedule_idle_timeout(gint timeout, GttIdleDialog *idle_dialog)
+schedule_idle_timeout (gint timeout, GttIdleDialog *idle_dialog)
 {
 
 	if (timeout > 0 && idle_dialog->xss_extension_supported)
@@ -104,7 +104,8 @@ idle_timeout_func (gpointer data)
 			time_t now = time(0);
 			idle_dialog->last_activity = now - idle_seconds;
 			show_idle_dialog (idle_dialog);
-			/* schedule a new timeout for one minute ahead to update the dialog. */
+			/* schedule a new timeout for one minute ahead to
+			   update the dialog. */
 			schedule_idle_timeout (60,  idle_dialog);
 		}
 		else
@@ -425,7 +426,7 @@ idle_dialog_new (void)
 void 
 show_idle_dialog (GttIdleDialog *id)
 {
-	time_t now, last;
+	time_t now;
 	time_t idle_time;
 	GttProject *prj = cur_proj;
 
@@ -467,20 +468,17 @@ show_idle_dialog (GttIdleDialog *id)
 void 
 raise_idle_dialog (GttIdleDialog *id)
 {
-	time_t now;
-	time_t idle_time;
+	g_return_if_fail(!id);
+	g_return_if_fail(id->gtxml);
 
-	if (!id) return;
-	if (NULL == id->gtxml) return;
+	/* Now, draw the messages in the GUI popup. */
+	display_value (id, config_idle_timeout);
+
 
 	/* The following will raise the window, and put it on the current
 	 * workspace, at least if the metacity WM is used. Haven't tried
 	 * other window managers.
 	 */
-
-	/* Now, draw the messages in the GUI popup. */
-	display_value (id, config_idle_timeout);
-
 
 	gtk_window_present (GTK_WINDOW (id->dlg));
 	id->visible = TRUE;

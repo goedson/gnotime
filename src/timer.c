@@ -155,6 +155,7 @@ timer_arm_idle_timeout (void)
 {
 	init_timer();
 	idle_dialog_activate_timer (idle_dialog);
+	active_dialog_deactivate_timer (active_dialog);
 }
 
 void
@@ -164,6 +165,7 @@ timer_arm_active_timeout (void)
 	if (!idle_dialog_is_visible(idle_dialog))
 	{
 		idle_dialog_deactivate_timer (idle_dialog);
+		active_dialog_activate_timer (active_dialog);
 	}
 }
 

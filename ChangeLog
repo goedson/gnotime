@@ -1,3 +1,28 @@
+2007-10-30  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/timer.c (timer_arm_idle_timeout, timer_arm_active_timeout):
+	Use the new active dialog timer activation and deactivation
+	functions.
+
+	* src/idle-dialog.c: Removed declaration of unused variables.
+
+	* src/active-dialog.c (struct GttActiveDialog_s): Remove unneded
+	fields (idt, armed, time_armed) and added the timeout_event_source
+	field.
+	(active_timeout_func): Added function to show the dialog when the
+	no project timeout expires.
+	(schedule_active_timeout): Added function to schedule the no
+	project timeout.
+	(dialog_close, dialog_kill): Use the new timeout scheduling
+	function instead of fiddling with the "armed" field.
+	
+
+	* src/active-dialog.h: Added declarations for functions
+	active_dialog_activate_timer and active_dialog_deactivate_timer
+
+	* src/idle-dialog.c: include gdk/gdkx.h for the declaration of
+	gdk_x11_drawable_get_xid.
+
 2007-10-29  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/app.c (cur_proj_set): Properly use the
