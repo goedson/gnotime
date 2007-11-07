@@ -48,9 +48,10 @@ void set_last_reset (time_t last);
 void gen_start_timer(void);
 void gen_stop_timer(void);
 
-void timer_arm_active_timeout ();
-void timer_arm_idle_timeout ();
+void start_no_project_timer ();
+void start_idle_timer ();
 
-
+void start_main_timer ();
+void stop_main_timer ();
 
 #endif /* __GTT_TIMER_H__ */

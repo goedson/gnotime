@@ -207,15 +207,18 @@ cur_proj_set (GttProject *proj)
 	
 	if (proj) 
 	{
+		stop_main_timer ();
 		cur_proj = proj;
 		gtt_project_timer_start (proj); 
 		run_shell_command (cur_proj, TRUE);
-		timer_arm_idle_timeout ();
+		start_idle_timer ();
+		start_main_timer ();
 	}
 	else
 	{
+		stop_main_timer ();
 		cur_proj = NULL;
-		timer_arm_active_timeout ();
+		start_no_project_timer ();
 	}
 	log_proj(proj);
 

@@ -40,6 +40,8 @@ int config_autosave_period = 60;
 int config_autosave_props_period = (4*3600);
 
 static gint main_timer = 0;
+static gint file_save_timer = 0;
+static gint config_save_timer = 0;
 static GttIdleDialog *idle_dialog = NULL;
 static GttActiveDialog *active_dialog = NULL;
 
@@ -67,7 +69,7 @@ zero_on_rollover (time_t when)
 	/* zero out day counts */
 	t1 = localtime(&when);
 	if ((year_last_reset != t1->tm_year) ||
-	    (day_last_reset != t1->tm_yday)) 
+		(day_last_reset != t1->tm_yday))
 	{
 		gtt_project_list_compute_secs ();
 		ctree_refresh(global_ptw);
@@ -79,8 +81,22 @@ zero_on_rollover (time_t when)
 
 /* =========================================================== */
 
-static gint 
-timer_func(gpointer data)
+static gint
+file_save_timer_func (gpointer data)
+{
+	save_projects ();
+	return 1;
+}
+
+static gint
+config_save_timer_func (gpointer data)
+{
+	save_properties ();
+	return 1;
+}
+
+static gint
+main_timer_func(gpointer data)
 {
 	time_t now = time(0);
 
@@ -88,80 +104,117 @@ timer_func(gpointer data)
 	 * the day/week/month counters periodically. */
 	if (0 == now%60) zero_on_rollover (now);
 
-	/* Periodically save data to file -- this is how we avoid data loss
-	 * in case Gnotime or X11 or the OS crashes. */
-	if (0 == now%config_autosave_period)
-	{
-		save_projects ();
-	}
-
-	/* Save current configuration, but less often */
-	if (0 == now%config_autosave_props_period)
-	{
-		save_properties ();
-	}
-
 	/* Wake up the notes area GUI, if needed. */
 	gtt_notes_timer_callback (global_na);
 	gtt_diary_timer_callback (NULL);
-	
+
 	if (!cur_proj)
 	{
-		return 1;
+		main_timer = 0;
+		return 0;
 	}
 
 	/* Update the data in the data engine. */
 	gtt_project_timer_update (cur_proj);
 
-	/* Update the GUI display, once a minute or once a second,
-	 * depending on the user preferences */
-	if (config_show_secs) 
-	{
-		ctree_update_label(global_ptw, cur_proj);
-	} 
-	else if (1 == gtt_project_get_secs_day(cur_proj) % 5) 
-	{
-		ctree_update_label(global_ptw, cur_proj);
-	}
+	ctree_update_label(global_ptw, cur_proj);
 
 	return 1;
 }
 
-
 static gboolean timer_inited = FALSE;
 
-void 
+void
+start_main_timer (void)
+{
+	if (main_timer)
+	{
+		g_source_remove (main_timer);
+	}
+
+	/* If we're showing seconds, call the timer routine once a second */
+	/* else, do it once a minute */
+	if (config_show_secs)
+	{
+		main_timer = g_timeout_add_seconds (1, main_timer_func, NULL);
+	}
+	else
+	{
+		main_timer = g_timeout_add_seconds (60, main_timer_func, NULL);
+	}
+}
+
+static void
+start_file_save_timer (void)
+{
+	g_return_if_fail (!file_save_timer);
+	file_save_timer = g_timeout_add_seconds (config_autosave_period,
+											 file_save_timer_func, NULL);
+}
+
+static void
+start_config_save_timer (void)
+{
+	g_return_if_fail (!config_save_timer);
+	config_save_timer = g_timeout_add_seconds (config_autosave_props_period,
+											   config_save_timer_func, NULL);
+}
+
+
+
+void
+stop_main_timer (void)
+{
+	if (cur_proj)
+	{
+		/* Update the data in the data engine. */
+		gtt_project_timer_update (cur_proj);
+		ctree_update_label(global_ptw, cur_proj);
+
+	}
+	g_return_if_fail (main_timer);
+	g_source_remove (main_timer);
+	main_timer = 0;
+}
+
+void
 init_timer(void)
 {
-	if (timer_inited) return;
+	g_return_if_fail (!timer_inited);
 	timer_inited = TRUE;
 
 	idle_dialog = idle_dialog_new();
 	active_dialog = active_dialog_new();
-	
-	/* The timer is measured in milliseconds, so 1000
-	 * means it pops once a second. */
-	main_timer = g_timeout_add_seconds(1, timer_func, NULL);
+
+	start_main_timer ();
+	start_file_save_timer ();
+	start_config_save_timer ();
 }
 
-gboolean 
+gboolean
 timer_is_running (void)
 {
 	return (NULL != cur_proj);
 }
 
 void
-timer_arm_idle_timeout (void)
+start_idle_timer (void)
 {
-	init_timer();
+	if (!timer_inited)
+	{
+		init_timer();
+	}
 	idle_dialog_activate_timer (idle_dialog);
 	active_dialog_deactivate_timer (active_dialog);
 }
 
 void
-timer_arm_active_timeout (void)
+start_no_project_timer (void)
 {
-	init_timer();
+	if (!timer_inited)
+	{
+		init_timer();
+	}
 	if (!idle_dialog_is_visible(idle_dialog))
 	{
 		idle_dialog_deactivate_timer (idle_dialog);

@@ -333,6 +333,7 @@ prefs_set(GnomePropertyBox * pb, gint page, PrefsDialog *odlg)
 			update_status_bar();
 			if (status_bar)
 			gtk_widget_queue_resize(status_bar);
+			start_main_timer ();
 		}
 		if (GTK_TOGGLE_BUTTON(odlg->show_statusbar)->active) {
 			gtk_widget_show(GTK_WIDGET(status_bar));

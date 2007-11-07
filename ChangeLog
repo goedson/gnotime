@@ -1,3 +1,21 @@
+2007-11-07  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/prefs.c (prefs_set): restart the main timer when needed.
+
+	* src/app.c (cur_proj_set): start/stop the main timer when needed.
+
+	* src/timer.c (start_main_timer, start_file_save_timer)
+	(start_config_save_timer): Added functions to start the main
+	timer, file save timer and configuration save timer independently
+	of each other.
+	(main_timer_func, config_save_timer_func, file_save_timer_func):
+	Separated the handling routines for each timer.
+	(start_idle_timer, start_no_project_timer): Renamed the
+	timer_arm_* functions for name consistency with the other
+	start_*_timer functions.
+	(stop_main_timer): Created function to stop the main timer when it
+	is not needed.
+
 2007-10-30  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/timer.c (timer_arm_idle_timeout, timer_arm_active_timeout):
