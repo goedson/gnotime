@@ -1,3 +1,8 @@
+2007-11-08  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/timer.c: Created a separate hourly timer for the zeroing the
+	daily counters.
+
 2007-11-07  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/prefs.c (prefs_set): restart the main timer when needed.

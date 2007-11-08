@@ -61,13 +61,16 @@ set_last_reset (time_t last)
 }
 
 
-void
-zero_on_rollover (time_t when)
+static void schedule_zero_daily_counters_timer (void);
+
+gint
+zero_daily_counters (gpointer data)
 {
 	struct tm *t1;
+	time_t now = time(0);
 
 	/* zero out day counts */
-	t1 = localtime(&when);
+	t1 = localtime(&now);
 	if ((year_last_reset != t1->tm_year) ||
 		(day_last_reset != t1->tm_yday))
 	{
@@ -77,6 +80,8 @@ zero_on_rollover (time_t when)
 		year_last_reset = t1->tm_year;
 		day_last_reset = t1->tm_yday;
 	}
+	schedule_zero_daily_counters_timer ();
+	return 0;
 }
 
 /* =========================================================== */
@@ -99,10 +104,6 @@ static gint
 main_timer_func(gpointer data)
 {
 	time_t now = time(0);
-
-	/* Even if there is no active project, we still have to zero out 
-	 * the day/week/month counters periodically. */
-	if (0 == now%60) zero_on_rollover (now);
 
 	/* Wake up the notes area GUI, if needed. */
 	gtt_notes_timer_callback (global_na);
@@ -222,4 +223,11 @@ start_no_project_timer (void)
 	}
 }
 
+static void
+schedule_zero_daily_counters_timer (void)
+{
+	time_t now = time(0);
+	time_t timeout = 3600 - (now % 3600);
+	g_timeout_add_seconds (timeout, zero_daily_counters, NULL);
+}
 /* ========================== END OF FILE ============================ */
