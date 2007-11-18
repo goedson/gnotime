@@ -1,3 +1,8 @@
+2007-11-18  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/active-dialog.c (schedule_active_timeout): Schedule timeout
+	only if it's greater than 0 seconds.
+
 2007-11-08  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/timer.c: Created a separate hourly timer for the zeroing the

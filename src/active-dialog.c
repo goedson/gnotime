@@ -70,7 +70,7 @@ active_timeout_func (gpointer data)
 static void
 schedule_active_timeout (gint timeout, GttActiveDialog *active_dialog)
 {
-	if (timeout >= 0)
+	if (timeout > 0)
 	{
 		if (active_dialog->timeout_event_source)
 		{
