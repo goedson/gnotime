@@ -409,6 +409,15 @@ prefs_set(GnomePropertyBox * pb, gint page, PrefsDialog *odlg)
 		config_idle_timeout = atoi(gtk_entry_get_text(GTK_ENTRY(odlg->idle_secs)));
 		config_no_project_timeout = atoi(gtk_entry_get_text(GTK_ENTRY(odlg->no_project_secs)));
 
+		if (timer_is_running ())
+		{
+			start_idle_timer ();
+		}
+		else
+		{
+			start_no_project_timer ();
+		}
+
 		/* Hunt for the hour-of night on which to start */
 		const char * buff = gtk_entry_get_text (odlg->daystart_secs);
 		int off = scan_time_string (buff);

@@ -1,5 +1,8 @@
 2007-11-26  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/prefs.c (prefs_set): reschedule the idle and no_project
+	timers when these configurations are changed.
+
 	* src/idle-dialog.c (raise_idle_dialog): Fixed check for validity
 	of the idle dialog.
 

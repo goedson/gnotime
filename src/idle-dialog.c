@@ -71,16 +71,15 @@ static gboolean idle_timeout_func (gpointer data);
 static void
 schedule_idle_timeout (gint timeout, GttIdleDialog *idle_dialog)
 {
-
+	if (idle_dialog->timeout_event_source != 0)
+	{
+		g_source_remove (idle_dialog->timeout_event_source);
+	}
 	if (timeout > 0 && idle_dialog->xss_extension_supported)
 	{
-		/* If we already have an idle timeout 
+		/* If we already have an idle timeout
 		 * sceduled, cancel it.
 		 */
-		if (idle_dialog->timeout_event_source != 0)
-		{
-			g_source_remove (idle_dialog->timeout_event_source);
-		}
 		idle_dialog->timeout_event_source = g_timeout_add_seconds (timeout, idle_timeout_func, idle_dialog);
 	}
 }
@@ -407,7 +406,6 @@ idle_dialog_new (void)
 			if (config_idle_timeout > 0)
 			{
 				schedule_idle_timeout (config_idle_timeout, id);
-				g_message("idle timeout scheduled");
 			}
 		}
 		else
