@@ -1,3 +1,8 @@
+2007-11-26  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/idle-dialog.c (raise_idle_dialog): Fixed check for validity
+	of the idle dialog.
+
 2007-11-18  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/active-dialog.c (schedule_active_timeout): Schedule timeout

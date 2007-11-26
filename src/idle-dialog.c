@@ -468,7 +468,7 @@ show_idle_dialog (GttIdleDialog *id)
 void 
 raise_idle_dialog (GttIdleDialog *id)
 {
-	g_return_if_fail(!id);
+	g_return_if_fail(id);
 	g_return_if_fail(id->gtxml);
 
 	/* Now, draw the messages in the GUI popup. */
