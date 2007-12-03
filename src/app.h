@@ -30,6 +30,7 @@
 
 extern ProjTreeWindow *global_ptw;  /* global ptr to tree GUI window */
 extern NotesArea *global_na;        /* global ptr to notes GUI area */
+extern GttProjectsTree *projects_tree;
 
 extern GtkWidget *app_window;  /* global top-level window */
 extern GtkWidget *status_bar;

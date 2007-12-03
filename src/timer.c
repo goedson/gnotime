@@ -34,7 +34,7 @@
 #include "proj.h"
 #include "props-task.h"
 #include "timer.h"
-
+#include "projects-tree.h"
 
 int config_autosave_period = 60;
 int config_autosave_props_period = (4*3600);
@@ -127,11 +127,11 @@ timer_func(gpointer data)
 	 * depending on the user preferences */
 	if (config_show_secs) 
 	{
-		ctree_update_label(global_ptw, cur_proj);
+		gtt_projects_tree_update_project_data (projects_tree, cur_proj);
 	} 
 	else if (1 == gtt_project_get_secs_day(cur_proj) % 5) 
 	{
-		ctree_update_label(global_ptw, cur_proj);
+		gtt_projects_tree_update_project_data (projects_tree, cur_proj);
 	}
 
 	/* Look for keyboard/mouse inactivity, and expire (stop) 
@@ -165,6 +165,12 @@ gboolean
 timer_is_running (void)
 {
 	return (NULL != cur_proj);
+}
+
+gboolean
+timer_project_is_running (GttProject *prj)
+{
+	return (prj == cur_proj);
 }
 
 /* ========================== END OF FILE ============================ */

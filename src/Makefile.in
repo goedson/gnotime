@@ -56,12 +56,13 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_gnotime_OBJECTS = active-dialog.$(OBJEXT) app.$(OBJEXT) \
-	ctree.$(OBJEXT) ctree-gnome2.$(OBJEXT) dbus.$(OBJEXT) \
-	dialog.$(OBJEXT) err.$(OBJEXT) err-throw.$(OBJEXT) \
-	export.$(OBJEXT) file-io.$(OBJEXT) gconf-gnomeui.$(OBJEXT) \
-	gconf-io.$(OBJEXT) ghtml.$(OBJEXT) ghtml-deprecated.$(OBJEXT) \
-	idle-dialog.$(OBJEXT) idle-timer.$(OBJEXT) journal.$(OBJEXT) \
-	log.$(OBJEXT) main.$(OBJEXT) menucmd.$(OBJEXT) menus.$(OBJEXT) \
+	ctree.$(OBJEXT) ctree-gnome2.$(OBJEXT) projects-tree.$(OBJEXT) \
+	dbus.$(OBJEXT) dialog.$(OBJEXT) err.$(OBJEXT) \
+	err-throw.$(OBJEXT) export.$(OBJEXT) file-io.$(OBJEXT) \
+	gconf-gnomeui.$(OBJEXT) gconf-io.$(OBJEXT) ghtml.$(OBJEXT) \
+	ghtml-deprecated.$(OBJEXT) idle-dialog.$(OBJEXT) \
+	idle-timer.$(OBJEXT) journal.$(OBJEXT) log.$(OBJEXT) \
+	main.$(OBJEXT) menucmd.$(OBJEXT) menus.$(OBJEXT) \
 	myoaf.$(OBJEXT) notes-area.$(OBJEXT) plug-edit.$(OBJEXT) \
 	plug-in.$(OBJEXT) prefs.$(OBJEXT) proj.$(OBJEXT) \
 	proj-query.$(OBJEXT) props-invl.$(OBJEXT) props-proj.$(OBJEXT) \
@@ -218,6 +219,7 @@ SK_CONFIG = @SK_CONFIG@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+WARN_CFLAGS = @WARN_CFLAGS@
 XGETTEXT = @XGETTEXT@
 XMKMF = @XMKMF@
 X_CFLAGS = @X_CFLAGS@
@@ -283,6 +285,7 @@ gnotime_SOURCES = \
 	app.c              \
 	ctree.c            \
 	ctree-gnome2.c     \
+	projects-tree.c    \
 	dbus.c		   \
 	dialog.c           \
 	err.c              \
@@ -323,6 +326,7 @@ noinst_HEADERS = \
 	app.h              \
 	ctree.h            \
 	ctree-gnome2.h     \
+	projects-tree.h    \
 	dbus.h		   \
 	cur-proj.h         \
 	dialog.h           \
@@ -508,6 +512,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prefs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/proj-query.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/proj.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/projects-tree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/props-invl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/props-proj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/props-task.Po@am__quote@

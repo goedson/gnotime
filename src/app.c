@@ -44,7 +44,7 @@
 #include "timer.h"
 #include "toolbar.h"
 #include "util.h"
-
+#include "projects-tree.h"
 
 /* XXX Most of the globals below should be placed into a single
  * application-wide top-level structure, rather than being allowed
@@ -53,6 +53,7 @@
 GttProject *cur_proj = NULL;
 
 ProjTreeWindow *global_ptw = NULL;
+GttProjectsTree *projects_tree = NULL;
 NotesArea *global_na = NULL;
 GtkWidget *app_window = NULL;
 GtkWidget *status_bar = NULL;
@@ -289,8 +290,8 @@ app_new(int argc, char *argv[], const char *geometry_string)
     separator = gtk_hseparator_new();
     gtk_widget_show(separator);
     gtk_box_pack_start(GTK_BOX(status_vbox), separator, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(status_vbox), labels, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(status_bar), status_vbox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(status_vbox), GTK_WIDGET (labels), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(status_bar), GTK_WIDGET (status_vbox), TRUE, TRUE, 0);
 
     grip = GTK_STATUSBAR(gtk_statusbar_new());
     gtk_statusbar_set_has_resize_grip(grip, TRUE);
@@ -326,6 +327,8 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	global_ptw = ctree_new();
 	ctree = ctree_get_widget(global_ptw);
 
+	projects_tree = gtt_projects_tree_new ();
+
 	/* create the notes area */
 	global_na = notes_area_new();
 	vpane = notes_area_get_widget (global_na);
@@ -341,7 +344,9 @@ app_new(int argc, char *argv[], const char *geometry_string)
 
     gtk_box_pack_end(GTK_BOX(vbox), status_bar, FALSE, FALSE, 2);
 
-	notes_area_add_ctree (global_na, ctree);
+//	notes_area_add_ctree (global_na, ctree);
+
+	notes_area_add_projects_tree (global_na, projects_tree);
 	
 	/* we are done building it, make it visible */
 	gtk_widget_show(vbox);

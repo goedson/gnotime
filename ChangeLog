@@ -1,3 +1,33 @@
+2007-12-03  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/projects-tree.c: Added getters and setters for the
+	customization properties of GttProjectsTree.
+
+2007-12-02  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/gconf-io.c (gtt_gconf_load): call the
+	prefs_update_projects_view_columns function after loading current
+	configuration.
+
+	* src/prefs.h: Added prototype for the new
+	prefs_update_projects_view_columns function.
+
+	* src/prefs.c (prefs_update_projects_view_columns): Added function
+	to update the list of visible columns in the GttProjectsTree
+	component.
+	(prefs_set): call the new prefs_update_projects_view_columns
+	instead of the old ctree_refresh.
+
+	* src/app.c (app_new): fixed some warnings caused by missing casts.
+
+2007-11-24  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/app.[ch], src/main.c, src/timer.c src/notes-area.[ch]:
+	Initial integration of the GtkTreeView based component.
+
+	* src/projects-tree.[ch]: Initial implementation of a GtkTreeView
+	based projects tree component.
+
 2007-10-23  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* Makefile.am: Removed debian from SUBDIRS

@@ -13,6 +13,7 @@ gnotime_SOURCES =     \
 	app.c              \
 	ctree.c            \
 	ctree-gnome2.c     \
+	projects-tree.c    \
 	dbus.c		   \
 	dialog.c           \
 	err.c              \
@@ -53,6 +54,7 @@ noinst_HEADERS =      \
 	app.h              \
 	ctree.h            \
 	ctree-gnome2.h     \
+	projects-tree.h    \
 	dbus.h		   \
 	cur-proj.h         \
 	dialog.h           \

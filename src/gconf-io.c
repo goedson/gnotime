@@ -46,6 +46,7 @@ extern int run_timer;
 
 #define GTT_GCONF "/apps/gnotime"
 
+
 /* ======================================================= */
 
 void
@@ -396,6 +397,9 @@ gtt_gconf_load (void)
 	}
 
 	config_show_secs            = GETBOOL ("/Display/ShowSecs", FALSE);
+
+	prefs_set_show_secs ();
+
 	config_show_clist_titles    = GETBOOL ("/Display/ShowTableHeader", FALSE);
 	config_show_subprojects     = GETBOOL ("/Display/ShowSubProjects", TRUE);
 	config_show_statusbar       = GETBOOL ("/Display/ShowStatusbar", TRUE);
@@ -418,8 +422,8 @@ gtt_gconf_load (void)
 	config_show_title_urgency    = GETBOOL ("/Display/ShowUrgency", TRUE);
 	config_show_title_importance = GETBOOL ("/Display/ShowImportance", TRUE);
 	config_show_title_status     = GETBOOL ("/Display/ShowStatus", FALSE);
-	ctree_update_column_visibility (global_ptw);
-
+	
+	prefs_update_projects_view_columns ();
 
 	/* ------------ */
 	config_show_toolbar    = GETBOOL ("/Toolbar/ShowToolbar", TRUE);

@@ -157,6 +157,118 @@ typedef struct _PrefsDialog
 } PrefsDialog;
 
 
+
+/* Update the columns shown in the projects tree according to current configuration */
+
+void
+prefs_update_projects_view_columns (void)
+{
+	GList *columns = NULL;
+
+	if (config_show_title_importance)
+	{
+		columns = g_list_insert (columns, "importance", -1);
+	}
+
+	if (config_show_title_urgency)
+	{
+		columns = g_list_insert (columns, "urgency", -1);
+	}
+	
+	if (config_show_title_status)
+	{
+		columns = g_list_insert (columns, "status", -1);
+	}
+
+	if (config_show_title_ever)
+	{
+		columns = g_list_insert (columns, "time_ever", -1);
+	}
+
+	if (config_show_title_year)
+	{
+		columns = g_list_insert (columns, "time_year", -1);
+	}
+
+	if (config_show_title_month)
+	{
+		columns = g_list_insert (columns, "time_month", -1);
+	}
+
+	if (config_show_title_week)
+	{
+		columns = g_list_insert (columns, "time_week", -1);
+	}
+
+	if (config_show_title_lastweek)
+	{
+		columns = g_list_insert (columns, "time_lastweek", -1);
+	}
+
+	if (config_show_title_yesterday)
+	{
+		columns = g_list_insert (columns, "time_yesterday", -1);
+	}
+
+	if (config_show_title_day)
+	{
+		columns = g_list_insert (columns, "time_today", -1);
+	}
+
+	if (config_show_title_current)
+	{
+		columns = g_list_insert (columns, "time_task", -1);
+	}
+
+	/* The title column is mandatory */
+	columns = g_list_insert (columns, "title", -1);
+
+	if (config_show_title_desc)
+	{
+		columns = g_list_insert (columns, "description", -1);
+	}
+
+	if (config_show_title_task)
+	{
+		columns = g_list_insert (columns, "task", -1);
+	}
+
+	if (config_show_title_estimated_start)
+	{
+		columns = g_list_insert (columns, "estimated_start", -1);
+	}
+
+	if (config_show_title_estimated_end)
+	{
+		columns = g_list_insert (columns, "estimated_end", -1);
+	}
+
+	if (config_show_title_due_date)
+	{
+		columns = g_list_insert (columns, "due_date", -1);
+	}
+
+	if (config_show_title_sizing)
+	{
+		columns = g_list_insert (columns, "sizing", -1);
+	}
+
+	if (config_show_title_percent_complete)
+	{
+		columns = g_list_insert (columns, "percent_done", -1);
+	}
+
+	gtt_projects_tree_set_visible_columns (projects_tree, columns);
+	g_list_free (columns);
+}
+
+void
+prefs_set_show_secs ()
+{
+	gtt_projects_tree_set_show_seconds (projects_tree, config_show_secs);
+}
+
+
 /* ============================================================== */
 /** Get and set the nth menu item */
 
@@ -318,7 +430,7 @@ prefs_set(GnomePropertyBox * pb, gint page, PrefsDialog *odlg)
 
 		if (change)
 		{
-			ctree_refresh (global_ptw);
+			prefs_update_projects_view_columns ();
 		}
 	
 	}
@@ -329,7 +441,7 @@ prefs_set(GnomePropertyBox * pb, gint page, PrefsDialog *odlg)
 		state = GTK_TOGGLE_BUTTON(odlg->show_secs)->active;
 		if (state != config_show_secs) {
 			config_show_secs = state;
-			ctree_setup (global_ptw, master_list);
+			prefs_set_show_secs ();
 			update_status_bar();
 			if (status_bar)
 			gtk_widget_queue_resize(status_bar);

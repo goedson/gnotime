@@ -407,6 +407,16 @@ notes_area_add_ctree (NotesArea *nadlg, GtkWidget *ctree)
 	gtk_widget_show_all (GTK_WIDGET(nadlg->ctree_holder));
 }
 
+void 
+notes_area_add_projects_tree (NotesArea *nadlg, GttProjectsTree *ptree)
+{
+	if (!nadlg) return;
+
+	gtk_container_add (nadlg->ctree_holder, GTK_WIDGET(ptree));
+	gtk_widget_show_all (GTK_WIDGET(nadlg->ctree_holder));
+}
+
+
 void
 notes_area_get_pane_sizes (NotesArea *na, int *vp, int *hp)
 {

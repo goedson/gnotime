@@ -20,6 +20,7 @@
 #define GTT_NOTES_AREA_H
 
 #include <gnome.h>
+#include "projects-tree.h"
 
 typedef struct NotesArea_s NotesArea;
 
@@ -36,6 +37,7 @@ GtkWidget * notes_area_get_widget (NotesArea *na);
 
 /* add the ctree widget to the appropriate location */
 void notes_area_add_ctree (NotesArea *na, GtkWidget *ctree);
+void notes_area_add_projects_tree (NotesArea *na, GttProjectsTree *projects_tree);
 
 /* Set the position of the two divideders in the notes area:
  * the vertical divider between the ctree and the notes,
