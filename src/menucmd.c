@@ -459,15 +459,15 @@ void
 gen_start_timer(void)
 {
 	GttProject *prj;
-	prj = ctree_get_focus_project (global_ptw);
-	ctree_start_timer (prj);
+	prj = gtt_projects_tree_get_selected_project (projects_tree);
+	cur_proj_set (prj);
 }
 
 
 void
 gen_stop_timer(void)
 {
-	ctree_stop_timer (cur_proj);
+	cur_proj_set (NULL);
 }
 
 void
@@ -488,12 +488,12 @@ void
 menu_toggle_timer(GtkWidget *w, gpointer data)
 {
 	GttProject *prj;
-	prj = ctree_get_focus_project (global_ptw);
+	prj = gtt_projects_tree_get_selected_project (projects_tree);
 
 	if (timer_is_running()) {
-		ctree_stop_timer (cur_proj);
+		cur_proj_set (NULL);
 	} else {
-		ctree_start_timer (prj);
+		cur_proj_set (prj);
 	}
 }
 
