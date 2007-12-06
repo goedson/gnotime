@@ -1,3 +1,14 @@
+2007-12-06  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/projects-tree.c (gtt_projects_tree_get_selected_project):
+	added function to query what is the project currently selected in
+	the tree.
+
+	* src/app.c (cur_proj_set): update the rows for the project being
+	activated and/or deactivated
+	(projects_tree_row_activated): added function to handle double
+	click in the project tree.
+
 2007-12-03  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/projects-tree.c: Added getters and setters for the

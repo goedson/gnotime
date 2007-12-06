@@ -72,6 +72,21 @@ gboolean geom_size_override = FALSE;
 
 extern GttActiveDialog *act;
 
+static void
+projects_tree_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
+{
+	GttProjectsTree *gpt = GTT_PROJECTS_TREE (tree_view);
+	GttProject *prj = gtt_projects_tree_get_selected_project (gpt);
+	if (cur_proj == prj)
+	{
+		cur_proj_set (NULL);
+	}
+	else
+	{
+		cur_proj_set (prj);
+	}
+}
+
 /* ============================================================= */
 
 void 
@@ -205,7 +220,7 @@ cur_proj_set (GttProject *proj)
 	log_proj(NULL);
 	gtt_project_timer_stop (cur_proj);
 	run_shell_command (cur_proj, FALSE);
-	
+	GttProject *old_prj = cur_proj;
 	if (proj) 
 	{
 		cur_proj = proj;
@@ -218,6 +233,16 @@ cur_proj_set (GttProject *proj)
 		arm_active_dialog (act);
 	}
 	log_proj(proj);
+
+	if (old_prj)
+	{
+		gtt_projects_tree_update_project_data (projects_tree, old_prj);
+	}
+
+	if (cur_proj)
+	{
+		gtt_projects_tree_update_project_data (projects_tree, cur_proj);
+	}
 
 	/* update GUI elements */
 	menu_set_states();
@@ -328,6 +353,8 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	ctree = ctree_get_widget(global_ptw);
 
 	projects_tree = gtt_projects_tree_new ();
+
+	g_signal_connect (projects_tree, "row-activated", projects_tree_row_activated, NULL);
 
 	/* create the notes area */
 	global_na = notes_area_new();

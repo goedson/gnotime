@@ -723,3 +723,25 @@ gtt_projects_tree_get_highlight_active (GttProjectsTree *gpt)
 	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
 	return priv->highlight_active;
 }
+
+
+GttProject *
+gtt_projects_tree_get_selected_project (GttProjectsTree *gpt)
+{
+	GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gpt));
+		GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (gpt));
+	GList *list = gtk_tree_selection_get_selected_rows(selection, NULL);
+	GttProject *prj = NULL;
+	if (list)
+	{
+		GtkTreePath *path = (GtkTreePath *)list->data;
+		GtkTreeIter iter;
+		if (gtk_tree_model_get_iter (model, &iter, path))
+		{
+			gtk_tree_model_get (model, &iter, GTT_PROJECT_COLUMN, &prj, -1);
+		}
+		g_list_foreach (list, gtk_tree_path_free, NULL);
+		g_list_free (list);
+	}
+	return prj;
+}
