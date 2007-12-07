@@ -70,13 +70,14 @@ typedef enum {
 	STATUS_COLUMN,
 	/* row configuration colums */
 	BACKGROUND_COLOR_COLUMN,        /* Custom background color */
+	WEIGHT_COLUMN,
 	/* pointer to the project structure */
 	GTT_PROJECT_COLUMN,
 	/* total number of columns in model */
 	NCOLS
 } ModelColumn;
 
-#define N_VIEWABLE_COLS (NCOLS - 2)
+#define N_VIEWABLE_COLS (NCOLS - 3)
 
 typedef struct _GttProjectsTreePrivate GttProjectsTreePrivate;
 
@@ -121,6 +122,7 @@ gtt_projects_tree_create_model (GttProjectsTree *gpt)
 									 G_TYPE_STRING,      /* IMPORTANCE_COLUMN */
 									 G_TYPE_STRING,      /* STATUS_COLUMN */
 									 G_TYPE_STRING,  /* BACKGROUND_COLOR_COLUMN */
+									 G_TYPE_INT,
 									 G_TYPE_POINTER   /* GTT_POINTER_COLUMN */
 		);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (gpt), GTK_TREE_MODEL (tree_model));
@@ -389,9 +391,10 @@ gtt_projects_tree_set_project_dates (GttProjectsTree *gpt, GtkTreeStore *tree_mo
 }
 
 static void
-gtt_projects_tree_set_background (GttProjectsTree *gpt, GtkTreeStore *tree_model, GttProject *prj, GtkTreeIter *iter)
+gtt_projects_tree_set_style (GttProjectsTree *gpt, GtkTreeStore *tree_model, GttProject *prj, GtkTreeIter *iter)
 {
 	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
+	PangoWeight weight = PANGO_WEIGHT_NORMAL;
 	gchar *bgcolor = NULL;
 
 	if (priv->highlight_active)
@@ -399,11 +402,13 @@ gtt_projects_tree_set_background (GttProjectsTree *gpt, GtkTreeStore *tree_model
 		if (timer_project_is_running (prj))
 		{
 			bgcolor = priv->active_bgcolor;
+			weight = PANGO_WEIGHT_BOLD;
 		}
 	}
 	gtk_tree_store_set (tree_model,
 						iter,
 						BACKGROUND_COLOR_COLUMN, bgcolor,
+						WEIGHT_COLUMN, weight,
 						-1);
 }
 
@@ -476,7 +481,7 @@ gtt_projects_tree_set_project_data (GttProjectsTree *gpt, GtkTreeStore *tree_mod
 						-1);
 	gtt_projects_tree_set_project_times (gpt, tree_model, prj, iter);
 	gtt_projects_tree_set_project_dates (gpt, tree_model, prj, iter);
-	gtt_projects_tree_set_background (gpt, tree_model, prj, iter);
+	gtt_projects_tree_set_style (gpt, tree_model, prj, iter);
 	gtt_projects_tree_set_project_urgency (gpt, tree_model, prj, iter);
 	gtt_projects_tree_set_project_importance (gpt, tree_model, prj, iter);
 	gtt_projects_tree_set_project_status (gpt, tree_model, prj, iter);
@@ -560,6 +565,10 @@ gtt_projects_tree_add_column (GttProjectsTree *project_tree, gchar *column_name)
 															   c->value_property_name, c->model_column,
 															   "cell-background", BACKGROUND_COLOR_COLUMN,
 															   NULL);
+			if (GTK_IS_CELL_RENDERER_TEXT (c->renderer))
+			{
+				gtk_tree_view_column_add_attribute (column, c->renderer, "weight", WEIGHT_COLUMN);
+			}
 			gtk_tree_view_column_set_resizable (column, TRUE);
 			gtk_tree_view_append_column (GTK_TREE_VIEW (project_tree), column);
 			if (!strcmp(c->name, "title"))

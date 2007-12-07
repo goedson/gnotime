@@ -1,4 +1,15 @@
+2007-12-07  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/projects-tree.c (gtt_projects_tree_set_style): Display the
+	running project in bold to make it easier to spot.
+
 2007-12-06  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/menucmd.c (menu_toggle_timer): get the selected project from
+	the tree view instead of ctree.
+	(gen_start_timer): get the selected project from the tree view
+	instead of ctree.
+	(gen_stop_timer): use cur_proj_set instead of ctree_stop_timer.
 
 	* src/projects-tree.c (gtt_projects_tree_get_selected_project):
 	added function to query what is the project currently selected in
