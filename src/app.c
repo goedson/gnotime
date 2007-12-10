@@ -219,12 +219,14 @@ cur_proj_set (GttProject *proj)
 
 	log_proj(NULL);
 	gtt_project_timer_stop (cur_proj);
+	gtt_status_icon_stop_timer (proj);
 	run_shell_command (cur_proj, FALSE);
 	GttProject *old_prj = cur_proj;
 	if (proj) 
 	{
 		cur_proj = proj;
 		gtt_project_timer_start (proj); 
+		gtt_status_icon_start_timer (proj);
 		run_shell_command (cur_proj, TRUE);
 	}
 	else

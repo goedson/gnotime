@@ -1368,7 +1368,7 @@ show_report (GtkWidget *w, gpointer data)
 	GttProject *prj;
 	char * path;
 
-	prj = ctree_get_focus_project (global_ptw);
+	prj = gtt_projects_tree_get_selected_project (projects_tree);
 
 	path = gtt_ghtml_resolve_path (report_file, NULL);
 	do_show_report (path, NULL, NULL, prj, FALSE, NULL);

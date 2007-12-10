@@ -82,6 +82,6 @@ gboolean gtt_projects_tree_get_show_seconds (GttProjectsTree *gpt);
 void gtt_projects_tree_set_highlight_active (GttProjectsTree *gpt, gboolean highlight_active);
 gboolean gtt_projects_tree_get_highlight_active (GttProjectsTree *gpt);
 GttProject *gtt_projects_tree_get_selected_project (GttProjectsTree *gpt);
-
+void gtt_projects_tree_update_all_rows (GttProjectsTree *gpt);
 
 #endif // __PROJECTS_TREE_H__

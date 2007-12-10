@@ -498,7 +498,7 @@ gtt_projects_tree_add_project (GttProjectsTree *gpt, GtkTreeStore *tree_model, G
 	
 	gtk_tree_store_append (tree_model, &iter, parent);
 	gtt_projects_tree_set_project_data (gpt, tree_model, prj, &iter);
-	row_reference = gtk_tree_row_reference_new (tree_model, path);
+	row_reference = gtk_tree_row_reference_new ( GTK_TREE_MODEL(tree_model), path);
 	g_tree_insert (priv->row_references, prj, row_reference);
 	if (recursive)
 	{
@@ -664,7 +664,7 @@ update_row_data (gpointer key, gpointer value, gpointer data)
 	return FALSE;
 }
 
-static void
+void
 gtt_projects_tree_update_all_rows (GttProjectsTree *gpt)
 {
 	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);

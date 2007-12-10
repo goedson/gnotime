@@ -128,10 +128,12 @@ timer_func(gpointer data)
 	if (config_show_secs) 
 	{
 		gtt_projects_tree_update_project_data (projects_tree, cur_proj);
+		update_status_bar ();
 	} 
 	else if (1 == gtt_project_get_secs_day(cur_proj) % 5) 
 	{
 		gtt_projects_tree_update_project_data (projects_tree, cur_proj);
+		update_status_bar ();
 	}
 
 	/* Look for keyboard/mouse inactivity, and expire (stop) 

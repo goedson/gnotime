@@ -1,3 +1,35 @@
+2007-12-10  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/prefs.c (prefs_update_projects_view): update tree lines and
+	header visibility on the projects tree according to current
+	settings.
+	(prefs_set): update the projects tree rows when there are changes
+	in the day start and week start settings.
+
+	* src/menucmd.c (menu_howto_edit_times): use gtk_dialog_run
+	to display the information dialog about editing time intervals.
+	(show_a): removed obsolete function.
+
+	* src/notes-area.h: removed declaration of notes_area_add_ctree.
+
+	* src/notes-area.c (notes_area_add_projects_tree): connect the
+	NotesArea to the selection change signal of the projects tree.
+	(projects_tree_selection_changed): track the selection changes in
+	the projects tree and update the NotesArea.
+	(notes_area_add_ctree): removed obsolete function.
+
+	* src/menucmd.c (menu_properties): query the GttProjectsTree
+	component instead of the ctree for the currently selected
+	project.
+
+	* src/timer.c (timer_func): Update the status bar
+
+	* src/journal.c (show_report): query the GttProjectsTree component
+	instead of the ctree for the currently selected project.
+
+	* src/app.c (cur_proj_set): Update the status icon when the timer
+	is started/stoped.
+
 2007-12-07  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/projects-tree.c (gtt_projects_tree_set_style): Display the

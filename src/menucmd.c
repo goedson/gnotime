@@ -510,24 +510,27 @@ void
 menu_properties(GtkWidget *w, gpointer data)
 {
 	GttProject *prj;
-	prj = ctree_get_focus_project (global_ptw);
+	prj = gtt_projects_tree_get_selected_project (projects_tree);
 
 	if (prj) {
 		prop_dialog_show(prj);
+	}
+	else
+	{
+		GtkWidget *dlg = gtk_message_dialog_new (app_window,
+												 GTK_DIALOG_MODAL,
+												 GTK_MESSAGE_INFO,
+												 GTK_BUTTONS_OK,
+												 _("You must select the project of which you want to edit the properties"));
+		gtk_dialog_run (GTK_DIALOG (dlg));
+		gtk_widget_destroy (dlg);
 	}
 }
 
 
 /* Cheesey usability hack to tell the user how to edit the timer
  * intervals.  Replace with something intuitive at earliest convenience.
- * (Yes this generates compiler warnings ... thats the point !!!
  */
-
-static void show_a (GtkWidget *w)
-{
-	gtk_widget_destroy (w);
-	show_report (NULL, ACTIVITY_REPORT);
-}
 
 void
 menu_howto_edit_times (GtkWidget *w,gpointer data)
@@ -544,9 +547,9 @@ menu_howto_edit_times (GtkWidget *w,gpointer data)
 	         GTK_MESSAGE_INFO,
 	         GTK_BUTTONS_OK,
 		      msg);
-	g_signal_connect (G_OBJECT(mb), "response",
-	         G_CALLBACK (show_a), mb);
-	gtk_widget_show (mb);
+	gtk_dialog_run (GTK_DIALOG (mb));
+	gtk_widget_destroy (mb);
+	show_report (NULL, ACTIVITY_REPORT);
 }
 
 /* ============================ END OF FILE ======================= */

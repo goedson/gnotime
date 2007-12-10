@@ -25,8 +25,6 @@
 #include <string.h>
 
 #include "app.h"
-#include "ctree.h"
-#include "ctree-gnome2.h"
 #include "cur-proj.h"
 #include "dialog.h"
 #include "gtt.h"
@@ -158,10 +156,10 @@ typedef struct _PrefsDialog
 
 
 
-/* Update the columns shown in the projects tree according to current configuration */
+/* Update the properties of the project view according to current settings */
 
 void
-prefs_update_projects_view_columns (void)
+prefs_update_projects_view (void)
 {
 	GList *columns = NULL;
 
@@ -260,6 +258,13 @@ prefs_update_projects_view_columns (void)
 
 	gtt_projects_tree_set_visible_columns (projects_tree, columns);
 	g_list_free (columns);
+
+	gtk_tree_view_set_enable_tree_lines (GTK_TREE_VIEW (projects_tree),
+										 config_show_subprojects);
+	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (projects_tree),
+									   config_show_clist_titles);
+
+
 }
 
 void
@@ -430,7 +435,7 @@ prefs_set(GnomePropertyBox * pb, gint page, PrefsDialog *odlg)
 
 		if (change)
 		{
-			prefs_update_projects_view_columns ();
+			prefs_update_projects_view ();
 		}
 	
 	}
@@ -455,20 +460,16 @@ prefs_set(GnomePropertyBox * pb, gint page, PrefsDialog *odlg)
 		}
 		if (GTK_TOGGLE_BUTTON(odlg->show_clist_titles)->active) {
 			config_show_clist_titles = 1;
-			ctree_titles_show (global_ptw);
 		} else {
 			config_show_clist_titles = 0;
-			ctree_titles_hide (global_ptw);
 		}
 	
 		if (GTK_TOGGLE_BUTTON(odlg->show_subprojects)->active) {
 			config_show_subprojects = 1;
-			ctree_subproj_show (global_ptw);
 		} else {
 			config_show_subprojects = 0;
-			ctree_subproj_hide (global_ptw);
 		}
-
+		prefs_update_projects_view ();
 	}
 
 	if (2 == page)
@@ -532,7 +533,7 @@ prefs_set(GnomePropertyBox * pb, gint page, PrefsDialog *odlg)
 		{
 			/* Need to recompute everything, including the bining */
 			gtt_project_list_compute_secs();
-			ctree_refresh (global_ptw);
+			gtt_projects_tree_update_all_rows (projects_tree);
 		}
 	}
 

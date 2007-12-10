@@ -422,8 +422,8 @@ gtt_gconf_load (void)
 	config_show_title_urgency    = GETBOOL ("/Display/ShowUrgency", TRUE);
 	config_show_title_importance = GETBOOL ("/Display/ShowImportance", TRUE);
 	config_show_title_status     = GETBOOL ("/Display/ShowStatus", FALSE);
-	
-	prefs_update_projects_view_columns ();
+
+	prefs_update_projects_view ();
 
 	/* ------------ */
 	config_show_toolbar    = GETBOOL ("/Toolbar/ShowToolbar", TRUE);
