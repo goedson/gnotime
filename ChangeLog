@@ -1,5 +1,11 @@
 2007-12-13  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/projects-tree.c
+	(gtt_projects_tree_remove_project_recursively): Remove all
+	children of the removed project from the tree of row references.
+	(gtt_projects_tree_insert_project): Insert project in bottom
+	instead of the top of the tree.
+
 	* src/menucmd.c (project_name_desc): insert projects into the
 	projects tree instead of ctree.
 
