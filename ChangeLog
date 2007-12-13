@@ -1,3 +1,18 @@
+2007-12-13  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/menucmd.c (project_name_desc): insert projects into the
+	projects tree instead of ctree.
+
+	* src/projects-tree.c (gtt_projects_tree_remove_project): Added
+	function for removing projects from the tree.
+	(gtt_projects_tree_insert_project): Added function for inserting
+	projects into the tree.
+
+2007-12-12  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/menucmd.c (cut_project): query the GttProjectsTree component
+	instead of the ctree for the currently selected project.
+
 2007-12-10  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/prefs.c (prefs_update_projects_view): update tree lines and

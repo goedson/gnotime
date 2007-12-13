@@ -754,3 +754,58 @@ gtt_projects_tree_get_selected_project (GttProjectsTree *gpt)
 	}
 	return prj;
 }
+
+void
+gtt_projects_tree_remove_project (GttProjectsTree *gpt, GttProject *prj)
+{
+	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
+	GtkTreeRowReference *row = g_tree_lookup (priv->row_references, prj);
+	GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (gpt));
+
+	if (row)
+	{
+		GtkTreePath *path = gtk_tree_row_reference_get_path (row);
+		GtkTreeIter iter;
+		if (gtk_tree_model_get_iter (model, &iter, path))
+		{
+			gtk_tree_store_remove (GTK_TREE_STORE (model), &iter);
+		}
+		g_tree_remove (priv->row_references, prj);
+		gtk_tree_path_free (path);
+	}
+}
+
+void
+gtt_projects_tree_insert_project (GttProjectsTree *gpt, GttProject *prj, GttProject *sibling)
+{
+	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
+	GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (gpt));
+	GtkTreeIter sib_iter;
+	GtkTreeIter prj_iter;
+	GtkTreePath *path = NULL;
+	if (sibling)
+	{
+		GtkTreeRowReference *row = g_tree_lookup (priv->row_references, sibling);
+		path = gtk_tree_row_reference_get_path (row);
+		if (gtk_tree_model_get_iter (model, &sib_iter, path))
+		{
+			gtk_tree_store_insert_after (GTK_TREE_STORE (model), &prj_iter, NULL, &sib_iter);
+		}
+		else
+		{
+			gtk_tree_store_insert_after (GTK_TREE_STORE (model), &prj_iter, NULL, NULL);
+		}
+		gtk_tree_path_free (path);
+	}
+	else
+	{
+		gtk_tree_store_insert_after (GTK_TREE_STORE (model), &prj_iter, NULL, NULL);
+	}
+
+	gtt_projects_tree_set_project_data (gpt, GTK_TREE_STORE (model), prj, &prj_iter);
+	path = gtk_tree_model_get_path (model, &prj_iter);
+	GtkTreeRowReference *row_reference = gtk_tree_row_reference_new ( model, path);
+	g_tree_insert (priv->row_references, prj, row_reference);
+	gtk_tree_path_free (path);
+
+}

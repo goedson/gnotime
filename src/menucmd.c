@@ -219,7 +219,7 @@ project_name_desc(GtkDialog *w, gint response_id, GtkEntry **entries)
 		return;
 	}
 
-	sib_prj = ctree_get_focus_project (global_ptw);
+	sib_prj = gtt_projects_tree_get_selected_project (projects_tree);
 
 	if (!(name = gtk_entry_get_text(entries[0]))) return;
 	if (!(desc = gtk_entry_get_text(entries[1]))) return;
@@ -230,7 +230,7 @@ project_name_desc(GtkDialog *w, gint response_id, GtkEntry **entries)
 	 */
 	proj = gtt_project_new_title_desc(name, desc);
 	gtt_project_insert_after (proj, sib_prj);
-	ctree_insert_after (global_ptw, proj, sib_prj);
+	gtt_projects_tree_insert_project (projects_tree, proj, sib_prj);
 
 	gtk_widget_destroy (GTK_WIDGET (w));
 }
@@ -345,12 +345,8 @@ cut_project(GtkWidget *w, gpointer data)
 {
 	GttProject *cut_prj;
 
-	/* Do NOT cut unless the ctree window actually has focus.
-	 * Otherwise, it will lead to cutting mayhem.
-	 * (We might have gotten the ctrl-x cut event by accident) */
-	if (0 == ctree_has_focus (global_ptw)) return;
-
-	cut_prj = ctree_get_focus_project (global_ptw);
+	
+	cut_prj = gtt_projects_tree_get_selected_project (projects_tree);
 	if (!cut_prj) return;
 
 	cutted_project_list = g_list_prepend (cutted_project_list, cut_prj);
@@ -361,12 +357,12 @@ cut_project(GtkWidget *w, gpointer data)
 
 	if (cut_prj == cur_proj) ctree_stop_timer (cur_proj);
 	gtt_project_remove(cut_prj);
-	ctree_remove(global_ptw, cut_prj);
+	gtt_projects_tree_remove_project (projects_tree, cut_prj);
 
 	/* Update various subsystems */
 	/* Set the notes are to whatever the new focus project is. */
-	GttProject *prj = ctree_get_focus_project (global_ptw);
-	notes_area_set_project (global_na, prj);
+//	GttProject *prj = ctree_get_focus_project (global_ptw);
+//	notes_area_set_project (global_na, prj);
 
 	menu_set_states();      /* To enable paste menu item */
 	toolbar_set_states();
@@ -551,5 +547,6 @@ menu_howto_edit_times (GtkWidget *w,gpointer data)
 	gtk_widget_destroy (mb);
 	show_report (NULL, ACTIVITY_REPORT);
 }
+
 
 /* ============================ END OF FILE ======================= */

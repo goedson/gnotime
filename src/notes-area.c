@@ -384,9 +384,10 @@ notes_area_set_project (NotesArea *na, GttProject *proj)
     na->proj = NULL;
   }
   if (proj != NULL) {
-    notes_area_do_set_project (na, proj);
     gtt_project_add_notifier (proj, redraw, na);
   }
+
+  notes_area_do_set_project (na, proj);
 }
 
 /* ============================================================== */

@@ -83,5 +83,6 @@ void gtt_projects_tree_set_highlight_active (GttProjectsTree *gpt, gboolean high
 gboolean gtt_projects_tree_get_highlight_active (GttProjectsTree *gpt);
 GttProject *gtt_projects_tree_get_selected_project (GttProjectsTree *gpt);
 void gtt_projects_tree_update_all_rows (GttProjectsTree *gpt);
-
+void gtt_projects_tree_remove_project (GttProjectsTree *gpt, GttProject *prj);
+void gtt_projects_tree_insert_project (GttProjectsTree *gpt, GttProject *prj, GttProject *sibling);
 #endif // __PROJECTS_TREE_H__
