@@ -792,41 +792,106 @@ gtt_projects_tree_remove_project (GttProjectsTree *gpt, GttProject *prj)
 	gtt_projects_tree_remove_project_recursively (gpt, prj, model, priv->row_references);
 }
 
+
+static void
+gtt_projects_tree_append_projects_recursively (GttProjectsTree * gpt,
+											   GtkTreeModel *model, GTree *row_references,
+											   GttProject *prj, GttProject *parent)
+{
+	GtkTreeIter parent_iter;
+	GtkTreeIter prj_iter;
+	GtkTreePath *path = NULL;
+	if (parent)
+	{
+		GtkTreeRowReference *row = g_tree_lookup (row_references, parent);
+		path = gtk_tree_row_reference_get_path (row);
+		gtk_tree_model_get_iter (model, &parent_iter, path);
+		gtk_tree_store_append (GTK_TREE_STORE (model), &prj_iter, &parent_iter);
+		gtk_tree_path_free (path);
+	}
+	else
+	{
+		gtk_tree_store_append (GTK_TREE_STORE (model), &prj_iter, NULL);
+	}
+
+	gtt_projects_tree_set_project_data (gpt, GTK_TREE_STORE (model),
+										prj, &prj_iter);
+	path = gtk_tree_model_get_path (model, &prj_iter);
+
+	GtkTreeRowReference *row_reference = gtk_tree_row_reference_new ( model,
+																	  path);
+	g_tree_insert (row_references, prj, row_reference);
+	gtk_tree_path_free (path);
+	GList *children;
+	for (children = gtt_project_get_children (prj); children; children = children->next)
+	{
+		gtt_projects_tree_append_projects_recursively (gpt, model,
+													  row_references,
+													  children->data, prj);
+	}
+}
+
+/*
+ * Appends a new project to the Projects Tree. The project is appended to
+ * the list of children of its parent, if one is provided, or to the bottom
+ * of the tree, otherwise.
+ *
+ * Parameters:
+ *
+ * - gpt - The GttProjectsTree to which the project should be appended
+ * - prj - The project to be append
+ * - parent - The parent of the project to be appended or NULL if it's
+ *            a toplevel project.
+ */
+
 void
-gtt_projects_tree_insert_project (GttProjectsTree *gpt, GttProject *prj, GttProject *sibling)
+gtt_projects_tree_append_project (GttProjectsTree *gpt, GttProject *prj, GttProject *parent)
 {
 	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
 	GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (gpt));
+
+	gtt_projects_tree_append_projects_recursively (gpt, model, priv->row_references, prj, parent);
+}
+
+
+
+void
+gtt_projects_tree_insert_project_before (GttProjectsTree *gpt, GttProject *prj, GttProject *sibling)
+{
+	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
+	GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (gpt));
+
 	GtkTreeIter sib_iter;
 	GtkTreeIter prj_iter;
 	GtkTreePath *path = NULL;
 	if (sibling)
 	{
-		/* Insert after the provided sibling or in the bottom of
-		 * the tree if the sibling cannot be found */
-
 		GtkTreeRowReference *row = g_tree_lookup (priv->row_references, sibling);
 		path = gtk_tree_row_reference_get_path (row);
-		if (gtk_tree_model_get_iter (model, &sib_iter, path))
-		{
-			gtk_tree_store_insert_after (GTK_TREE_STORE (model), &prj_iter, NULL, &sib_iter);
-		}
-		else
-		{
-			gtk_tree_store_append (GTK_TREE_STORE (model), &prj_iter, NULL);
-		}
+		gtk_tree_model_get_iter (model, &sib_iter, path);
+		gtk_tree_store_insert_before (GTK_TREE_STORE (model), &prj_iter, NULL, &sib_iter);
 		gtk_tree_path_free (path);
 	}
 	else
 	{
-		/* Insert after the last toplevel project */
 		gtk_tree_store_append (GTK_TREE_STORE (model), &prj_iter, NULL);
 	}
 
-	gtt_projects_tree_set_project_data (gpt, GTK_TREE_STORE (model), prj, &prj_iter);
+	gtt_projects_tree_set_project_data (gpt, GTK_TREE_STORE (model),
+										prj, &prj_iter);
 	path = gtk_tree_model_get_path (model, &prj_iter);
 
-	GtkTreeRowReference *row_reference = gtk_tree_row_reference_new ( model, path);
+	GtkTreeRowReference *row_reference = gtk_tree_row_reference_new ( model,
+																	  path);
 	g_tree_insert (priv->row_references, prj, row_reference);
 	gtk_tree_path_free (path);
+
+	GList *children;
+	for (children = gtt_project_get_children (prj); children; children = children->next)
+	{
+		gtt_projects_tree_append_projects_recursively (gpt, model,
+													   priv->row_references,
+													   children->data, prj);
+	}
+
 }

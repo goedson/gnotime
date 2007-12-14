@@ -1,8 +1,21 @@
 2007-12-14  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/menucmd.c (paste_project): implemented pasting project to
+	the GttProjectsTree.
+
 	* src/projects-tree.c
 	(gtt_projects_tree_remove_project_recursively): removed reference
 	to undeclared variable "priv".
+	(gtt_projects_tree_insert_project): insert the new project as the
+	last child of the parent's sibling, to match the way it is
+	inserted in the project list.
+	(gtt_projects_tree_append_project): renamed function to be
+	consistent with what it does.
+	(gtt_projects_tree_append_projects_recursively): added function to
+	recursively append a project and its children to the projects
+	tree.
+	(gtt_projects_tree_insert_project_before): added function to
+	insert a project before its sibling.
 
 2007-12-13  Goedson Teixeira Paixao  <goedson@debian.org>
 

@@ -230,7 +230,7 @@ project_name_desc(GtkDialog *w, gint response_id, GtkEntry **entries)
 	 */
 	proj = gtt_project_new_title_desc(name, desc);
 	gtt_project_insert_after (proj, sib_prj);
-	gtt_projects_tree_insert_project (projects_tree, proj, sib_prj);
+	gtt_projects_tree_append_project (projects_tree, proj, gtt_project_get_parent (sib_prj));
 
 	gtk_widget_destroy (GTK_WIDGET (w));
 }
@@ -376,7 +376,7 @@ paste_project(GtkWidget *w, gpointer data)
 	GttProject *sib_prj;
 	GttProject *p, *focus_prj;
 
-	sib_prj = ctree_get_focus_project (global_ptw);
+	sib_prj = gtt_projects_tree_get_selected_project (projects_tree);
 
 	debug_print_cutted_proj_list ("pre paste");
 
@@ -399,20 +399,7 @@ paste_project(GtkWidget *w, gpointer data)
 
 	/* Insert before the focus proj */
 	gtt_project_insert_before (p, sib_prj);
-
-	if (!sib_prj)
-	{
-		/* top-level insert */
-		ctree_add(global_ptw, p);
-		return;
-	}
-	ctree_insert_before(global_ptw, p, sib_prj);
-
-	/* Set the notes are to whatever the new focus project is.
-	 * (which should be 'p', bbut we play it safe to avoid
-	 * weird inconsistent state.) */
-	focus_prj = ctree_get_focus_project (global_ptw);
-	notes_area_set_project (global_na, focus_prj);
+	gtt_projects_tree_insert_project_before (projects_tree, p, sib_prj);
 }
 
 
@@ -513,7 +500,7 @@ menu_properties(GtkWidget *w, gpointer data)
 	}
 	else
 	{
-		GtkWidget *dlg = gtk_message_dialog_new (app_window,
+		GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (app_window),
 												 GTK_DIALOG_MODAL,
 												 GTK_MESSAGE_INFO,
 												 GTK_BUTTONS_OK,
