@@ -1,3 +1,9 @@
+2007-12-14  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/projects-tree.c
+	(gtt_projects_tree_remove_project_recursively): removed reference
+	to undeclared variable "priv".
+
 2007-12-13  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/projects-tree.c

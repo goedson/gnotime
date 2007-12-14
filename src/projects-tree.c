@@ -771,7 +771,7 @@ gtt_projects_tree_remove_project_recursively (GttProjectsTree *gpt,
 		{
 			gtk_tree_store_remove (GTK_TREE_STORE (model), &iter);
 		}
-		g_tree_remove (priv->row_references, prj);
+		g_tree_remove (row_references, prj);
 		gtk_tree_path_free (path);
 
 		GList *node;
