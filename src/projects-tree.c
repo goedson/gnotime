@@ -93,14 +93,19 @@ struct _GttProjectsTreePrivate {
 	gboolean         highlight_active;
 	ColumnDefinition column_definitions[N_VIEWABLE_COLS];
 	GTree            *row_references;
+	gulong            row_changed_handler;
 };
 
 
+static void gtt_projects_tree_row_expand_collapse_callback (GtkTreeView *view, GtkTreeIter *iter, GtkTreePath *path, gpointer data);
+
+static void gtt_projects_tree_model_row_changed_callback (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 
 static void
 gtt_projects_tree_create_model (GttProjectsTree *gpt)
 {
 	GtkTreeStore *tree_model;
+	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
 	tree_model = gtk_tree_store_new (NCOLS,
 									 G_TYPE_STRING,      /* TIME_EVER_COLUMN */
 									 G_TYPE_STRING,      /* TIME_YEAR_COLUMN */
@@ -126,6 +131,12 @@ gtt_projects_tree_create_model (GttProjectsTree *gpt)
 									 G_TYPE_POINTER   /* GTT_POINTER_COLUMN */
 		);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (gpt), GTK_TREE_MODEL (tree_model));
+
+	priv->row_changed_handler = g_signal_connect (GTK_TREE_MODEL(tree_model),
+												 "row-changed",
+												 gtt_projects_tree_model_row_changed_callback,
+												 gpt);
+
 }
 
 
@@ -295,8 +306,17 @@ gtt_projects_tree_init (GttProjectsTree* gpt)
 	gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (gpt), TRUE);
 	gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (gpt), TRUE);
 	gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (gpt), TRUE);
-	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (gpt), TRUE);
 	gtk_tree_view_set_enable_tree_lines (GTK_TREE_VIEW (gpt), TRUE);
+
+	g_signal_connect (GTK_TREE_VIEW (gpt),
+					  "row-expanded",
+					  gtt_projects_tree_row_expand_collapse_callback,
+					  NULL);
+	g_signal_connect (GTK_TREE_VIEW (gpt),
+					  "row-collapsed",
+					  gtt_projects_tree_row_expand_collapse_callback,
+					  NULL);
+
 }
 
 static void
@@ -371,14 +391,30 @@ gtt_projects_tree_set_date_value (GttProjectsTree *gpt, GtkTreeStore *tree_model
 static void
 gtt_projects_tree_set_project_times (GttProjectsTree *gpt, GtkTreeStore *tree_model, GttProject *prj, GtkTreeIter *iter)
 {
-	gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_EVER_COLUMN, gtt_project_get_secs_ever (prj));
-	gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_YEAR_COLUMN, gtt_project_get_secs_year (prj));
-	gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_MONTH_COLUMN, gtt_project_get_secs_month (prj));
-	gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_WEEK_COLUMN, gtt_project_get_secs_week (prj));
-	gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_LASTWEEK_COLUMN, gtt_project_get_secs_lastweek (prj));
-	gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_YESTERDAY_COLUMN, gtt_project_get_secs_yesterday (prj));
-	gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_TODAY_COLUMN, gtt_project_get_secs_day (prj));
-	gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_TASK_COLUMN, gtt_project_get_secs_current (prj));
+	GtkTreePath *path = gtk_tree_model_get_path (GTK_TREE_MODEL (tree_model), iter);
+
+	if (gtk_tree_view_row_expanded (GTK_TREE_VIEW (gpt), path))
+	{
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_EVER_COLUMN, gtt_project_get_secs_ever (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_YEAR_COLUMN, gtt_project_get_secs_year (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_MONTH_COLUMN, gtt_project_get_secs_month (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_WEEK_COLUMN, gtt_project_get_secs_week (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_LASTWEEK_COLUMN, gtt_project_get_secs_lastweek (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_YESTERDAY_COLUMN, gtt_project_get_secs_yesterday (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_TODAY_COLUMN, gtt_project_get_secs_day (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_TASK_COLUMN, gtt_project_get_secs_current (prj));
+	}
+	else
+	{
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_EVER_COLUMN, gtt_project_total_secs_ever (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_YEAR_COLUMN, gtt_project_total_secs_year (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_MONTH_COLUMN, gtt_project_total_secs_month (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_WEEK_COLUMN, gtt_project_total_secs_week (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_LASTWEEK_COLUMN, gtt_project_total_secs_lastweek (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_YESTERDAY_COLUMN, gtt_project_total_secs_yesterday (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_TODAY_COLUMN, gtt_project_total_secs_day (prj));
+		gtt_projects_tree_set_time_value (gpt, tree_model, iter, TIME_TASK_COLUMN, gtt_project_total_secs_current (prj));
+	}
 }
 
 
@@ -470,6 +506,13 @@ gtt_projects_tree_set_project_status (GttProjectsTree *gpt, GtkTreeStore *tree_m
 static void
 gtt_projects_tree_set_project_data (GttProjectsTree *gpt, GtkTreeStore *tree_model, GttProject *prj, GtkTreeIter *iter)
 {
+
+	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
+	if (priv->row_changed_handler)
+	{
+		g_signal_handler_disconnect (tree_model, priv->row_changed_handler);
+		priv->row_changed_handler = 0;
+	}
 	gtk_tree_store_set (tree_model,
 						iter,
 						TITLE_COLUMN, gtt_project_get_title (prj),
@@ -485,6 +528,11 @@ gtt_projects_tree_set_project_data (GttProjectsTree *gpt, GtkTreeStore *tree_mod
 	gtt_projects_tree_set_project_urgency (gpt, tree_model, prj, iter);
 	gtt_projects_tree_set_project_importance (gpt, tree_model, prj, iter);
 	gtt_projects_tree_set_project_status (gpt, tree_model, prj, iter);
+
+	priv->row_changed_handler = g_signal_connect (GTK_TREE_MODEL(tree_model),
+												 "row-changed",
+												 gtt_projects_tree_model_row_changed_callback,
+												 gpt);
 }
 
 static void
@@ -855,6 +903,17 @@ gtt_projects_tree_append_project (GttProjectsTree *gpt, GttProject *prj, GttProj
 
 
 
+/*
+ * Inserts a new project to the Projects Tree. The project is inserted
+ * before its sibling, if one is provided, or to the bottom of the tree,
+ * otherwise.
+ *
+ * Parameters:
+ *
+ * - gpt - The GttProjectsTree to which the project should be appended
+ * - prj - The project to be append
+ * - sibling - The sibling before wich the project will be inserted.
+ */
 void
 gtt_projects_tree_insert_project_before (GttProjectsTree *gpt, GttProject *prj, GttProject *sibling)
 {
@@ -894,4 +953,71 @@ gtt_projects_tree_insert_project_before (GttProjectsTree *gpt, GttProject *prj, 
 													   children->data, prj);
 	}
 
+}
+
+static void
+gtt_projects_tree_row_expand_collapse_callback (GtkTreeView *view,
+												GtkTreeIter *iter,
+												GtkTreePath *path,
+												gpointer data)
+{
+	GttProjectsTree *gpt = GTT_PROJECTS_TREE (view);
+	GttProject *prj = NULL;
+	GtkTreeModel *tree_model = gtk_tree_view_get_model (view);
+
+	gtk_tree_model_get (tree_model, iter, GTT_PROJECT_COLUMN, &prj, -1);
+
+	gtt_projects_tree_set_project_data (gpt, GTK_TREE_STORE (tree_model),
+										prj, iter);
+
+}
+
+
+static void
+gtt_projects_tree_model_row_changed_callback (GtkTreeModel *model,
+											  GtkTreePath *path,
+											  GtkTreeIter *iter,
+											  gpointer data)
+{
+	GttProjectsTree *gpt = GTT_PROJECTS_TREE (data);
+	GttProject *prj = NULL;
+	GttProject *parent = NULL;
+
+	gtk_tree_model_get (model, iter, GTT_PROJECT_COLUMN, &prj, -1);
+
+	if (prj)
+	{
+		int path_depth = gtk_tree_path_get_depth (path);
+		gint *indices = gtk_tree_path_get_indices (path);
+		int position = 0;
+		if (indices)
+		{
+			position = indices[path_depth - 1];
+		}
+		else
+		{
+			g_message ("indices is NULL");
+		}
+		GtkTreeIter parent_iter;
+		if (gtk_tree_model_iter_parent (model, &parent_iter, iter))
+		{
+			gtk_tree_model_get (model, &parent_iter, GTT_PROJECT_COLUMN, &parent, -1);
+		}
+
+		GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
+		GtkTreeRowReference *row_ref = (GtkTreeRowReference *) g_tree_lookup (priv->row_references, prj);
+		if (row_ref)
+		{
+			GtkTreePath *ref_path = gtk_tree_row_reference_get_path (row_ref);
+
+			/* If the row has been moved around we reparent it and 
+			   update its row reference */
+			if (gtk_tree_path_compare (path, ref_path))
+			{
+				gtt_project_reparent (prj, parent, position);
+				row_ref = gtk_tree_row_reference_new (model, path);
+				g_tree_insert (priv->row_references, prj, row_ref);
+			}
+		}
+	}
 }

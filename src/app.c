@@ -356,6 +356,8 @@ app_new(int argc, char *argv[], const char *geometry_string)
 
 	projects_tree = gtt_projects_tree_new ();
 
+	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (projects_tree), TRUE);
+
 	g_signal_connect (projects_tree, "row-activated", projects_tree_row_activated, NULL);
 
 	/* create the notes area */

@@ -1,3 +1,22 @@
+2007-12-16  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/projects-tree.c
+	(gtt_projects_tree_model_row_changed_callback): update project's
+	parent and row reference to reflect the result of a drag-and-drop
+	operation.
+	(gtt_projects_tree_set_project_times): display totals when row is
+	collapsed.
+	(gtt_projects_tree_row_expand_collapse_callback): update row data
+	when it is collapsed or expanded.
+	(gtt_projects_tree_init): connect the "row-collapsed" and
+	"row-expanded" signals so we can update the row displays
+	correctly. 
+
+2007-12-15  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/proj.c (gtt_project_reparent): added function to change the
+	parent of a project.
+
 2007-12-14  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/menucmd.c (paste_project): implemented pasting project to
