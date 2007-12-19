@@ -89,7 +89,7 @@ AC_ARG_ENABLE(glibtest, [  --disable-glibtest      do not try to compile and run
       esac
   done
 
-  PKG_PROG_PKG_CONFIG([0.7])
+  PKG_PROG_PKG_CONFIG([0.16])
 
   no_glib=""
 
@@ -907,6 +907,20 @@ AC_SUBST(INTLTOOL_THEME_RULE)
 AC_SUBST(INTLTOOL_SERVICE_RULE)
 AC_SUBST(INTLTOOL_POLICY_RULE)
 
+# Check the gettext tools to make sure they are GNU
+AC_PATH_PROG(XGETTEXT, xgettext)
+AC_PATH_PROG(MSGMERGE, msgmerge)
+AC_PATH_PROG(MSGFMT, msgfmt)
+if test -z "$XGETTEXT" -o -z "$MSGMERGE" -o -z "$MSGFMT"; then
+    AC_MSG_ERROR([GNU gettext tools not found; required for intltool])
+fi
+xgversion="`$XGETTEXT --version|grep '(GNU ' 2> /dev/null`"
+mmversion="`$MSGMERGE --version|grep '(GNU ' 2> /dev/null`"
+mfversion="`$MSGFMT --version|grep '(GNU ' 2> /dev/null`"
+if test -z "$xgversion" -o -z "$mmversion" -o -z "$mfversion"; then
+    AC_MSG_ERROR([GNU gettext tools not found; required for intltool])
+fi
+
 # Use the tools built into the package, not the ones that are installed.
 AC_SUBST(INTLTOOL_EXTRACT, '$(top_builddir)/intltool-extract')
 AC_SUBST(INTLTOOL_MERGE, '$(top_builddir)/intltool-merge')
@@ -1041,7 +1055,7 @@ AU_ALIAS([AC_PROG_INTLTOOL], [IT_PROG_INTLTOOL])
 
 # libtool.m4 - Configure libtool for the host system. -*-Autoconf-*-
 
-# serial 51 Debian 1.5.24-1 AC_PROG_LIBTOOL
+# serial 51 Debian 1.5.24-2 AC_PROG_LIBTOOL
 
 
 # AC_PROVIDE_IFELSE(MACRO-NAME, IF-PROVIDED, IF-NOT-PROVIDED)

@@ -86,4 +86,7 @@ void gtt_projects_tree_update_all_rows (GttProjectsTree *gpt);
 void gtt_projects_tree_remove_project (GttProjectsTree *gpt, GttProject *prj);
 void gtt_projects_tree_append_project (GttProjectsTree *gpt, GttProject *prj, GttProject *sibling);
 void gtt_projects_tree_insert_project_before (GttProjectsTree *gpt, GttProject *prj, GttProject *sibling);
+gchar *gtt_projects_tree_get_expander_state (GttProjectsTree *gpt);
+gint gtt_projects_tree_get_col_width (GttProjectsTree *gpt, int col);
+void gtt_projects_tree_set_col_width (GttProjectsTree *gpt, int col, int width);
 #endif // __PROJECTS_TREE_H__

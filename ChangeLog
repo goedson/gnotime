@@ -1,3 +1,60 @@
+2007-12-19  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/timer.c (zero_on_rollover): refresh the GttProjectsTree
+	component data instead of ctree.
+
+	* src/idle-dialog.c (restart_proj): use cur_proj_set instead of
+	ctree_start_timer to start the project timer.
+	(show_idle_dialog): use cur_proj_set instead of ctree_stop_timer
+	to stop the project timer.
+
+	* src/active-dialog.c (start_proj): use cur_proj_set instead of
+	ctree_start_timer to start the project timer.
+
+	* src/gconf-io.c (gtt_gconf_save): get expander state from
+	GttProjectsTree instead of ctree.
+
+	* src/projects-tree.c (gtt_projects_tree_init): set default width
+	for all column types.
+	(count_rows, get_expander_state)
+	(gtt_projects_tree_get_expander_state, set_expander_state)
+	(gtt_projects_tree_set_expander_state): implemented saving and
+	restoring of expanders state.
+
+	* src/app.c: Removed all remaining references to the old ctree
+	code.
+
+	* src/projects-tree.c (gtt_projects_tree_get_col_width)
+	(gtt_projects_tree_set_col_width): implemented saving and
+	restoring of column widths.
+	(gtt_projects_tree_add_column): implemented setting the column
+	width to a default value so we don't have columns that are not
+	wide enough to be seen.
+
+2007-12-17  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/journal.c (invoke_report, new_task_ui, edit_task_ui): query
+	the GttProjectsTree component for the currently selected project.
+
+	* src/file-io.c (gtt_load_gnome_config): removed references to the
+	old ctree code.
+
+	* src/menucmd.c (cut_project): removed references to the old ctree
+	code.
+
+	* src/app.c (app_new): removed references to the old ctree.
+
+	* src/ghtml.c (do_ret_selected_project): query the GttProjectsTree
+	component for the currently selected project.
+
+	* src/menucmd.c (copy_project): query the GttProjectsTree
+	component for the currently selected project.
+	(cut_project): use gen_stop_timer instead of ctree_stop_timer to
+	stop running the timer.
+
+	* src/export.c (export_projects): query the GttProjectsTree
+	component for the currently selected project.
+
 2007-12-16  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/projects-tree.c

@@ -29,7 +29,6 @@
 
 #include <glib/gi18n.h>
 
-
 #include "projects-tree.h"
 #include "timer.h"
 
@@ -44,7 +43,14 @@ typedef struct _ColumnDefinition {
 	GtkCellRenderer  *renderer;
 	gchar            *value_property_name;
 	gchar            *label;
+	gint             default_width;
 } ColumnDefinition;
+
+typedef struct _ExpanderStateHelper {
+	GtkTreeView *view;
+	gchar *states;
+	int   *row;
+} ExpanderStateHelper;
 
 /* Columns for the model */
 typedef enum {
@@ -94,6 +100,7 @@ struct _GttProjectsTreePrivate {
 	ColumnDefinition column_definitions[N_VIEWABLE_COLS];
 	GTree            *row_references;
 	gulong            row_changed_handler;
+	char *expander_states;
 };
 
 
@@ -190,114 +197,133 @@ gtt_projects_tree_init (GttProjectsTree* gpt)
 	priv->column_definitions[0].renderer = priv->time_renderer;
 	priv->column_definitions[0].value_property_name = "text";
 	priv->column_definitions[0].label = _("Total");
+	priv->column_definitions[0].default_width = 72;
 
 	priv->column_definitions[1].name = "time_year";
 	priv->column_definitions[1].model_column = TIME_YEAR_COLUMN;
 	priv->column_definitions[1].renderer = priv->time_renderer;
 	priv->column_definitions[1].value_property_name = "text";
 	priv->column_definitions[1].label = _("Year");
+	priv->column_definitions[1].default_width = 72;
 
 	priv->column_definitions[2].name = "time_month";
 	priv->column_definitions[2].model_column = TIME_MONTH_COLUMN;
 	priv->column_definitions[2].renderer = priv->time_renderer;
 	priv->column_definitions[2].value_property_name = "text";
 	priv->column_definitions[2].label = _("Month");
+	priv->column_definitions[2].default_width = 72;
 
 	priv->column_definitions[3].name = "time_week";
 	priv->column_definitions[3].model_column = TIME_WEEK_COLUMN;
 	priv->column_definitions[3].renderer = priv->time_renderer;
 	priv->column_definitions[3].value_property_name = "text";
 	priv->column_definitions[3].label = _("Week");
+	priv->column_definitions[3].default_width = 72;
 
 	priv->column_definitions[4].name = "time_lastweek";
 	priv->column_definitions[4].model_column = TIME_LASTWEEK_COLUMN;
 	priv->column_definitions[4].renderer = priv->time_renderer;
 	priv->column_definitions[4].value_property_name = "text";
 	priv->column_definitions[4].label = _("Last Week");
+	priv->column_definitions[4].default_width = 72;
 
 	priv->column_definitions[5].name = "time_yesterday";
 	priv->column_definitions[5].model_column = TIME_YESTERDAY_COLUMN;
 	priv->column_definitions[5].renderer = priv->time_renderer;
 	priv->column_definitions[5].value_property_name = "text";
 	priv->column_definitions[5].label = _("Yesterday");
+	priv->column_definitions[5].default_width = 72;
 
 	priv->column_definitions[6].name = "time_today";
 	priv->column_definitions[6].model_column = TIME_TODAY_COLUMN;
 	priv->column_definitions[6].renderer = priv->time_renderer;
 	priv->column_definitions[6].value_property_name = "text";
 	priv->column_definitions[6].label = _("Today");
+	priv->column_definitions[6].default_width = 72;
 
 	priv->column_definitions[7].name = "time_task";
 	priv->column_definitions[7].model_column = TIME_TASK_COLUMN;
 	priv->column_definitions[7].renderer = priv->time_renderer;
 	priv->column_definitions[7].value_property_name = "text";
 	priv->column_definitions[7].label = _("Entry");
+	priv->column_definitions[7].default_width = 72;
 
 	priv->column_definitions[8].name = "title";
 	priv->column_definitions[8].model_column = TITLE_COLUMN;
 	priv->column_definitions[8].renderer = priv->text_renderer;
 	priv->column_definitions[8].value_property_name = "text";
 	priv->column_definitions[8].label = _("Title");
+	priv->column_definitions[8].default_width = 72;
 
 	priv->column_definitions[9].name = "description";
 	priv->column_definitions[9].model_column = TITLE_COLUMN;
 	priv->column_definitions[9].renderer = priv->text_renderer;
 	priv->column_definitions[9].value_property_name = "text";
 	priv->column_definitions[9].label = _("Description");
+	priv->column_definitions[9].default_width = 72;
 
 	priv->column_definitions[10].name = "task";
 	priv->column_definitions[10].model_column = TASK_COLUMN;
 	priv->column_definitions[10].renderer = priv->text_renderer;
 	priv->column_definitions[10].value_property_name = "text";
 	priv->column_definitions[10].label = _("Diary Entry");
+	priv->column_definitions[10].default_width = 72;
 
 	priv->column_definitions[11].name = "estimated_start";
 	priv->column_definitions[11].model_column = ESTIMATED_START_COLUMN;
 	priv->column_definitions[11].renderer = priv->date_renderer;
 	priv->column_definitions[11].value_property_name = "text";
 	priv->column_definitions[11].label = _("Start");
+	priv->column_definitions[11].default_width = 72;
 
 	priv->column_definitions[12].name = "estimated_end";
 	priv->column_definitions[12].model_column = ESTIMATED_END_COLUMN;
 	priv->column_definitions[12].renderer = priv->date_renderer;
 	priv->column_definitions[12].value_property_name = "text";
 	priv->column_definitions[12].label = _("End");
+	priv->column_definitions[12].default_width = 72;
 
 	priv->column_definitions[13].name = "due_date";
 	priv->column_definitions[13].model_column = DUE_DATE_COLUMN;
 	priv->column_definitions[13].renderer = priv->date_renderer;
 	priv->column_definitions[13].value_property_name = "text";
 	priv->column_definitions[13].label = _("Due");
+	priv->column_definitions[13].default_width = 72;
 
 	priv->column_definitions[14].name = "sizing";
 	priv->column_definitions[14].model_column = SIZING_COLUMN;
 	priv->column_definitions[14].renderer = priv->date_renderer;
 	priv->column_definitions[14].value_property_name = "text";
 	priv->column_definitions[14].label = _("Size");
+	priv->column_definitions[14].default_width = 72;
 
 	priv->column_definitions[15].name = "percent_done";
 	priv->column_definitions[15].model_column = PERCENT_COLUMN;
 	priv->column_definitions[15].renderer = priv->progress_renderer;
 	priv->column_definitions[15].value_property_name = "value";
 	priv->column_definitions[15].label = _("Done");
+	priv->column_definitions[15].default_width = 72;
 	
 	priv->column_definitions[16].name = "urgency";
 	priv->column_definitions[16].model_column = URGENCY_COLUMN;
 	priv->column_definitions[16].renderer = priv->text_renderer;
 	priv->column_definitions[16].value_property_name = "text";
 	priv->column_definitions[16].label = _("Urgency");
+	priv->column_definitions[16].default_width = 72;
 	
 	priv->column_definitions[17].name = "importance";
 	priv->column_definitions[17].model_column = IMPORTANCE_COLUMN;
 	priv->column_definitions[17].renderer = priv->text_renderer;
 	priv->column_definitions[17].value_property_name = "text";
 	priv->column_definitions[17].label = _("Importance");
+	priv->column_definitions[17].default_width = 72;
 	
 	priv->column_definitions[18].name = "status";
 	priv->column_definitions[18].model_column = STATUS_COLUMN;
 	priv->column_definitions[18].renderer = priv->text_renderer;
 	priv->column_definitions[18].value_property_name = "text";
 	priv->column_definitions[18].label = _("Status");
+	priv->column_definitions[18].default_width = 72;
 
 	gtt_projects_tree_create_model (gpt);
 	gtt_projects_tree_set_visible_columns (gpt, NULL);
@@ -618,6 +644,8 @@ gtt_projects_tree_add_column (GttProjectsTree *project_tree, gchar *column_name)
 				gtk_tree_view_column_add_attribute (column, c->renderer, "weight", WEIGHT_COLUMN);
 			}
 			gtk_tree_view_column_set_resizable (column, TRUE);
+			gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
+			gtk_tree_view_column_set_fixed_width (column, c->default_width);
 			gtk_tree_view_append_column (GTK_TREE_VIEW (project_tree), column);
 			if (!strcmp(c->name, "title"))
 			{
@@ -1020,4 +1048,117 @@ gtt_projects_tree_model_row_changed_callback (GtkTreeModel *model,
 			}
 		}
 	}
+}
+
+
+
+static gboolean
+count_rows (GtkTreeModel *model, GtkTreeIter *iter, GtkTreePath *path, gpointer data)
+{
+	int *rows = (int *)data;
+	++*rows;
+	return FALSE;
+}
+
+static gboolean
+get_expander_state (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+	ExpanderStateHelper *esh = (ExpanderStateHelper *) data;
+	if (gtk_tree_view_row_expanded (esh->view, path))
+	{
+		esh->states[*esh->row] = 'y';
+	}
+	else
+	{
+		esh->states[*esh->row] = 'n';
+	}
+	++(*esh->row);
+	return FALSE;
+}
+
+
+char *
+gtt_projects_tree_get_expander_state (GttProjectsTree *gpt)
+{
+	GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (gpt));
+	GtkTreeIter iter;
+	int rows = 0;
+
+	gtk_tree_model_foreach (model, count_rows, &rows);
+
+	ExpanderStateHelper esh;
+	esh.view = GTK_TREE_VIEW (gpt);
+	esh.states = g_new0(char, rows + 1);
+	rows = 0;
+	esh.row = &rows;
+
+	gtk_tree_model_foreach (model, get_expander_state, &esh);
+
+	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
+
+	if (priv->expander_states)
+	{
+		g_free (priv->expander_states);
+	}
+
+	priv->expander_states = esh.states;
+
+	return priv->expander_states;
+}
+
+static gboolean
+set_expander_state (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+	ExpanderStateHelper *esh = (ExpanderStateHelper *) data;
+	if (esh->states[*esh->row] == 'y')
+	{
+		gtk_tree_view_expand_row (esh->view, path, FALSE);
+	}
+	else
+	{
+		gtk_tree_view_collapse_row (esh->view, path);
+	}
+	++(*esh->row);
+	return FALSE;
+}
+
+void
+gtt_projects_tree_set_expander_state (GttProjectsTree *gpt, gchar *states)
+{
+	GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (gpt));
+	ExpanderStateHelper esh;
+	int row = 0;
+
+	esh.states = states;
+	esh.row = &row;
+	esh.view = GTK_TREE_VIEW (gpt);
+
+
+	gtk_tree_model_foreach (model, set_expander_state, &esh);
+}
+
+
+gint
+gtt_projects_tree_get_col_width (GttProjectsTree *gpt, int col)
+{
+	g_return_val_if_fail (col >= 0, 0);
+
+	GtkTreeViewColumn *column = gtk_tree_view_get_column (GTK_TREE_VIEW (gpt), col);
+	if (column == NULL)
+	{
+		return -1;
+	}
+	return gtk_tree_view_column_get_width (column);
+}
+
+
+
+void
+gtt_projects_tree_set_col_width (GttProjectsTree *gpt, int col, int width)
+{
+	g_return_if_fail (col >= 0);
+
+	GtkTreeViewColumn *column = gtk_tree_view_get_column (GTK_TREE_VIEW (gpt), col);
+	g_return_if_fail (column != NULL);
+	gtk_tree_view_column_set_fixed_width (column, width);
 }

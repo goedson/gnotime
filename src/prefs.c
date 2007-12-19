@@ -263,8 +263,6 @@ prefs_update_projects_view (void)
 										 config_show_subprojects);
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (projects_tree),
 									   config_show_clist_titles);
-
-
 }
 
 void

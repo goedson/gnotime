@@ -143,7 +143,7 @@ gtt_gconf_save (void)
 	SETBOOL ("/Display/ShowImportance", config_show_title_importance);
 	SETBOOL ("/Display/ShowStatus", config_show_title_status);
 
-	xpn = ctree_get_expander_state (global_ptw);
+	xpn = gtt_projects_tree_get_expander_state (projects_tree);
 	SETSTR ("/Display/ExpanderState", xpn);
 
 	/* ------------- */
@@ -202,7 +202,7 @@ gtt_gconf_save (void)
 		GSList *list= NULL;
 		for (i=0, w=0; -1< w; i++) 
 		{
-			w = ctree_get_col_width (global_ptw, i);
+			w = gtt_projects_tree_get_col_width (projects_tree, i);
 			if (0 > w) break;
 			list = g_slist_prepend (list, (gpointer) w);
 		}
@@ -467,7 +467,7 @@ gtt_gconf_load (void)
 			num = (int)(node->data);
 			if (-1 < num)
 			{
-				ctree_set_col_width (global_ptw, i, num);
+				gtt_projects_tree_set_col_width (projects_tree, i, num);
 			}
 		}
 	}

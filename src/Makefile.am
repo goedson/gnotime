@@ -11,8 +11,6 @@ bin_PROGRAMS = gnotime
 gnotime_SOURCES =     \
 	active-dialog.c    \
 	app.c              \
-	ctree.c            \
-	ctree-gnome2.c     \
 	projects-tree.c    \
 	dbus.c		   \
 	dialog.c           \
@@ -52,8 +50,6 @@ gnotime_SOURCES =     \
 noinst_HEADERS =      \
 	active-dialog.h    \
 	app.h              \
-	ctree.h            \
-	ctree-gnome2.h     \
 	projects-tree.h    \
 	dbus.h		   \
 	cur-proj.h         \

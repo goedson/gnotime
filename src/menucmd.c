@@ -22,8 +22,6 @@
 #include <string.h>
 
 #include "app.h"
-#include "ctree.h"
-#include "ctree-gnome2.h"
 #include "cur-proj.h"
 #include "err-throw.h"
 #include "file-io.h"
@@ -345,7 +343,6 @@ cut_project(GtkWidget *w, gpointer data)
 {
 	GttProject *cut_prj;
 
-	
 	cut_prj = gtt_projects_tree_get_selected_project (projects_tree);
 	if (!cut_prj) return;
 
@@ -355,14 +352,9 @@ cut_project(GtkWidget *w, gpointer data)
 	/* Clear out relevent GUI elements. */
 	prop_dialog_set_project(NULL);
 
-	if (cut_prj == cur_proj) ctree_stop_timer (cur_proj);
+	if (cut_prj == cur_proj) gen_stop_timer ();
 	gtt_project_remove(cut_prj);
 	gtt_projects_tree_remove_project (projects_tree, cut_prj);
-
-	/* Update various subsystems */
-	/* Set the notes are to whatever the new focus project is. */
-//	GttProject *prj = ctree_get_focus_project (global_ptw);
-//	notes_area_set_project (global_na, prj);
 
 	menu_set_states();      /* To enable paste menu item */
 	toolbar_set_states();
@@ -408,7 +400,7 @@ void
 copy_project(GtkWidget *w, gpointer data)
 {
 	GttProject *prj;
-	prj = ctree_get_focus_project (global_ptw);
+	prj = gtt_projects_tree_get_selected_project (projects_tree);
 
 	if (!prj) return;
 

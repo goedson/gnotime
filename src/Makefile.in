@@ -56,13 +56,12 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_gnotime_OBJECTS = active-dialog.$(OBJEXT) app.$(OBJEXT) \
-	ctree.$(OBJEXT) ctree-gnome2.$(OBJEXT) projects-tree.$(OBJEXT) \
-	dbus.$(OBJEXT) dialog.$(OBJEXT) err.$(OBJEXT) \
-	err-throw.$(OBJEXT) export.$(OBJEXT) file-io.$(OBJEXT) \
-	gconf-gnomeui.$(OBJEXT) gconf-io.$(OBJEXT) ghtml.$(OBJEXT) \
-	ghtml-deprecated.$(OBJEXT) idle-dialog.$(OBJEXT) \
-	idle-timer.$(OBJEXT) journal.$(OBJEXT) log.$(OBJEXT) \
-	main.$(OBJEXT) menucmd.$(OBJEXT) menus.$(OBJEXT) \
+	projects-tree.$(OBJEXT) dbus.$(OBJEXT) dialog.$(OBJEXT) \
+	err.$(OBJEXT) err-throw.$(OBJEXT) export.$(OBJEXT) \
+	file-io.$(OBJEXT) gconf-gnomeui.$(OBJEXT) gconf-io.$(OBJEXT) \
+	ghtml.$(OBJEXT) ghtml-deprecated.$(OBJEXT) \
+	idle-dialog.$(OBJEXT) idle-timer.$(OBJEXT) journal.$(OBJEXT) \
+	log.$(OBJEXT) main.$(OBJEXT) menucmd.$(OBJEXT) menus.$(OBJEXT) \
 	myoaf.$(OBJEXT) notes-area.$(OBJEXT) plug-edit.$(OBJEXT) \
 	plug-in.$(OBJEXT) prefs.$(OBJEXT) proj.$(OBJEXT) \
 	proj-query.$(OBJEXT) props-invl.$(OBJEXT) props-proj.$(OBJEXT) \
@@ -197,6 +196,7 @@ MKDIR_P = @MKDIR_P@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
 MSGFMT_OPTS = @MSGFMT_OPTS@
+MSGMERGE = @MSGMERGE@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -283,8 +283,6 @@ top_srcdir = @top_srcdir@
 gnotime_SOURCES = \
 	active-dialog.c    \
 	app.c              \
-	ctree.c            \
-	ctree-gnome2.c     \
 	projects-tree.c    \
 	dbus.c		   \
 	dialog.c           \
@@ -324,8 +322,6 @@ gnotime_SOURCES = \
 noinst_HEADERS = \
 	active-dialog.h    \
 	app.h              \
-	ctree.h            \
-	ctree-gnome2.h     \
 	projects-tree.h    \
 	dbus.h		   \
 	cur-proj.h         \
@@ -486,8 +482,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/active-dialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/app.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ctree-gnome2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ctree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbus.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/err-throw.Po@am__quote@

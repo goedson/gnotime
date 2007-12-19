@@ -31,8 +31,6 @@
 
 #include "active-dialog.h"
 #include "app.h"
-#include "ctree.h"
-#include "ctree-gnome2.h"
 #include "cur-proj.h"
 #include "gtt.h"
 #include "log.h"
@@ -52,7 +50,6 @@
  */
 GttProject *cur_proj = NULL;
 
-ProjTreeWindow *global_ptw = NULL;
 GttProjectsTree *projects_tree = NULL;
 NotesArea *global_na = NULL;
 GtkWidget *app_window = NULL;
@@ -275,7 +272,6 @@ focus_row_set (GttProject *proj)
 void 
 app_new(int argc, char *argv[], const char *geometry_string)
 {
-	GtkWidget *ctree;
 	GtkWidget *vbox;
 	GtkWidget *widget;
 	GtkWidget *vpane;
@@ -351,9 +347,6 @@ app_new(int argc, char *argv[], const char *geometry_string)
                      FALSE, FALSE, 1);
 
 	/* create the main columned tree for showing projects */
-	global_ptw = ctree_new();
-	ctree = ctree_get_widget(global_ptw);
-
 	projects_tree = gtt_projects_tree_new ();
 
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (projects_tree), TRUE);
@@ -374,8 +367,6 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	gtk_widget_unref (vpane);
 
     gtk_box_pack_end(GTK_BOX(vbox), status_bar, FALSE, FALSE, 2);
-
-//	notes_area_add_ctree (global_na, ctree);
 
 	notes_area_add_projects_tree (global_na, projects_tree);
 	
