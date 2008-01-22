@@ -27,6 +27,7 @@
  * Modified by:   Goedson Teixeira Paixao <goedson@debian.org>
  ********************************************************************/
 
+#include <glib.h>
 #include <glib/gi18n.h>
 
 #include "projects-tree.h"
@@ -83,6 +84,12 @@ typedef enum {
 	NCOLS
 } ModelColumn;
 
+enum {
+	COLUMNS_SETUP_DONE,
+	LAST_SIGNAL
+};
+
+
 #define N_VIEWABLE_COLS (NCOLS - 3)
 
 typedef struct _GttProjectsTreePrivate GttProjectsTreePrivate;
@@ -99,10 +106,12 @@ struct _GttProjectsTreePrivate {
 	gboolean         highlight_active;
 	ColumnDefinition column_definitions[N_VIEWABLE_COLS];
 	GTree            *row_references;
+	GTree            *column_references;
 	gulong            row_changed_handler;
 	char *expander_states;
 };
 
+static guint projects_tree_signals[LAST_SIGNAL] = {0};
 
 static void gtt_projects_tree_row_expand_collapse_callback (GtkTreeView *view, GtkTreeIter *iter, GtkTreePath *path, gpointer data);
 
@@ -172,10 +181,9 @@ gtt_projects_tree_init (GttProjectsTree* gpt)
 	priv->highlight_active = TRUE;
 
 	/* references to the rows */
-
 	priv->row_references = g_tree_new_full (project_cmp, NULL, NULL, gtk_tree_row_reference_free);
 
-	/* cell renderers user to render the tree */
+	/* cell renderers used to render the tree */
 	priv->text_renderer = gtk_cell_renderer_text_new ();
 	g_object_ref (priv->text_renderer);
 
@@ -354,6 +362,7 @@ gtt_projects_tree_finalize (GObject *obj)
 	g_object_unref (priv->time_renderer);
 	g_object_unref (priv->progress_renderer);
 	g_tree_destroy (priv->row_references);
+	g_tree_destroy (priv->column_references);
 }
 
 GttProjectsTree *
@@ -368,6 +377,13 @@ gtt_projects_tree_class_init (GttProjectsTreeClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = gtt_projects_tree_finalize;
 	g_type_class_add_private (object_class, sizeof (GttProjectsTreePrivate));
+	projects_tree_signals[COLUMNS_SETUP_DONE] = 
+		g_signal_new ("columns_setup_done",
+					  G_TYPE_FROM_CLASS (object_class),
+					  G_SIGNAL_RUN_LAST,
+					  NULL, NULL, NULL,
+					  g_cclosure_marshal_VOID__VOID,
+					  G_TYPE_NONE, 0);
 }
 
 static void
@@ -646,11 +662,13 @@ gtt_projects_tree_add_column (GttProjectsTree *project_tree, gchar *column_name)
 			gtk_tree_view_column_set_resizable (column, TRUE);
 			gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
 			gtk_tree_view_column_set_fixed_width (column, c->default_width);
+			gtk_tree_view_column_set_clickable (column, TRUE);
 			gtk_tree_view_append_column (GTK_TREE_VIEW (project_tree), column);
 			if (!strcmp(c->name, "title"))
 			{
 				gtk_tree_view_set_expander_column (GTK_TREE_VIEW (project_tree), column);
 			}
+			g_tree_insert (priv->column_references, column_name, column);
 			return;
 		}
 	}
@@ -664,6 +682,11 @@ gtt_projects_tree_set_visible_columns (GttProjectsTree *project_tree,
 	GtkTreeViewColumn *column = NULL;
 	GtkTreeView * tree_view = GTK_TREE_VIEW (project_tree);
 	GList *p;
+	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (project_tree);
+
+	g_tree_destroy (priv->column_references);
+	priv->column_references = g_tree_new (strcmp);
+
 
 	/* remove all columns */
 	while ((column = gtk_tree_view_get_column (tree_view, 0)))
@@ -685,6 +708,8 @@ gtt_projects_tree_set_visible_columns (GttProjectsTree *project_tree,
 	{
 		gtt_projects_tree_add_column (project_tree, p->data);
 	}
+	
+	g_signal_emit (project_tree, projects_tree_signals[COLUMNS_SETUP_DONE], 0);
 }
 
 static void
@@ -1161,4 +1186,37 @@ gtt_projects_tree_set_col_width (GttProjectsTree *gpt, int col, int width)
 	GtkTreeViewColumn *column = gtk_tree_view_get_column (GTK_TREE_VIEW (gpt), col);
 	g_return_if_fail (column != NULL);
 	gtk_tree_view_column_set_fixed_width (column, width);
+}
+
+GtkTreeViewColumn *
+gtt_projects_tree_get_column_by_name (GttProjectsTree *gpt, gchar *column_name)
+{
+	g_return_val_if_fail (gpt, NULL);
+	GttProjectsTreePrivate *priv = GTT_PROJECTS_TREE_GET_PRIVATE (gpt);
+
+	g_return_val_if_fail (priv->column_references, NULL);
+	return g_tree_lookup (priv->column_references, column_name);
+}
+
+void
+gtt_projects_tree_set_sorted_column (GttProjectsTree *gpt, GtkTreeViewColumn *column)
+{
+	GList *columns = gtk_tree_view_get_columns (GTK_TREE_VIEW (gpt));
+
+	GList *p = columns;
+
+	for (; p != NULL; p = p->next)
+	{
+		if (p->data == column)
+		{
+			gtk_tree_view_column_set_sort_indicator (GTK_TREE_VIEW_COLUMN(p->data), TRUE);
+			gtk_tree_view_column_set_sort_order (GTK_TREE_VIEW_COLUMN(p->data), GTK_SORT_ASCENDING);
+		} 
+		else
+		{
+			gtk_tree_view_column_set_sort_indicator (GTK_TREE_VIEW_COLUMN(p->data), FALSE);
+		}
+	}
+
+	g_list_free (columns);
 }

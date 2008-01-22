@@ -89,4 +89,9 @@ void gtt_projects_tree_insert_project_before (GttProjectsTree *gpt, GttProject *
 gchar *gtt_projects_tree_get_expander_state (GttProjectsTree *gpt);
 gint gtt_projects_tree_get_col_width (GttProjectsTree *gpt, int col);
 void gtt_projects_tree_set_col_width (GttProjectsTree *gpt, int col, int width);
+
+GtkTreeViewColumn *gtt_projects_tree_get_column_by_name (GttProjectsTree *gpt, gchar *column_name);
+
+void gtt_projects_tree_set_sorted_column (GttProjectsTree *gpt, GtkTreeViewColumn *column);
+
 #endif // __PROJECTS_TREE_H__

@@ -1,3 +1,35 @@
+2008-01-22  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/app.c (column_clicked): handler for the GtkTreeViewColumn
+	clicked signal. Sorts the project list based on the clicked
+	column's field.
+	(projects_tree_columns_setup_done): handler for the
+	GttProjectsTree "columns-setup-done" signal. Connects all columns
+	to the clicked signal handler.
+	(app_new): connect to the "columns-setup-done" signal for the
+	projects_tree object so we can connect all columns to the their
+	respective sorting functions.
+
+	* src/proj.h: added reference to the global_project list
+	reference, so we can reference it in other parts of the program.
+
+	* src/projects-tree.c (struct _GttProjectsTreePrivate): added
+	GTree with references to the GtkTreeViewColumn objects to allow
+	retrieving the columns by the name of the displayed field
+	(gtt_projects_tree_class_init): create columns_setup_done signal,
+	that will be emited when all columns have been created.
+	(gtt_projects_tree_set_visible_columns): emit the
+	columns_setup_done signal after creating all the tree view
+	columns.
+	(gtt_projects_tree_add_column):
+	- make the column headers clickable;
+	- insert reference to the newly created column into the
+	column_references GTree.
+	(gtt_projects_tree_get_column_by_name): added function to retrieve
+	a reference to a column list based on its name.
+	(gtt_projects_tree_set_sorted_column): added function to mark a
+	column as being the column for which the project list was sorted.
+
 2007-12-19  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/timer.c (zero_on_rollover): refresh the GttProjectsTree
