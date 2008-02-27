@@ -1,5 +1,7 @@
 2008-02-27  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* doc/C/man/gnotime.1: Fixed the manpage's text
+
 	* src/notes-area.c: include menus.h for prototype of the
 	menus_get_popup function.
 
