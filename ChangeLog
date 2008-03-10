@@ -1,3 +1,8 @@
+2008-03-10  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/projects-tree.c (gtt_projects_tree_init): Fixed display of
+	the description column (Fixes #1911087)
+
 2008-02-27  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* doc/C/man/gnotime.1: Fixed the manpage's text
