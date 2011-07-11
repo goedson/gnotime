@@ -1,3 +1,10 @@
+2011-07-10  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/toolbar.c, src/status-icon.c, src/prefs.c, src/notes-area.c,
+	src/menus.c, src/menucmd.c, src/main.c, src/gconf-io.c, src/app.c:
+	Removed direct 	references to private GTK struct members in order
+	to make it buildable with the -DGSEAL_ENABLE option.
+
 2011-03-20  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/Makefile.am (gnotime_LDADD): Added -lX11, fixing build with

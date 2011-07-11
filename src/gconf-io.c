@@ -105,8 +105,8 @@ gtt_gconf_save (void)
 
 	/* ------------- */
 	/* save the window location and size */
-	gdk_window_get_origin(app_window->window, &x, &y);
-	gdk_window_get_size(app_window->window, &w, &h);
+	gdk_window_get_origin(gtk_widget_get_window (app_window), &x, &y);
+	gdk_window_get_size(gtk_widget_get_window (app_window), &w, &h);
 	SETINT ("/Geometry/Width", w);
 	SETINT ("/Geometry/Height", h);
 	SETINT ("/Geometry/X", x);

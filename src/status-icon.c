@@ -63,7 +63,7 @@ status_icon_popup_menu(GtkStatusIcon *status_icon, guint button, guint activate_
 {
     GtkWidget *menu = gtk_menu_new ();
     GtkWidget *menuitem = gtk_check_menu_item_new_with_mnemonic (_("_Hide main window"));
-	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuitem), !GTK_WIDGET_VISIBLE(app_window));
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuitem), !gtk_widget_get_visible (app_window));
 	g_signal_connect (G_OBJECT (menuitem), "toggled", G_CALLBACK (status_icon_menuitem_visibility), NULL);
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
 	gtk_widget_show_all (menu);

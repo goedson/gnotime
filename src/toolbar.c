@@ -83,14 +83,6 @@ toolbar_set_states(void)
 		return;
 	}
 
-	if (mytbar->tbar && mytbar->tbar->tooltips)
-	{
-		if (config_show_tb_tips)
-			gtk_tooltips_enable(mytbar->tbar->tooltips);
-		else
-			gtk_tooltips_disable(mytbar->tbar->tooltips);
-	}
-
 	if (mytbar->paste)
 	{
 		gtk_widget_set_sensitive(mytbar->paste, have_cutted_project());

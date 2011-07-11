@@ -192,7 +192,7 @@ new_project(GtkWidget *widget, gpointer data)
 	gtk_dialog_add_button (dlg, GTK_STOCK_OK, GTK_RESPONSE_OK);
 	gtk_dialog_add_button (dlg, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 
-	vbox = GTK_BOX(dlg->vbox);
+	vbox = GTK_BOX(gtk_dialog_get_content_area (dlg));
 
 	/* Put stuff into the dialog box */
 	t = gtk_label_new(_("Project Title"));
