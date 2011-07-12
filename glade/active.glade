@@ -149,7 +149,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkOptionMenu" id="project option menu">
+		<widget class="GtkComboBox" id="project option menu">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="history">-1</property>

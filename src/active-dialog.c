@@ -17,9 +17,10 @@
  */
 
 #include "config.h"
+#include <glib.h>
+#include <glib/gi18n.h>
 
 #include <glade/glade.h>
-#include <gnome.h>
 #include <string.h>
 
 #include <qof.h>
@@ -43,7 +44,7 @@ struct GttActiveDialog_s
 	GtkButton   *help_btn;
 	GtkLabel    *active_label;
 	GtkLabel    *credit_label;
-	GtkOptionMenu  *project_menu;
+	GtkComboBox *project_menu;
 	guint        timeout_event_source;
 };
 
@@ -120,17 +121,18 @@ dialog_kill (GObject *obj, GttActiveDialog *dlg)
 static void
 start_proj (GObject *obj, GttActiveDialog *dlg)
 {
-	GtkMenu *menu;
-	GtkWidget *w;
+	GtkTreeModel *tree_model;
+	GtkTreeIter iter;
 	GttProject *prj;
-	
-	/* Start the project that the user has selected from the menu */
-	menu = GTK_MENU (gtk_option_menu_get_menu (dlg->project_menu));
-	w = gtk_menu_get_active (menu);
-	prj = g_object_get_data (G_OBJECT (w), "prj");
 
-	cur_proj_set (prj);
-	dialog_kill (obj, dlg);
+	/* start the project selected by the user, if any */
+	if (gtk_combo_box_get_active_iter (dlg->project_menu, &iter))
+	{
+		tree_model = gtk_combo_box_get_model (dlg->project_menu);
+		gtk_tree_model_get (tree_model, &iter, 1, &prj, -1);
+		cur_proj_set (prj);
+		dialog_kill (obj, dlg);
+	}
 }
 
 /* =========================================================== */
@@ -138,7 +140,8 @@ start_proj (GObject *obj, GttActiveDialog *dlg)
 static void
 setup_menus (GttActiveDialog *dlg)
 {
-	GtkMenuShell *menushell;
+	GtkListStore *list_store;
+	GtkTreeIter iter;
 	GList *prjlist, *node;
 	char * msg;
 
@@ -156,7 +159,7 @@ setup_menus (GttActiveDialog *dlg)
 						 
 	gtk_label_set_text (dlg->credit_label, msg);
 
-	menushell = GTK_MENU_SHELL (gtk_menu_new());
+	list_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
 
 	/* Give user a list only of the unfinished projects, 
 	 * so that there isn't too much clutter ... */
@@ -164,13 +167,12 @@ setup_menus (GttActiveDialog *dlg)
 	for (node = prjlist; node; node=node->next)
 	{
 		GttProject *prj = node->data;
-		GtkWidget *item;
-		item = gtk_menu_item_new_with_label (gtt_project_get_title (prj));
-		g_object_set_data (G_OBJECT(item), "prj", prj);
-		gtk_menu_shell_append (menushell, item);
-		gtk_widget_show (item);
+		gtk_list_store_append (list_store, &iter);
+		gtk_list_store_set (list_store, &iter,
+							0, gtt_project_get_title (prj),
+							1, prj,-1);
 	}
-	gtk_option_menu_set_menu (dlg->project_menu, GTK_WIDGET(menushell));
+	gtk_combo_box_set_model (dlg->project_menu, GTK_TREE_MODEL (list_store));
 }
 
 /* =========================================================== */
@@ -184,6 +186,7 @@ active_dialog_realize (GttActiveDialog * id)
 {
 	GtkWidget *w;
 	GladeXML *gtxml;
+	GtkCellRenderer *renderer;
 
 	gtxml = gtt_glade_xml_new ("glade/active.glade", "Active Dialog");
 	id->gtxml = gtxml;
@@ -196,7 +199,11 @@ active_dialog_realize (GttActiveDialog * id)
 	id->active_label = GTK_LABEL (glade_xml_get_widget (gtxml, "active label"));
 	id->credit_label = GTK_LABEL (glade_xml_get_widget (gtxml, "credit label"));
 	w = glade_xml_get_widget (gtxml, "project option menu");
-	id->project_menu = GTK_OPTION_MENU (w);
+	id->project_menu = GTK_COMBO_BOX (w);
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), renderer, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w), renderer, "text", 0, NULL);
 
 	g_signal_connect(G_OBJECT(id->dlg), "destroy",
 	          G_CALLBACK(dialog_close), id);
