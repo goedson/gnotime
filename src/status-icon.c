@@ -52,7 +52,7 @@ status_icon_activated(GtkStatusIcon *status_icon, gpointer data)
 static void
 status_icon_menuitem_visibility(GtkWidget *toggle, gpointer *user_data)
 {
-    if (GTK_WIDGET_VISIBLE(app_window))
+    if (gtk_widget_get_visible (app_window))
         gtk_widget_hide(app_window);
     else
         gtk_widget_show(app_window);

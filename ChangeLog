@@ -1,5 +1,9 @@
 2011-07-11  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/status-icon.c (status_icon_menuitem_visibility): removed
+	direct reference to GTK struct data members in order to make it
+	buildable with the -DGSEAL_ENABLE option.
+
 	* src/active-dialog.c, glade/active.glade: Use GtkComboBox instead
 	of GtkOptionMenu in the start project dialog.
 
