@@ -374,12 +374,7 @@ menu_set_states(void)
 	gtk_widget_set_sensitive(menu_main_timer[MENU_TIMER_TOGGLE_POS].widget,
 				 1);
 	mi = GTK_CHECK_MENU_ITEM(menu_main_timer[MENU_TIMER_TOGGLE_POS].widget);
-	/* Can't call the 'set_active' directly, as that issues an
-	 * event which puts us in an infinite loop.  Instead,
-	 * just set the value.
-	 * gtk_check_menu_item_set_active (mi, timer_is_running());
-	 */
-	gtk_check_menu_item_set_active (mi,timer_is_running());
+	gtk_check_menu_item_set_active (mi, timer_is_running());
 
 	/* XXX would be nice to change this menu entry to say
 	 * 'timer stopped' when the timer is stopped.  But don't

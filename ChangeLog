@@ -1,3 +1,12 @@
+2011-07-19  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/menucmd.c (menu_toggle_timer): Do not change project state
+	if it already matches the menu item state. Avoid infinite loop
+	when starting/stoping project timer.
+
+	* src/toolbar.c (toolbar_toggle_timer): added function to handle
+	toolbar button differently from the menu toggle timer menu item.
+
 2011-07-11  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/status-icon.c (status_icon_menuitem_visibility): removed

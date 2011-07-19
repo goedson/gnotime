@@ -384,19 +384,22 @@ menu_stop_timer(GtkWidget *w, gpointer data)
 }
 
 
+
 void
 menu_toggle_timer(GtkWidget *w, gpointer data)
 {
 	GttProject *prj;
 	prj = gtt_projects_tree_get_selected_project (projects_tree);
 
-	if (timer_is_running()) {
+	gboolean menu_active = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (w));
+
+	// Only take action if the new menu state is different from timer state
+	if (timer_is_running() && !menu_active) {
 		cur_proj_set (NULL);
-	} else {
+	} else if (!timer_is_running() && menu_active) {
 		cur_proj_set (prj);
 	}
 }
-
 
 void
 menu_options(GtkWidget *w, gpointer data)

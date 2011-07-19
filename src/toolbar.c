@@ -120,6 +120,19 @@ toolbar_append_stock_button (GtkToolbar *toolbar,
 	return w;
 }
 
+void
+toolbar_toggle_timer(GtkWidget *w, gpointer data)
+{
+	GttProject *prj;
+	prj = gtt_projects_tree_get_selected_project (projects_tree);
+
+	if (timer_is_running()) {
+		cur_proj_set (NULL);
+	} else {
+		cur_proj_set (prj);
+	}
+}
+
 /* ================================================================= */
 /* Assemble the buttons in the toolbar.  Which ones
  * are visible depends on the config settings.
@@ -208,7 +221,7 @@ build_toolbar(void)
 										_("Start/Stop Timer"),
 										NULL,
 										GTK_WIDGET(mytbar->timer_button_image),
-										(GtkSignalFunc) menu_toggle_timer, NULL);
+										(GtkSignalFunc) toolbar_toggle_timer, NULL);
 			position ++;
 		}
 		if (config_show_tb_calendar)
