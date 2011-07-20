@@ -20,7 +20,6 @@
 #ifndef __GTT_APP_H__
 #define __GTT_APP_H__
 
-#include <gnome.h>
 #include "notes-area.h"
 #include "proj.h"
 #include "status-icon.h"
@@ -29,7 +28,7 @@
 extern NotesArea *global_na;        /* global ptr to notes GUI area */
 extern GttProjectsTree *projects_tree;
 
-extern GtkWidget *app_window;  /* global top-level window */
+extern GtkWindow *app_window;  /* global top-level window */
 extern GtkWidget *status_bar;
 
 /* true if command line over-rides geometry */

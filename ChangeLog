@@ -1,3 +1,10 @@
+2011-07-20  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/app.c (app_new): Use a plain GtkWindow instead of GnomeApp.
+
+	* src/menus.c (menus_create): Migrate from GnomeUIInfo to
+	GtkUIManager for the creation of the main menu.
+
 2011-07-19  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/menucmd.c (menu_toggle_timer): Do not change project state

@@ -18,7 +18,6 @@
  */
 #include "config.h"
 
-#include <gnome.h>
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,6 +27,8 @@
 #include <unistd.h>
 
 #include <qof.h>
+
+#include <glib/gi18n.h>
 
 #include "active-dialog.h"
 #include "app.h"
@@ -53,7 +54,7 @@ GttProject *cur_proj = NULL;
 
 GttProjectsTree *projects_tree = NULL;
 NotesArea *global_na = NULL;
-GtkWidget *app_window = NULL;
+GtkWindow *app_window = NULL;
 GtkWidget *status_bar = NULL;
 
 
@@ -422,23 +423,30 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	GtkLabel *filler;
 	GtkHBox *labels;
 	GtkVBox *status_vbox;
+	GtkVBox *top_vbox;
+	GtkWidget *menubar;
 	GtkStatusbar *grip;
 
-	app_window = gnome_app_new(GTT_APP_NAME, GTT_APP_TITLE " " VERSION);
-	gtk_window_set_wmclass(GTK_WINDOW(app_window),
-	                         GTT_APP_NAME, GTT_APP_PROPER_NAME);
+	app_window = GTK_WINDOW (gtk_window_new (GTK_WINDOW_TOPLEVEL));
+	gtk_window_set_title (app_window, GTT_APP_TITLE " " VERSION);
+
 
 	/* 485 x 272 seems to be a good size to default to */
-	gtk_window_set_default_size(GTK_WINDOW(app_window), 485, 272);
-	gtk_window_set_resizable (GTK_WINDOW(app_window), TRUE);
+	gtk_window_set_default_size(app_window, 485, 272);
+	gtk_window_set_resizable (app_window, TRUE);
 
 	/* build menus */
-	menus_create(GNOME_APP(app_window));
+	menubar = menus_create(app_window);
+
+	top_vbox = gtk_vbox_new (FALSE, 0);
+	gtk_container_add (GTK_CONTAINER (app_window), GTK_WIDGET (top_vbox));
+	gtk_box_pack_start (GTK_BOX (top_vbox), menubar, FALSE, FALSE, 0);
+
 
 	/* build toolbar */
 	widget = build_toolbar();
 	gtk_widget_show(widget);
-	gnome_app_set_toolbar(GNOME_APP(app_window), GTK_TOOLBAR(widget));
+	gtk_box_pack_start (GTK_BOX (top_vbox), widget, FALSE, FALSE, 0);
 
 	/* container holds status bar, main ctree widget */
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -483,7 +491,8 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	gtk_box_pack_start(GTK_BOX(labels), GTK_WIDGET(filler), TRUE, TRUE, 1);
 
 	/* put timer icon into statusbar */
-	status_timer = gtk_image_new_from_stock (GNOME_STOCK_TIMER,
+	// TODO replace by a custom timer icon
+	status_timer = gtk_image_new_from_stock (GTK_STOCK_MEDIA_PLAY,
 	                                           GTK_ICON_SIZE_MENU);
 	gtk_widget_show(status_timer);
 	gtk_box_pack_end(GTK_BOX(status_bar), GTK_WIDGET(status_timer),

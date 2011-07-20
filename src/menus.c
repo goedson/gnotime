@@ -18,7 +18,6 @@
  */
 
 #include <config.h>
-#include <gnome.h>
 #include <string.h>
 
 #include "app.h"
@@ -31,6 +30,87 @@
 #include "timer.h"
 
 
+
+/* Normal items */
+
+static const GtkActionEntry entries[] = {
+		{"FileMenu", NULL, "_File"},
+		{"ProjectsMenu", NULL, "_Projects"},
+		{"SettingsMenu", NULL, "_Settings"},
+		{"ReportsMenu", NULL, "_Reports"},
+		{"TimerMenu", NULL, "_Timer"},
+		{"HelpMenu", NULL, "_Help"},
+
+		// File menu actions
+		{"ExportTasks", NULL, "_Export Tasks", "<control>E", "Export tasks to file", G_CALLBACK (export_file_picker)},
+		{"ExportProjects", NULL, "Export _Projects", "<control>P", "Export projects to file", G_CALLBACK (export_file_picker)},
+		{"Quit", GTK_STOCK_QUIT, "_Quit", "<control>Q", "Exit the program", G_CALLBACK (app_quit)},
+
+		// Projects menu actions
+		{"NewProject", GTK_STOCK_NEW, "_New ...", "<control>N", "Create a new project", G_CALLBACK (new_project)},
+		{"CutProject", GTK_STOCK_CUT, "Cu_t", "<control>D", "Delete the selected project", G_CALLBACK (cut_project)},
+		{"CopyProject", GTK_STOCK_COPY, "_Copy", "<control>F", "Copy the selected project", G_CALLBACK (copy_project)},
+		{"PasteProject", GTK_STOCK_PASTE, "_Paste", "<control>G", "Paste the previously copied project", G_CALLBACK (paste_project)},
+		{"EditTimes", GTK_STOCK_EDIT, "Edit _Times", NULL, "Edit the time interval associated with this project", G_CALLBACK (menu_howto_edit_times)},
+
+		// Settings menu actions
+		{"Preferences", GTK_STOCK_PREFERENCES, "Prefere_nces", NULL, "Edit application preferences", G_CALLBACK (menu_options)},
+
+		// Reports menu actions
+		{},
+
+		// Timer menu actions
+		{"TimerStart", GTK_STOCK_MEDIA_PLAY, "St_art", "<control>S", "Start the timer running", G_CALLBACK (menu_start_timer)},
+		{"TimerStop", GTK_STOCK_MEDIA_STOP, "Sto_p", "<control>S", "Stop the timer", G_CALLBACK (menu_start_timer)},
+
+		// Help menu actions
+		{"HelpContents", GTK_STOCK_HELP, "_Contents", "F1", "Help contents",NULL},
+		{"HelpAbout", GTK_STOCK_ABOUT, "_About", NULL, "About Gnotime",about_box},
+};
+
+/* Toggle items */
+
+static const GtkToggleActionEntries toggle_entries [] = {
+	{"TimerToggle", NULL, "_Timer Running", "<control>T", "Toggle the timer", G_CALLBACK(menu_toggle_timer)}
+};
+
+
+
+static const char * ui_description =
+	"<ui>"
+	"<menubar name='MainMenu'>"
+	"    <menu action='FileMenu'>"
+	"        <menuitem action='ExportTasks'/>"
+	"        <menuitem action='ExportProjects'/>"
+	"        <menuitem action='Quit'/>"
+	"    </menu>"
+	"    <menu action='ProjectsMenu'>"
+	"        <menuitem action='NewProject'/>"
+	"        <menuitem action='CutProject'/>"
+	"        <menuitem action='CopyProject'/>"
+	"        <menuitem action='PasteProject'/>"
+	"        <menuitem action='EditTimes'/>"
+	"    </menu>"
+	"    <menu action='SettingsMenu'>"
+	"        <menuitem action='Preferences'/>"
+	"    </menu>"
+	"    <menu action='ReportsMenu'>"
+	"    </menu>"
+	"    <menu action='TimerMenu'>"
+	"        <menuitem action='TimerStart'/>"
+	"        <menuitem action='TimerStop'/>"
+	"        <menuitem action='TimerToggle'/>"
+	"    </menu>"
+	"    <menu action='HelpMenu'>"
+	"        <menuitem action='HelpContents'/>"
+	"        <menuitem action='HelpAbout'/>"
+	"    </menu>"
+	"</menubar>"
+;
+
+
+
+/*
 static GnomeUIInfo menu_main_file[] = {
 	{GNOME_APP_UI_ITEM, N_("_Export Tasks"), NULL,
 		export_file_picker,  TAB_DELIM_EXPORT, NULL,
@@ -45,7 +125,9 @@ static GnomeUIInfo menu_main_file[] = {
 	GNOMEUIINFO_END
 };
 
+*/
 /* Insert an item with a stock icon and a user data pointer */
+/*
 #define GNOMEUIINFO_ITEM_STOCK_DATA(label, tooltip, callback, user_data, stock_id) \
    { GNOME_APP_UI_ITEM, label, tooltip, (gpointer)callback, user_data, NULL, \
      GNOME_APP_PIXMAP_STOCK, stock_id, 0, (GdkModifierType) 0, NULL }
@@ -256,7 +338,7 @@ static GnomeUIInfo menu_popup[] = {
 	GNOMEUIINFO_END
 };
 
-
+*/
 
 
 GtkMenuShell *
@@ -273,12 +355,42 @@ menus_get_popup(void)
 
 
 
-void
-menus_create(GnomeApp *app)
+GtkWidget *
+menus_create(GtkWindow *window)
 {
-	menus_get_popup(); /* initialize it */
-	gnome_app_create_menus(app, menu_main);
+	GtkActionGroup *action_group;
+	GtkWidget      *menubar;
+	GtkAccelGroup  *accel_group;
+	GtkUIManager   *ui_manager;
+	GtkVBox        *vbox;
+	GError         *error;
 
+
+
+	action_group = gtk_action_group_new ("MenuActions");
+	gtk_action_group_add_actions (action_group, entries, G_N_ELEMENTS (entries), window);
+	gtk_action_group_add_toggle_actions (action_group, toggle_entries, G_N_ELEMENTS (toggle_entries), window);
+
+	ui_manager = gtk_ui_manager_new();
+	gtk_ui_manager_insert_action_group (ui_manager, action_group, 0);
+
+	accel_group = gtk_ui_manager_get_accel_group (ui_manager);
+	gtk_window_add_accel_group (window, accel_group);
+
+	error = NULL;
+
+	if (!gtk_ui_manager_add_ui_from_string (ui_manager, ui_description, -1, &error))
+	{
+		g_message ("building menus failed: %s", error->message);
+		g_error_free (error);
+		exit (EXIT_FAILURE);
+	}
+
+	menubar = gtk_ui_manager_get_widget (ui_manager, "/MainMenu");
+
+	return menubar;
+	// TODO create the popup menu
+	//	menus_get_popup(); /* initialize it */
 }
 
 /* Global: the user-defined reports pull-down menu */

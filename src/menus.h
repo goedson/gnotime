@@ -19,8 +19,6 @@
 #ifndef __GTT_MENUS_H__
 #define __GTT_MENUS_H__
 
-#include <gnome.h>
-
 /* names of reports */
 #define ACTIVITY_REPORT "activity.ghtml"
 #define DAILY_REPORT    "daily.ghtml"
@@ -35,20 +33,20 @@
 #define TODO_EXPORT      "todo-export.ghtml"
 
 GtkMenuShell *menus_get_popup(void);
-void menus_create(GnomeApp *app);
+GtkWidget *menus_create(GtkWindow *app);
 void menus_set_states(void);
 
-void menus_add_plugins(GnomeApp *app);
+void menus_add_plugins(GtkWindow *app);
 
 /** Return pointer to user-defined reports menu */
-GnomeUIInfo * gtt_get_reports_menu (void);
+GtkMenu * gtt_get_reports_menu (void);
 
 /** Install the indicate user reports menu */
-void gtt_set_reports_menu (GnomeApp *app, GnomeUIInfo *new_menus);
+void gtt_set_reports_menu (GtkWindow *app, GtkMenu *new_menus);
 
-/** Prepend the indicated user-defined report entry into the 
+/** Prepend the indicated user-defined report entry into the
  *   user-defined reports menu.
  */
-void gtt_reports_menu_prepend_entry (GnomeApp *app, GnomeUIInfo *new_entry);
-		  
+void gtt_reports_menu_prepend_entry (GtkWindow *app, GtkMenu *new_entry);
+
 #endif /* __GTT_MENUS_H__ */
