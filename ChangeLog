@@ -1,3 +1,10 @@
+2011-07-21  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/Makefile.am (gnotime_SOURCES): Removed file-io.c from the
+	build (support for old config file formats)
+
+	* src/main.c (read_config): Remove support for old config file formats
+
 2011-07-20  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/app.c (app_new): Use a plain GtkWindow instead of GnomeApp.

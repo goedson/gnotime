@@ -526,7 +526,7 @@ read_config(void)
 
 	/* Try ... */
 	gtt_err_set_code (GTT_NO_ERR);
-	gtt_load_config ();
+	gtt_gconf_load ();
 
 	/* Catch ... */
 	conf_errcode = gtt_err_get_code();
