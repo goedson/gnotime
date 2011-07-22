@@ -31,6 +31,10 @@
 
 
 
+static GtkMenu *popup_menu;
+
+
+
 /* Normal items */
 
 static const GtkActionEntry entries[] = {
@@ -75,6 +79,12 @@ static const GtkActionEntry entries[] = {
 		// Help menu actions
 		{"HelpContents", GTK_STOCK_HELP, "_Contents", "F1", "Help contents",NULL},
 		{"HelpAbout", GTK_STOCK_ABOUT, "_About", NULL, "About Gnotime",G_CALLBACK (about_box)},
+
+		// Popup menu actions
+		{"EditTimes", NULL, "Edit _Times", NULL, "Edit the time interval associated with this project", G_CALLBACK (menu_howto_edit_times)},
+		{"NewDiaryEntry", NULL, "_New Diary Entry", NULL, "Change the current task for this project", G_CALLBACK (new_task_ui)},
+		{"EditDiaryEntry", NULL, "_Edit Diary Entry", NULL, "Edit task header for this project", G_CALLBACK (edit_task_ui)},
+
 };
 
 /* Toggle items */
@@ -125,8 +135,16 @@ static const char * ui_description =
 	"        <menuitem action='HelpAbout'/>"
 	"    </menu>"
 	"</menubar>"
-	"<menu>"
-	"    <menuitem action='ReportActivity'>"
+	"<menu name='PopupMenu'>"
+	"    <menuitem action='ReportActivity'/>"
+	"    <menuitem action='EditTimes'>"
+	"    <menuitem action='NewDiaryEntry'/>"
+	"    <menuitem action='EditDiaryEntry'/>"
+	"    <separator/>"
+	"    <menuitem action='CutProject'/>"
+	"    <menuitem action='CopyProject'/>"
+	"    <menuitem action='PasteProject'/>"
+	"    <separator/>"
 	"</menu>"
 	"</ui>"
 ;
@@ -367,13 +385,7 @@ static GnomeUIInfo menu_popup[] = {
 GtkMenuShell *
 menus_get_popup(void)
 {
-	static GtkMenuShell *menu = NULL;
-
-	if (menu) return menu;
-
-	menu = (GtkMenuShell *)gtk_menu_new();
-	gnome_app_fill_menu(menu, menu_popup, NULL, TRUE, 0);
-	return menu;
+	return GTK_MENU_SHELL (popup_menu);
 }
 
 
@@ -410,10 +422,9 @@ menus_create(GtkWindow *window)
 	}
 
 	menubar = gtk_ui_manager_get_widget (ui_manager, "/MainMenu");
+	popup_menu = gtk_ui_manager_get_widget (ui_manager, "/PopupMenu");
 
 	return menubar;
-	// TODO create the popup menu
-	//	menus_get_popup(); /* initialize it */
 }
 
 /* Global: the user-defined reports pull-down menu */

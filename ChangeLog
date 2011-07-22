@@ -1,5 +1,8 @@
 2011-07-22  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/menus.c (menus_create): Create the popup menu using
+	GtkUIManager
+
 	* src/journal.c: Added callbacks for the Reports menu items
 
 	* src/menus.c: Added menu items to the Reports menu
