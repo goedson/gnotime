@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "app.h"
 #include "export.h"
@@ -56,6 +57,8 @@ static const GtkActionEntry entries[] = {
 		{"CopyProject", GTK_STOCK_COPY, "_Copy", "<control>F", "Copy the selected project", G_CALLBACK (copy_project)},
 		{"PasteProject", GTK_STOCK_PASTE, "_Paste", "<control>G", "Paste the previously copied project", G_CALLBACK (paste_project)},
 		{"EditTimes", GTK_STOCK_EDIT, "Edit _Times", NULL, "Edit the time interval associated with this project", G_CALLBACK (menu_howto_edit_times)},
+		{"ProjectProperties",GTK_STOCK_PROPERTIES, "_Properties", "Edit project properties", G_CALLBACK (menu_properties)},
+
 
 		// Settings menu actions
 		{"Preferences", GTK_STOCK_PREFERENCES, "Prefere_nces", NULL, "Edit application preferences", G_CALLBACK (menu_options)},
@@ -105,10 +108,13 @@ static const char * ui_description =
 	"    </menu>"
 	"    <menu action='ProjectsMenu'>"
 	"        <menuitem action='NewProject'/>"
+	"        <separator/>"
 	"        <menuitem action='CutProject'/>"
 	"        <menuitem action='CopyProject'/>"
 	"        <menuitem action='PasteProject'/>"
+	"        <separator/>"
 	"        <menuitem action='EditTimes'/>"
+	"        <menuitem action='ProjectProperties'/>"
 	"    </menu>"
 	"    <menu action='SettingsMenu'>"
 	"        <menuitem action='Preferences'/>"
@@ -135,7 +141,7 @@ static const char * ui_description =
 	"        <menuitem action='HelpAbout'/>"
 	"    </menu>"
 	"</menubar>"
-	"<menu name='PopupMenu'>"
+	"<popup name='PopupMenu'>"
 	"    <menuitem action='ReportActivity'/>"
 	"    <menuitem action='EditTimes'>"
 	"    <menuitem action='NewDiaryEntry'/>"
@@ -145,7 +151,8 @@ static const char * ui_description =
 	"    <menuitem action='CopyProject'/>"
 	"    <menuitem action='PasteProject'/>"
 	"    <separator/>"
-	"</menu>"
+	"    <menuitem action='ProjectProperties'/>"
+	"</popup>"
 	"</ui>"
 ;
 
@@ -397,7 +404,6 @@ menus_create(GtkWindow *window)
 	GtkWidget      *menubar;
 	GtkAccelGroup  *accel_group;
 	GtkUIManager   *ui_manager;
-	GtkVBox        *vbox;
 	GError         *error;
 
 
@@ -422,7 +428,7 @@ menus_create(GtkWindow *window)
 	}
 
 	menubar = gtk_ui_manager_get_widget (ui_manager, "/MainMenu");
-	popup_menu = gtk_ui_manager_get_widget (ui_manager, "/PopupMenu");
+	popup_menu = GTK_MENU (gtk_ui_manager_get_widget (ui_manager, "/PopupMenu"));
 
 	return menubar;
 }
