@@ -57,7 +57,7 @@ static const GtkActionEntry entries[] = {
 		{"CopyProject", GTK_STOCK_COPY, "_Copy", "<control>F", "Copy the selected project", G_CALLBACK (copy_project)},
 		{"PasteProject", GTK_STOCK_PASTE, "_Paste", "<control>G", "Paste the previously copied project", G_CALLBACK (paste_project)},
 		{"EditTimes", GTK_STOCK_EDIT, "Edit _Times", NULL, "Edit the time interval associated with this project", G_CALLBACK (menu_howto_edit_times)},
-		{"ProjectProperties",GTK_STOCK_PROPERTIES, "_Properties", "Edit project properties", G_CALLBACK (menu_properties)},
+		{"ProjectProperties",GTK_STOCK_PROPERTIES, "_Properties", NULL, "Edit project properties", G_CALLBACK (menu_properties)},
 
 
 		// Settings menu actions
