@@ -19,6 +19,17 @@
 #ifndef __GTT_JOURNAL_H__
 #define __GTT_JOURNAL_H__
 
+
+/* callbacks for each of the built-in reports */
+void show_journal_report (GtkWidget *, gpointer data);
+void show_activity_report (GtkWidget *, gpointer data);
+void show_daily_report (GtkWidget *, gpointer data);
+void show_status_report (GtkWidget *, gpointer data);
+void show_todo_report (GtkWidget *, gpointer data);
+void show_invoice_report (GtkWidget *, gpointer data);
+void show_query_report (GtkWidget *, gpointer data);
+void show_primer_report (GtkWidget *, gpointer data);
+
 /* Menu callback, will show the report passed as filename */
 void show_report   (GtkWidget *, gpointer filename);
 

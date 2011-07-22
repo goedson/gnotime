@@ -1,3 +1,9 @@
+2011-07-22  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/journal.c: Added callbacks for the Reports menu items
+
+	* src/menus.c: Added menu items to the Reports menu
+
 2011-07-21  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/Makefile.am (gnotime_SOURCES): Removed file-io.c from the

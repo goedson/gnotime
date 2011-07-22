@@ -20,8 +20,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
 #include <glade/glade.h>
-#include <gnome.h>
 #include <gtkhtml/gtkhtml.h>
 #include <libgnomevfs/gnome-vfs.h>
 #include <stdio.h>
@@ -1353,6 +1353,56 @@ gtt_ghtml_resolve_path (const char *path_frag, const char *reference_path)
 		if (g_file_test ((buff), G_FILE_TEST_EXISTS)) return g_strdup (buff);
 	}
 	return g_strdup(path_frag);
+}
+
+
+/* callbacks for each of the built-in reports */
+void
+show_journal_report (GtkWidget *w, gpointer data)
+{
+	show_report (w, JOURNAL_REPORT);
+}
+
+void
+show_activity_report (GtkWidget *w, gpointer data)
+{
+	show_report (w, ACTIVITY_REPORT);
+}
+
+void
+show_daily_report (GtkWidget *w, gpointer data)
+{
+	show_report (w, DAILY_REPORT);
+}
+
+void
+show_status_report (GtkWidget *w, gpointer data)
+{
+	show_report (w, STATUS_REPORT);
+}
+
+void
+show_todo_report (GtkWidget *w, gpointer data)
+{
+	show_report (w, TODO_REPORT);
+}
+
+void
+show_invoice_report (GtkWidget *w, gpointer data)
+{
+	show_report (w, INVOICE_REPORT);
+}
+
+void
+show_query_report (GtkWidget *w, gpointer data)
+{
+	show_report (w, QUERY_REPORT);
+}
+
+void
+show_primer_report (GtkWidget *w, gpointer data)
+{
+	show_report (w, PRIMER_REPORT);
 }
 
 
