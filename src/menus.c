@@ -65,13 +65,13 @@ static const GtkActionEntry entries[] = {
 
 		// Help menu actions
 		{"HelpContents", GTK_STOCK_HELP, "_Contents", "F1", "Help contents",NULL},
-		{"HelpAbout", GTK_STOCK_ABOUT, "_About", NULL, "About Gnotime",about_box},
+		{"HelpAbout", GTK_STOCK_ABOUT, "_About", NULL, "About Gnotime",G_CALLBACK (about_box)},
 };
 
 /* Toggle items */
 
-static const GtkToggleActionEntries toggle_entries [] = {
-	{"TimerToggle", NULL, "_Timer Running", "<control>T", "Toggle the timer", G_CALLBACK(menu_toggle_timer)}
+static const GtkToggleActionEntry toggle_entries [] = {
+	{"TimerToggle", NULL, "_Timer Running", "<control>T", "Toggle the timer", G_CALLBACK(menu_toggle_timer), FALSE}
 };
 
 
@@ -106,6 +106,10 @@ static const char * ui_description =
 	"        <menuitem action='HelpAbout'/>"
 	"    </menu>"
 	"</menubar>"
+	"<menu>"
+	"    <menuitem action='ReportActivity'>"
+	"</menu>"
+	"</ui>"
 ;
 
 
@@ -383,7 +387,7 @@ menus_create(GtkWindow *window)
 	{
 		g_message ("building menus failed: %s", error->message);
 		g_error_free (error);
-		exit (EXIT_FAILURE);
+		exit (1);
 	}
 
 	menubar = gtk_ui_manager_get_widget (ui_manager, "/MainMenu");
