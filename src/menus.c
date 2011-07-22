@@ -57,16 +57,16 @@ static const GtkActionEntry entries[] = {
 		{"Preferences", GTK_STOCK_PREFERENCES, "Prefere_nces", NULL, "Edit application preferences", G_CALLBACK (menu_options)},
 
 		// Reports menu actions
-		{"ReportJournal", NULL, "_Journal...", "Show the journal for this project", G_CALLBACK(show_journal_report)},
-		{"ReportActivity", NULL, "_Activity...", "Show the journal together with the timestamps for this project", G_CALLBACK(show_activity_report)},
-		{"ReportDaily", NULL, "_Daily...", "Show the total time spent on a project, day by day", G_CALLBACK(show_daily_report)},
-		{"ReportStatus", NULL, "_Status...", "Show the project descriptions and notes.", G_CALLBACK(show_status_report)},
-		{"ReportTodo", NULL, "_To Do...", "Show a sample to-do list", G_CALLBACK(show_todo_report)},
-		{"ReportInvoice", NULL, "_Invoice...", "Show a sample invoice for this project", G_CALLBACK(show_invoice_report)},
-		{"ReportQuery", NULL, "_Query...", "Run a sample Query Generator", G_CALLBACK(show_query_report)},
-		{"ReportPrimer", NULL, "_Primer...", "Show a sample introductory primer for designing custom reports", G_CALLBACK(show_primer_report)},
-		{"ReportAddNew", NULL, "_New Report...", "Define a path to a new GnoTime ghtml report file", G_CALLBACK(new_report)},
-		{"ReportEditMenu", NULL, "_Edit Reports...", "Edit the entries in the Reports pulldown menu (this menu)", G_CALLBACK(report_menu_edit)},
+		{"ReportJournal", NULL, "_Journal...", NULL, "Show the journal for this project", G_CALLBACK(show_journal_report)},
+		{"ReportActivity", NULL, "_Activity...", NULL, "Show the journal together with the timestamps for this project", G_CALLBACK(show_activity_report)},
+		{"ReportDaily", NULL, "_Daily...", NULL, "Show the total time spent on a project, day by day", G_CALLBACK(show_daily_report)},
+		{"ReportStatus", NULL, "_Status...", NULL, "Show the project descriptions and notes.", G_CALLBACK(show_status_report)},
+		{"ReportTodo", NULL, "_To Do...", NULL, "Show a sample to-do list", G_CALLBACK(show_todo_report)},
+		{"ReportInvoice", NULL, "_Invoice...", NULL, "Show a sample invoice for this project", G_CALLBACK(show_invoice_report)},
+		{"ReportQuery", NULL, "_Query...", NULL, "Run a sample Query Generator", G_CALLBACK(show_query_report)},
+		{"ReportPrimer", NULL, "_Primer...", NULL, "Show a sample introductory primer for designing custom reports", G_CALLBACK(show_primer_report)},
+		{"ReportAddNew", NULL, "_New Report...", NULL, "Define a path to a new GnoTime ghtml report file", G_CALLBACK(new_report)},
+		{"ReportEditMenu", NULL, "_Edit Reports...", NULL, "Edit the entries in the Reports pulldown menu (this menu)", G_CALLBACK(report_menu_edit)},
 
 		// Timer menu actions
 		{"TimerStart", GTK_STOCK_MEDIA_PLAY, "St_art", "<control>S", "Start the timer running", G_CALLBACK (menu_start_timer)},
