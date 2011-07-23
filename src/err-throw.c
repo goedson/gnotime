@@ -19,7 +19,7 @@
 #include "config.h"
 
 #include <glib.h>
-#include <gnome.h>  /* needed only to define the _() macro */
+#include <glib/gi18n.h>
 
 #include "err-throw.h"
 

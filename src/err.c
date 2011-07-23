@@ -18,8 +18,7 @@
  */
 
 #include <config.h>
-#include <gnome.h>
-
+#include <stdio.h>
 #include "gtt.h"
  
 #include <X11/Xlib.h>

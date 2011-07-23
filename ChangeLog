@@ -1,3 +1,11 @@
+2011-07-23  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/err.c: replaced gnome.h for stdio.h for the definition of
+	fprintf
+
+	* src/err-throw.c: Replaced gnome.h by glib/gi18n.h for the
+	definition of _()
+
 2011-07-22  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/menus.c (menus_create): Create the popup menu using
