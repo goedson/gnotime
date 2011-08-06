@@ -1,3 +1,8 @@
+2011-08-05  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/dialog.c (gtt_help_popup): Use gtk_show_uri instead of
+	gnome_help_display for displaying the application help file.
+
 2011-07-23  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/err.c: replaced gnome.h for stdio.h for the definition of

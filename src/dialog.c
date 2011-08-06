@@ -17,9 +17,7 @@
  */
 
 #include <config.h>
-#include <gnome.h>
-#include <libgnome/gnome-help.h>
- 
+#include <gtk/gtk.h>
 #include "dialog.h"
 
 /* ================================================================= */
@@ -29,8 +27,14 @@ gtt_help_popup(GtkWidget *widget, gpointer data)
 {
 	GError *err = NULL;
 	char * section = data;
-	if ((section != NULL) && !strcmp ("", section)) section = NULL;
-	gnome_help_display ("gnotime", section, &err);
+	GdkScreen *screen = NULL;
+
+	screen = gtk_widget_get_screen (widget);
+
+	// TODO handle opening different sections of the help file
+	// if ((section != NULL) && !strcmp ("", section)) section = NULL;
+	gtk_show_uri (screen, "ghelp:gnotime", gtk_get_current_event_time(), &err);
+
 	if (err)
 	{
 		GtkWidget *mb;
@@ -43,8 +47,6 @@ gtt_help_popup(GtkWidget *widget, gpointer data)
 		g_signal_connect (G_OBJECT(mb), "response",
 		         G_CALLBACK (gtk_widget_destroy), mb);
 		gtk_widget_show (mb);
-
-		printf ("duude gnome help err msg: %s\n", err->message);
 	}
 }
 
