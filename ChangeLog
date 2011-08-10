@@ -1,3 +1,7 @@
+2011-08-09  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/app.c (app_new): Removed usage of deprecated functions
+
 2011-08-05  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/dialog.c (gtt_help_popup): Use gtk_show_uri instead of

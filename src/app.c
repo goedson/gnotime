@@ -56,7 +56,7 @@ GttProjectsTree *projects_tree = NULL;
 NotesArea *global_na = NULL;
 GtkWindow *app_window = NULL;
 GtkWidget *status_bar = NULL;
-
+GtkApplication *app = NULL;
 
 static GtkLabel *status_project = NULL;
 static GtkLabel *status_day_time = NULL;
@@ -427,9 +427,11 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	GtkWidget *menubar;
 	GtkStatusbar *grip;
 
+
+	app = gtk_application_new (PACKAGE, G_APPLICATION_FLAGS_NONE);
 	app_window = GTK_WINDOW (gtk_window_new (GTK_WINDOW_TOPLEVEL));
 	gtk_window_set_title (app_window, GTT_APP_TITLE " " VERSION);
-
+	gtk_application_add_window (app, app_window);
 
 	/* 485 x 272 seems to be a good size to default to */
 	gtk_window_set_default_size(app_window, 485, 272);
@@ -438,7 +440,7 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	/* build menus */
 	menubar = menus_create(app_window);
 
-	top_vbox = gtk_vbox_new (FALSE, 0);
+	top_vbox = GTK_VBOX (gtk_vbox_new (FALSE, 0));
 	gtk_container_add (GTK_CONTAINER (app_window), GTK_WIDGET (top_vbox));
 	gtk_box_pack_start (GTK_BOX (top_vbox), menubar, FALSE, FALSE, 0);
 
@@ -468,7 +470,7 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	gtk_box_pack_start(GTK_BOX(status_bar), GTK_WIDGET (status_vbox), TRUE, TRUE, 0);
 
 	grip = GTK_STATUSBAR(gtk_statusbar_new());
-	gtk_statusbar_set_has_resize_grip(grip, TRUE);
+	gtk_window_set_has_resize_grip(app_window, TRUE);
 	gtk_widget_show(GTK_WIDGET(grip));
 	gtk_box_pack_start(GTK_BOX(status_bar), GTK_WIDGET(grip), FALSE, FALSE, 0);
 
@@ -515,10 +517,10 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	 * But gtk_widget_reparent (vpane); causes  a "Gtk-CRITICAL"
 	 * to occur.  So we need a fancier move.
 	 */
-	gtk_widget_ref (vpane);
+	g_object_ref (vpane);
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent (vpane)), vpane);
 	gtk_box_pack_start(GTK_BOX(vbox), vpane, TRUE, TRUE, 0);
-	gtk_widget_unref (vpane);
+	g_object_unref (vpane);
 
 	gtk_box_pack_end(GTK_BOX(vbox), status_bar, FALSE, FALSE, 2);
 
@@ -526,7 +528,7 @@ app_new(int argc, char *argv[], const char *geometry_string)
 
 	/* we are done building it, make it visible */
 	gtk_widget_show(vbox);
-	gnome_app_set_contents(GNOME_APP(app_window), vbox);
+	gtk_container_add(GTK_CONTAINER(app_window), vbox);
 
 	gtt_status_icon_create();
 	if (!geometry_string) return;
@@ -537,18 +539,19 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	}
 	else
 	{
-		gnome_app_error(GNOME_APP(app_window),
-			_("Couldn't understand geometry (position and size)\n"
+		g_message (_("Couldn't understand geometry (position and size)\n"
 			  " specified on command line"));
+		exit (1);
+
 	}
 }
 
 void
 app_show (void)
 {
-	if (!gtk_widget_get_mapped (app_window))
+	if (!gtk_widget_get_mapped (GTK_WIDGET (app_window)))
 	{
-		gtk_widget_show(app_window);
+		gtk_widget_show(GTK_WIDGET (app_window));
 	}
 }
 
