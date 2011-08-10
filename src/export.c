@@ -18,10 +18,9 @@
  */
 
 #include <config.h>
-#include <gnome.h>
 #include <string.h>
 #include <libgnomevfs/gnome-vfs.h>
-
+#include <glib/gi18n.h>
 #include "app.h"
 #include "export.h"
 #include "ghtml.h"
