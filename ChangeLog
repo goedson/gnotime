@@ -1,3 +1,8 @@
+2011-08-10  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/journal.c, src/idle-timer.c : replaced usage of gtk_timeout*
+	by g_timeout_* 	and g_source_* for timeout handling
+
 2011-08-09  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/export.c: Removed usage of gnome.h

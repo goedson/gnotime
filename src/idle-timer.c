@@ -295,7 +295,7 @@ start_notice_events_timer (IdleTimeout *si, Window w)
   arg = g_new(struct notice_events_timer_arg, 1);
   arg->si = si;
   arg->w = w;
-  gtk_timeout_add ( si->notice_events_timeout *1000, 
+  g_timeout_add_seconds ( si->notice_events_timeout,
                    notice_events_timer, (gpointer) arg);
 }
 
@@ -883,7 +883,7 @@ idle_timeout_new (void)
   {
     /* Check to see if the mouse has moved, and set up a repeating timer
        to do so periodically (typically, every 5 seconds.) */
-    si->check_pointer_timer_id = gtk_timeout_add (si->pointer_timeout *1000, 
+    si->check_pointer_timer_id = g_timeout_add_seconds (si->pointer_timeout,
                   check_pointer_timer, (gpointer) si);
 
     /* run it once, to initialze stuff */
@@ -893,12 +893,12 @@ idle_timeout_new (void)
   /* ------------------------------------------------------------- */
 
   if (si->scanning_all_windows)
-  { 
+  {
     /* get events from every window */
     notice_events (si, DefaultRootWindow(si->dpy), True);
-  
+
     /* hijack the main loop; this is the only way to get events */
-    gtk_timeout_add (900, idle_timeout_main_loop, (gpointer)si);
+    g_timeout_add (900, idle_timeout_main_loop, (gpointer)si);
   }
 
   return si;
