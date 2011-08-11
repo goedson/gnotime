@@ -1,5 +1,8 @@
 2011-08-10  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/main.c (lock_gtt): Replaced usage of GnomeMessageBox by
+	GtkMessageDialog 
+
 	* src/journal.c, src/idle-timer.c : replaced usage of gtk_timeout*
 	by g_timeout_* 	and g_source_* for timeout handling
 
