@@ -1,3 +1,9 @@
+2011-08-17  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/err.c: Included missing stdlib.h header
+
+	* src/gtt.h: Included missing glib.h header
+
 2011-08-10  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/main.c (lock_gtt): Replaced usage of GnomeMessageBox by

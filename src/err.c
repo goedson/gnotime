@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "gtt.h"
  
 #include <X11/Xlib.h>
