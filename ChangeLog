@@ -1,5 +1,10 @@
 2011-08-17  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/idle-dialog.c: Replaced gnome.h by glib/gi18n.h for the
+	definition of the function '_'
+	(idle_timeout_func): Replaces gdk_x11_drawable_get_xid by
+	gdk_x11_window_get_xid
+
 	* src/err.c: Included missing stdlib.h header
 
 	* src/gtt.h: Included missing glib.h header

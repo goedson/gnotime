@@ -20,9 +20,9 @@
 #include "config.h"
 
 #include <glib.h>
+#include <glib/gi18n.h>
 #include <glade/glade.h>
 #include <gdk/gdkx.h>
-#include <gnome.h>
 #include <string.h>
 
 #include <X11/Xlib.h>
@@ -85,8 +85,8 @@ static gboolean
 idle_timeout_func (gpointer data)
 {
 	GttIdleDialog *idle_dialog = (GttIdleDialog *) data;
-	GdkWindow *gdk_window = gtk_widget_get_root_window (app_window);
-	XID drawable = gdk_x11_drawable_get_xid (GDK_DRAWABLE(gdk_window));
+	GdkWindow *gdk_window = gtk_widget_get_root_window (GTK_WIDGET (app_window));
+	XID drawable = gdk_x11_window_get_xid (gdk_window);
 	Status xss_query_ok = XScreenSaverQueryInfo (idle_dialog->display,
 												 drawable,
 												 idle_dialog->xss_info);
