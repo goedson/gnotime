@@ -18,9 +18,8 @@
  */
 
 #include <config.h>
-#include <gnome.h>
 #include <string.h>
-
+#include <glib/gi18n.h>
 #include "app.h"
 #include "cur-proj.h"
 #include "err-throw.h"
@@ -109,7 +108,7 @@ about_box(GtkWidget *w, gpointer data)
 		"Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA\n"
 		"02110-1301, USA.\n";
 
-	gtk_show_about_dialog (w,
+	gtk_show_about_dialog (GTK_WINDOW (w),
 						   "version", VERSION,
 						   "program-name", GTT_APP_TITLE,
 						   "authors", authors,
@@ -174,10 +173,10 @@ new_project(GtkWidget *widget, gpointer data)
 	GtkWidget **entries = g_new0(GtkWidget *, 2);
 	GtkWidget *table;
 
-	title = gnome_entry_new("project_title");
-	desc = gnome_entry_new("project_description");
-	entries[0] = gnome_entry_gtk_entry(GNOME_ENTRY(title));
-	entries[1] = gnome_entry_gtk_entry(GNOME_ENTRY(desc));
+	title = gtk_entry_new();
+	desc = gtk_entry_new();
+	entries[0] = title;
+	entries[1] = desc;
 
 	/* Create new dialog box */
 	w = gtk_dialog_new_with_buttons (
@@ -220,7 +219,7 @@ new_project(GtkWidget *widget, gpointer data)
 	/* enter in first entry goes to next */
 	g_signal_connect_object (G_OBJECT (entries[0]), "activate",
 				   G_CALLBACK (gtk_widget_grab_focus),
-				   GTK_OBJECT (entries[1]), 0);
+				   GTK_WIDGET (entries[1]), 0);
 	// gnome_dialog_editable_enters(GNOME_DIALOG(dlg),
 	// 			     GTK_EDITABLE(entries[1]));
 
