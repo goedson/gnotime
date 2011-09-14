@@ -1,5 +1,8 @@
 2011-09-13  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/ghtml-deprecated.c,src/ghtml.c: included glib/gi18n.h for
+	the definition 	of internationalization functions
+
 	* src/util.c: Removed usage of gnome.h
 	(gtt_glade_xml_new): replaced use of deprecated
 	g_concat_dir_and_file by g_build_filename
