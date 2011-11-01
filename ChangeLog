@@ -1,3 +1,10 @@
+2011-10-31  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/journal.c: replaced GtkObject by GtkWidget in Gtk event
+	callback declarations.
+	(do_show_report): replaced GTK_SIGNAL_FUNC by G_CALLBACK in
+	callback bindings
+
 2011-09-13  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/ghtml-deprecated.c,src/ghtml.c: included glib/gi18n.h for

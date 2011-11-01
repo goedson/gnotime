@@ -731,7 +731,7 @@ on_close_clicked_cb (GtkWidget *w, gpointer data)
 }
 
 static void
-destroy_cb(GtkObject *ob, gpointer data)
+destroy_cb(GtkWidget *ob, gpointer data)
 {
 }
 
@@ -1143,21 +1143,21 @@ do_show_report (const char * report, GttPlugin *plg,
 	/* Signals for the browser, and the Journal window */
 
 	glade_xml_signal_connect_data (glxml, "on_close_clicked",
-	        GTK_SIGNAL_FUNC (on_close_clicked_cb), wig);
+	        G_CALLBACK (on_close_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_save_clicked",
-	        GTK_SIGNAL_FUNC (on_save_clicked_cb), wig);
+	        G_CALLBACK (on_save_clicked_cb), wig);
 
 #if LATER
 	glade_xml_signal_connect_data (glxml, "on_print_clicked",
-	        GTK_SIGNAL_FUNC (on_print_clicked_cb), wig);
+	        G_CALLBACK (on_print_clicked_cb), wig);
 #endif
 
 	glade_xml_signal_connect_data (glxml, "on_publish_clicked",
-	        GTK_SIGNAL_FUNC (on_publish_clicked_cb), wig);
+	        G_CALLBACK (on_publish_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_refresh_clicked",
-	        GTK_SIGNAL_FUNC (on_refresh_clicked_cb), wig);
+	        G_CALLBACK (on_refresh_clicked_cb), wig);
 
 	g_signal_connect (G_OBJECT(wig->top), "destroy",
 			G_CALLBACK (destroy_cb), wig);
@@ -1188,13 +1188,13 @@ do_show_report (const char * report, GttPlugin *plg,
 	wig->publish_entry = GTK_ENTRY(glade_xml_get_widget (glxml, "url entry"));
 
 	glade_xml_signal_connect_data (glxml, "on_pub_help_clicked",
-	        GTK_SIGNAL_FUNC (gtt_help_popup), NULL);
+	        G_CALLBACK (gtt_help_popup), NULL);
 
 	glade_xml_signal_connect_data (glxml, "on_pub_cancel_clicked",
-	        GTK_SIGNAL_FUNC (on_pub_cancel_clicked_cb), wig);
+	        G_CALLBACK (on_pub_cancel_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_pub_ok_clicked",
-	        GTK_SIGNAL_FUNC (on_pub_ok_clicked_cb), wig);
+	        G_CALLBACK (on_pub_ok_clicked_cb), wig);
 
 	/* ---------------------------------------------------- */
 	/* This is the popup menu that says 'edit/delete/merge' */
@@ -1210,31 +1210,31 @@ do_show_report (const char * report, GttPlugin *plg,
 	wig->interval=NULL;
 
 	glade_xml_signal_connect_data (glxml, "on_new_interval_activate",
-	        GTK_SIGNAL_FUNC (interval_new_clicked_cb), wig);
+	        G_CALLBACK (interval_new_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_edit_activate",
-	        GTK_SIGNAL_FUNC (interval_edit_clicked_cb), wig);
+	        G_CALLBACK (interval_edit_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_delete_activate",
-	        GTK_SIGNAL_FUNC (interval_delete_clicked_cb), wig);
+	        G_CALLBACK (interval_delete_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_merge_up_activate",
-	        GTK_SIGNAL_FUNC (interval_merge_up_clicked_cb), wig);
+	        G_CALLBACK (interval_merge_up_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_merge_down_activate",
-	        GTK_SIGNAL_FUNC (interval_merge_down_clicked_cb), wig);
+	        G_CALLBACK (interval_merge_down_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_move_up_activate",
-	        GTK_SIGNAL_FUNC (interval_move_up_clicked_cb), wig);
+	        G_CALLBACK (interval_move_up_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_move_down_activate",
-	        GTK_SIGNAL_FUNC (interval_move_down_clicked_cb), wig);
+	        G_CALLBACK (interval_move_down_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_insert_memo_activate",
-	        GTK_SIGNAL_FUNC (interval_insert_memo_cb), wig);
+	        G_CALLBACK (interval_insert_memo_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_paste_memo_activate",
-	        GTK_SIGNAL_FUNC (interval_paste_memo_cb), wig);
+	        G_CALLBACK (interval_paste_memo_cb), wig);
 
 	/* ---------------------------------------------------- */
 	/* This is the popup menu that says 'edit/delete/merge' */
@@ -1247,25 +1247,25 @@ do_show_report (const char * report, GttPlugin *plg,
 	wig->task=NULL;
 
 	glade_xml_signal_connect_data (glxml, "on_new_task_activate",
-	        GTK_SIGNAL_FUNC (task_new_task_clicked_cb), wig);
+	        G_CALLBACK (task_new_task_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_edit_task_activate",
-	        GTK_SIGNAL_FUNC (task_edit_task_clicked_cb), wig);
+	        G_CALLBACK (task_edit_task_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_delete_memo_activate",
-	        GTK_SIGNAL_FUNC (task_delete_memo_clicked_cb), wig);
+	        G_CALLBACK (task_delete_memo_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_delete_times_activate",
-	        GTK_SIGNAL_FUNC (task_delete_times_clicked_cb), wig);
+	        G_CALLBACK (task_delete_times_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_copy_activate",
-	        GTK_SIGNAL_FUNC (task_copy_clicked_cb), wig);
+	        G_CALLBACK (task_copy_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_paste_activate",
-	        GTK_SIGNAL_FUNC (task_paste_clicked_cb), wig);
+	        G_CALLBACK (task_paste_clicked_cb), wig);
 
 	glade_xml_signal_connect_data (glxml, "on_new_interval_activate",
-	        GTK_SIGNAL_FUNC (task_new_interval_cb), wig);
+	        G_CALLBACK (task_new_interval_cb), wig);
 
 	/* ---------------------------------------------------- */
 	wig->hover_help_window = NULL;
