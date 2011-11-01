@@ -26,6 +26,7 @@
 #include <libgnomevfs/gnome-vfs.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <sched.h>
 
 #include <qof.h>
@@ -1297,7 +1298,7 @@ do_show_report (const char * report, GttPlugin *plg,
 char *
 gtt_ghtml_resolve_path (const char *path_frag, const char *reference_path)
 {
-	const GList *list;
+	const gchar * const *list;
 	char buff[PATH_MAX], *path;
 
 	if (!path_frag) return NULL;
@@ -1317,29 +1318,41 @@ gtt_ghtml_resolve_path (const char *path_frag, const char *reference_path)
 	}
 
 	/* Next, check each language that the user is willing to look at. */
-	list = gnome_i18n_get_language_list ("LC_MESSAGES");
-	for ( ; list; list=list->next)
+	list = g_get_language_names ();
+	for ( ; list; ++list)
 	{
-		const char *lang = list->data;
+		const gchar *lang = *list;
 
 		/* See if gnotime/ghtml/<lang>/<path_frag> exists. */
 		/* Look in the local build dir first (for testing) */
 
-		snprintf (buff, PATH_MAX, "ghtml/%s/%s", lang, path_frag);
-		path = gnome_program_locate_file (NULL, GNOME_FILE_DOMAIN_DATADIR,
-						  buff, TRUE, NULL);
-		if (path) return path;
+		path = g_build_path (DATADIR, "gnotime", "ghtml", lang, path_frag, NULL);
+		GFile *f = g_file_new_for_path (path);
+		if (g_file_query_exists (f, NULL))
+		{
+			g_object_unref (f);
+			return path;
+		}
+		else
+		{
+			g_object_unref (f);
+		}
 
-		snprintf (buff, PATH_MAX, "gnotime/ghtml/%s/%s", lang, path_frag);
-		path = gnome_program_locate_file (NULL, GNOME_FILE_DOMAIN_DATADIR,
-						  buff, TRUE, NULL);
-		if (path) return path;
 
 		/* Backwards compat, check the gtt dir, not just the gnotime dir */
-		snprintf (buff, PATH_MAX, "gtt/ghtml/%s/%s", lang, path_frag);
-		path = gnome_program_locate_file (NULL, GNOME_FILE_DOMAIN_DATADIR,
-						  buff, TRUE, NULL);
-		if (path) return path;
+
+		path = g_build_path (DATADIR, "gnotime", "ghtml", lang, path_frag, NULL);
+		f = g_file_new_for_path (path);
+		if (g_file_query_exists (f, NULL))
+		{
+			g_object_unref (f);
+			return path;
+		}
+		else
+		{
+			g_object_unref (f);
+		}
+
 
 		/* some users compile with path settings that gnome
 		 * cannot find.  In that case we have to supply a full
@@ -1348,8 +1361,17 @@ gtt_ghtml_resolve_path (const char *path_frag, const char *reference_path)
 		 *
 		 * -warlord 2001-11-29
 		 */
- 		snprintf (buff, PATH_MAX, GTTDATADIR "/ghtml/%s/%s", lang, path_frag);
-		if (g_file_test ((buff), G_FILE_TEST_EXISTS)) return g_strdup (buff);
+		path = g_build_path (GTTDATADIR, "ghtml", lang, path_frag, NULL);
+		f = g_file_new_for_path (path);
+		if (g_file_query_exists (f, NULL))
+		{
+			g_object_unref (f);
+			return path;
+		}
+		else
+		{
+			g_object_unref (f);
+		}
 	}
 	return g_strdup(path_frag);
 }

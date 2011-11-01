@@ -4,6 +4,11 @@
 	callback declarations.
 	(do_show_report): replaced GTK_SIGNAL_FUNC by G_CALLBACK in
 	callback bindings
+	(gtt_ghtml_resolve_path): use g_build_path and g_file_* instead of
+	gnome_program_locate_file to test for the presence of report
+	files.
+	Use g_get_language_names instead of gnome_i18n_get_language_list
+	to list of supported languages in the system.
 
 2011-09-13  Goedson Teixeira Paixao  <goedson@debian.org>
 
