@@ -1,3 +1,11 @@
+2011-11-29  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/app.c (projects_tree_row_activated): activate single or
+	multiple projects based on CTRL key activation
+	(main_window_key_released): track CTRL key state so CTRL+<double
+	click> on a project will activate it without affect the other
+	running projects
+
 2009-11-19  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/app.c (app_new): Add signal handlers to update the projects

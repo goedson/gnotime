@@ -18,6 +18,7 @@
  */
 #include "config.h"
 
+#include <gdk/gdk.h>
 #include <gnome.h>
 #include <sched.h>
 #include <stdio.h>
@@ -52,6 +53,9 @@
 
 static GttRunningProjects *running_projects = NULL;
 
+/* TRUE if Ctrl key is pressed */
+static gboolean ctrl_key_pressed = FALSE;
+
 GttProjectsTree *projects_tree = NULL;
 NotesArea *global_na = NULL;
 GtkWidget *app_window = NULL;
@@ -71,18 +75,64 @@ gboolean geom_size_override = FALSE;
 
 extern GttActiveDialog *act;
 
+
+static gboolean
+main_window_key_pressed (GtkWidget *widget, GdkEvent *event, gpointer data)
+{
+
+	GdkEventKey * e = (GdkEventKey *) event;
+
+
+	if (e->keyval == GDK_KEY_Control_L || e->keyval  == GDK_KEY_Control_R)
+	{
+		if (data != NULL) *(gboolean *)data = TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+main_window_key_released (GtkWidget *widget, GdkEvent *event, gpointer data)
+{
+
+	GdkEventKey * e = (GdkEventKey *) event;
+
+
+	if (e->keyval == GDK_KEY_Control_L || e->keyval  == GDK_KEY_Control_R)
+	{
+		if (data != NULL) *(gboolean *)data = FALSE;
+	}
+	return FALSE;
+}
+
+
 static void
 projects_tree_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
 {
 	GttProjectsTree *gpt = GTT_PROJECTS_TREE (tree_view);
 	GttProject *prj = gtt_projects_tree_get_selected_project (gpt);
-	if (gtt_running_projects_contains(running_projects, prj))
+
+	if (!ctrl_key_pressed)
 	{
-		gtt_running_projects_stop_project(running_projects, prj);
+		if (gtt_running_projects_contains(running_projects, prj))
+		{
+			gtt_running_projects_stop_all (running_projects);
+		}
+		else
+		{
+			gtt_running_projects_stop_all (running_projects);
+			gtt_running_projects_run_project (running_projects, prj);
+		}
 	}
 	else
 	{
-		gtt_running_projects_run_project(running_projects, prj);
+		if (gtt_running_projects_contains(running_projects, prj))
+		{
+			gtt_running_projects_stop_project (running_projects, prj);
+		}
+		else
+		{
+			gtt_running_projects_run_project (running_projects, prj);
+		}
 	}
 }
 
@@ -524,6 +574,15 @@ app_new(int argc, char *argv[], const char *geometry_string, GttRunningProjects 
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (projects_tree), TRUE);
 
 	g_signal_connect (projects_tree, "row-activated", G_CALLBACK (projects_tree_row_activated), NULL);
+
+	GdkWindow *gdk_window = gtk_widget_get_window (app_window);
+	GdkEventMask mask = gdk_window_get_events (gdk_window);
+	mask |= (GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
+	gdk_window_set_events (gdk_window, mask);
+
+	g_signal_connect (app_window, "key-press-event", G_CALLBACK (main_window_key_pressed), &ctrl_key_pressed);
+	g_signal_connect (app_window, "key-release-event", G_CALLBACK (main_window_key_released), &ctrl_key_pressed);
+
 
 	/* create the notes area */
 	global_na = notes_area_new();
