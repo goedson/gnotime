@@ -1,5 +1,11 @@
 2011-11-30  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/running-projects.c (gtt_running_projects_run_project): Avoid
+	adding NULL to the set of running projects
+	(gtt_running_projects_stop_all): Remove each project from the set
+	individually, so the listeners know when the last one has been
+	stoped.
+
 	* src/timer.c (timer_project_stoped_handler): update the projects
 	tree entry for the stoped project
 

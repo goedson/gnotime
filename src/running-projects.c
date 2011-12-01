@@ -103,6 +103,8 @@ gtt_running_projects_run_project(GttRunningProjects *rp, GttProject *prj)
 {
 	GttRunningProjectsPrivate *priv = GTT_RUNNING_PROJECTS_GET_PRIVATE (rp);
 
+	g_return_if_fail (prj != NULL);
+
 	gpointer value = g_tree_lookup (priv->projects, prj);
 	g_return_if_fail (value == NULL);
 
@@ -135,6 +137,8 @@ emit_stoped_signal (gpointer key, gpointer value, gpointer data)
 	GttRunningProjects *rp = GTT_RUNNING_PROJECTS (data);
 
 	g_signal_emit (rp, running_projects_signals[PROJECT_STOPED], 0, (gpointer) prj);
+	return FALSE;
+
 }
 
 static gboolean
@@ -145,15 +149,33 @@ update_project_timer (gpointer key, gpointer value, gpointer data)
 	return FALSE;
 }
 
+static gboolean
+add_project_to_list (gpointer key, gpointer value, gpointer data)
+{
+	GList **list = (GList **)data;
+	*list = g_list_prepend (*list, key);
+	return FALSE;
+}
+
+static void
+stop_project (gpointer value, gpointer data)
+{
+	GttProject *prj = (GttProject *) value;
+	GttRunningProjects *rp = GTT_RUNNING_PROJECTS (data);
+	gtt_running_projects_stop_project (rp, prj);
+}
+
 void
 gtt_running_projects_stop_all(GttRunningProjects *rp)
 {
 	GttRunningProjectsPrivate *priv = GTT_RUNNING_PROJECTS_GET_PRIVATE (rp);
+	GList *list = NULL;
 
 	g_tree_foreach (priv->projects, update_project_timer, NULL);
-	g_tree_foreach (priv->projects, emit_stoped_signal, rp);
-	g_tree_destroy (priv->projects);
-	priv->projects = g_tree_new_full (gtt_project_cmp, NULL, NULL, NULL);
+	g_tree_foreach (priv->projects, add_project_to_list, &list);
+
+	g_list_foreach (list, stop_project, rp);
+	g_list_free (list);
 }
 
 gint
