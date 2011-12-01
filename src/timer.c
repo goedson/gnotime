@@ -213,6 +213,10 @@ timer_project_stoped_handler (GttRunningProjects *rp, GttProject *prj)
 		stop_main_timer ();
 		start_no_project_timer ();
 	}
+	if (NULL != prj)
+	{
+		gtt_projects_tree_update_project_data (projects_tree, prj);
+	}
 }
 
 
