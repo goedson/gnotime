@@ -855,6 +855,22 @@ gtt_projects_tree_get_selected_project (GttProjectsTree *gpt)
 	return prj;
 }
 
+GttProject *
+gtt_projects_tree_get_project_for_path (GttProjectsTree *gpt,
+										GtkTreePath *path)
+{
+	GtkTreeIter iter;
+	GttProject *prj = NULL;
+	GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (gpt));
+
+	if (gtk_tree_model_get_iter (model, &iter, path))
+	{
+		gtk_tree_model_get (model, &iter, GTT_PROJECT_COLUMN, &prj, -1);
+	}
+	return prj;
+}
+
+
 static void
 gtt_projects_tree_remove_project_recursively (GttProjectsTree *gpt,
 											  GttProject *prj,

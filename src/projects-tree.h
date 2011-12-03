@@ -82,6 +82,7 @@ gboolean gtt_projects_tree_get_show_seconds (GttProjectsTree *gpt);
 void gtt_projects_tree_set_highlight_active (GttProjectsTree *gpt, gboolean highlight_active);
 gboolean gtt_projects_tree_get_highlight_active (GttProjectsTree *gpt);
 GttProject *gtt_projects_tree_get_selected_project (GttProjectsTree *gpt);
+GttProject *gtt_projects_tree_get_project_for_path (GttProjectsTree *gpt, GtkTreePath *path);
 void gtt_projects_tree_update_all_rows (GttProjectsTree *gpt);
 void gtt_projects_tree_remove_project (GttProjectsTree *gpt, GttProject *prj);
 void gtt_projects_tree_append_project (GttProjectsTree *gpt, GttProject *prj, GttProject *sibling);

@@ -109,7 +109,9 @@ static void
 projects_tree_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
 {
 	GttProjectsTree *gpt = GTT_PROJECTS_TREE (tree_view);
-	GttProject *prj = gtt_projects_tree_get_selected_project (gpt);
+	GttProject *prj = gtt_projects_tree_get_project_for_path (gpt, path);
+
+	g_return_if_fail (prj != NULL);
 
 	if (!ctrl_key_pressed)
 	{
