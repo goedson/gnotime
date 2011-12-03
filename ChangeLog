@@ -1,3 +1,12 @@
+2011-12-02  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/projects-tree.c (gtt_projects_tree_get_project_for_path):
+	Implemented method to retrieve the project referenced by a given
+	GtkTreePath object.
+
+	* src/app.c (projects_tree_row_activated): Get the project from
+	the clicked row instead of the one that is selected.
+
 2011-11-30  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/running-projects.c (gtt_running_projects_run_project): Avoid
