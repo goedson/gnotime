@@ -19,8 +19,10 @@
 #ifndef __GTT_TOOLBAR_H__
 #define __GTT_TOOLBAR_H__
 
-/* The build_toolbar() routine assembles the buttons in the toolbar.  
- * The toolbar appearence (i.e. which buttons are visible) is 
+#include "running-projects.h"
+
+/* The build_toolbar() routine assembles the buttons in the toolbar.
+ * The toolbar appearence (i.e. which buttons are visible) is
  * dynamically determined by the configuration settings.
  * Returns a pointer to the GtkToolbar widget.
  */
@@ -38,5 +40,12 @@ void toolbar_set_states(void);
  * have changed, in order for them to take effect.
  */
 void update_toolbar_sections(void);
+
+/* Signal handlers for project start/stop events
+ *  These are responsible for updating the toolbar buttons accordingly.
+ *  e.g. change timer button icon fro start to stop and vice-versa.
+ */
+void toolbar_project_started_handler (GttRunningProjects *rp, GttProject *prj);
+void toolbar_project_stoped_handler (GttRunningProjects *rp, GttProject *prj);
 
 #endif

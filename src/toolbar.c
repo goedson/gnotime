@@ -95,15 +95,6 @@ toolbar_set_states(void)
 	{
 		gtk_widget_set_sensitive(mytbar->paste, have_cutted_project());
 	}
-
-	if (mytbar->timer_button_image)
-	{
-		gtk_image_set_from_stock (mytbar->timer_button_image,
-				 ((timer_is_running()) ?
-				     GNOME_STOCK_TIMER_STOP :
-				     GNOME_STOCK_TIMER),
-				 GTK_ICON_SIZE_LARGE_TOOLBAR);
-	}
 }
 
 /* ================================================================= */
@@ -311,5 +302,37 @@ update_toolbar_sections(void)
 	tb = build_toolbar();
 	gtk_widget_show(tb);
 }
+
+
+static void
+toolbar_update_timer_button_icon (GttRunningProjects *rp)
+{
+	g_return_if_fail (mytbar != NULL);
+	g_return_if_fail(mytbar->tbar != NULL);
+	g_return_if_fail(GTK_IS_TOOLBAR(mytbar->tbar));
+
+	if (mytbar->timer_button_image)
+	{
+		gtk_image_set_from_stock (mytbar->timer_button_image,
+				((gtt_running_projects_nprojects (rp) > 0) ?
+				     GNOME_STOCK_TIMER_STOP :
+				     GNOME_STOCK_TIMER),
+				 GTK_ICON_SIZE_LARGE_TOOLBAR);
+	}
+}
+
+
+void
+toolbar_project_started_handler (GttRunningProjects *rp, GttProject *prj)
+{
+	toolbar_update_timer_button_icon (rp);
+}
+
+void
+toolbar_project_stoped_handler (GttRunningProjects *rp, GttProject *prj)
+{
+	toolbar_update_timer_button_icon (rp);
+}
+
 
 /* ======================= END OF FILE ======================= */

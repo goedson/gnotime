@@ -436,19 +436,7 @@ cur_proj_set (GttProject *proj)
 	}
 	log_proj(proj);
 
-	if (old_prj)
-	{
-		gtt_projects_tree_update_project_data (projects_tree, old_prj);
-	}
-
-	if (cur_proj)
-	{
-		gtt_projects_tree_update_project_data (projects_tree, cur_proj);
-	}
-
-	// update GUI elements 
-	menu_set_states();
-	toolbar_set_states();
+	// update GUI elements
 	if (proj)
 	{
 		prop_dialog_set_project(proj);
@@ -474,6 +462,7 @@ void
 app_project_started_handler (GttRunningProjects *rp, GttProject *prj)
 {
 	gtt_projects_tree_update_project_data (projects_tree, prj);
+	menu_set_states();
 }
 
 
@@ -481,6 +470,7 @@ void
 app_project_stoped_handler (GttRunningProjects *rp, GttProject *prj)
 {
 	gtt_projects_tree_update_project_data (projects_tree, prj);
+	menu_set_states();
 }
 
 /* ============================================================= */
@@ -502,6 +492,10 @@ app_new(int argc, char *argv[], const char *geometry_string, GttRunningProjects 
 
 	g_signal_connect (G_OBJECT(rp), "project_started", G_CALLBACK(app_project_started_handler), NULL);
 	g_signal_connect (G_OBJECT(rp), "project_stoped", G_CALLBACK(app_project_stoped_handler), NULL);
+
+	g_signal_connect (G_OBJECT(rp), "project_started", G_CALLBACK(toolbar_project_started_handler), NULL);
+	g_signal_connect (G_OBJECT(rp), "project_stoped", G_CALLBACK(toolbar_project_stoped_handler), NULL);
+
 
 	app_window = gnome_app_new(GTT_APP_NAME, GTT_APP_TITLE " " VERSION);
 	gtk_window_set_wmclass(GTK_WINDOW(app_window),
