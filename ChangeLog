@@ -1,3 +1,40 @@
+2011-12-07  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/app.c (app_project_started_handler)
+	(app_project_stoped_handler): Removed unnecessary calls to
+	menu_set_states. 
+	(app_new): Connected start/stop project signals to their
+	respective signal handlers in the menus module.
+
+	* src/main.c (post_read_data): Removed unnecessary calls to
+	menu_set_states and toolbar_set_states.
+
+	* src/menus.c (menus_project_started_handler)
+	(menus_project_stoped_handler): Added handlers for the start/stop
+	project signals.
+	(menus_update_timer_menu_states): Implemented updating of the
+	timer menu items based on the properties of the RunningProjects
+	object.
+
+2011-12-06  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/app.c (app_new): Connect the toolbar signal handlers to the
+	running_projects object, so it keeps its timer button updated.
+
+	* src/toolbar.c (toolbar_set_states): moved the code to update
+	timer button icon to a separate function to be used by signal
+	handlers.
+	(toolbar_update_timer_button_icon): Implemented method to update
+	the icon of the the "timer" toolbar button according to current
+	state of running projects.
+	(toolbar_project_started_handler)
+	(toolbar_project_stoped_handler): Implemented handlers for the
+	project start/stop signals to keep the icon of the "timer" button
+	updated.
+
+	* src/toolbar.h: added handlers for project start/stop signals, to
+	keep buttons updated. 
+
 2011-12-02  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/projects-tree.c (gtt_projects_tree_get_project_for_path):

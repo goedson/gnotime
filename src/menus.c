@@ -368,6 +368,19 @@ menus_add_plugins (GnomeApp *app)
 void
 menu_set_states(void)
 {
+	gtk_widget_set_sensitive(menu_main_projects[MENU_PROJECTS_PASTE_POS].widget,
+							 (have_cutted_project()) );
+
+	if (menu_popup[MENU_POPUP_CUT_POS].widget)
+	{
+		gtk_widget_set_sensitive(menu_popup[MENU_POPUP_PASTE_POS].widget,
+				 (have_cutted_project()) );
+	}
+}
+
+static void
+menus_update_timer_menu_states(GttRunningProjects *rp)
+{
 	GtkCheckMenuItem *mi;
 
 	if (!menu_main_timer[MENU_TIMER_START_POS].widget) return;
@@ -379,25 +392,30 @@ menu_set_states(void)
 	 * just set the value.
 	 * gtk_check_menu_item_set_active (mi, timer_is_running());
 	 */
-	mi->active = timer_is_running();
+	mi->active = gtt_running_projects_nprojects(rp) > 0;
 
 	/* XXX would be nice to change this menu entry to say
 	 * 'timer stopped' when the timer is stopped.  But don't
 	 * know how to change the menu label in gtk */
 
 	gtk_widget_set_sensitive(menu_main_timer[MENU_TIMER_START_POS].widget,
-				 (FALSE == timer_is_running()) );
+							 (FALSE == (gtt_running_projects_nprojects(rp) > 0)) );
 	gtk_widget_set_sensitive(menu_main_timer[MENU_TIMER_STOP_POS].widget,
-				 (timer_is_running()) );
-	gtk_widget_set_sensitive(menu_main_projects[MENU_PROJECTS_PASTE_POS].widget,
-				 (have_cutted_project()) );
-
-	if (menu_popup[MENU_POPUP_CUT_POS].widget)
-	{
-		gtk_widget_set_sensitive(menu_popup[MENU_POPUP_PASTE_POS].widget,
-				 (have_cutted_project()) );
-	}
+				 (gtt_running_projects_nprojects(rp) > 0) );
 }
+
+void
+menus_project_started_handler (GttRunningProjects *rp, GttProject *prj)
+{
+	menus_update_timer_menu_states (rp);
+}
+
+void
+menus_project_stoped_handler (GttRunningProjects *rp, GttProject *prj)
+{
+	menus_update_timer_menu_states (rp);
+}
+
 
 /* ======================= END OF FILE ===================== */
 

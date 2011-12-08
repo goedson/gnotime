@@ -20,6 +20,7 @@
 #define __GTT_MENUS_H__
 
 #include <gnome.h>
+#include "running-projects.h"
 
 /* names of reports */
 #define ACTIVITY_REPORT "activity.ghtml"
@@ -50,5 +51,12 @@ void gtt_set_reports_menu (GnomeApp *app, GnomeUIInfo *new_menus);
  *   user-defined reports menu.
  */
 void gtt_reports_menu_prepend_entry (GnomeApp *app, GnomeUIInfo *new_entry);
-		  
+
+
+/* Signal handlers for project start/stop events
+ *  These are responsible for updating the menu items accordingly.
+ */
+void menus_project_started_handler (GttRunningProjects *rp, GttProject *prj);
+void menus_project_stoped_handler (GttRunningProjects *rp, GttProject *prj);
+
 #endif /* __GTT_MENUS_H__ */

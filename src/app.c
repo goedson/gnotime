@@ -462,7 +462,6 @@ void
 app_project_started_handler (GttRunningProjects *rp, GttProject *prj)
 {
 	gtt_projects_tree_update_project_data (projects_tree, prj);
-	menu_set_states();
 }
 
 
@@ -470,7 +469,6 @@ void
 app_project_stoped_handler (GttRunningProjects *rp, GttProject *prj)
 {
 	gtt_projects_tree_update_project_data (projects_tree, prj);
-	menu_set_states();
 }
 
 /* ============================================================= */
@@ -495,6 +493,9 @@ app_new(int argc, char *argv[], const char *geometry_string, GttRunningProjects 
 
 	g_signal_connect (G_OBJECT(rp), "project_started", G_CALLBACK(toolbar_project_started_handler), NULL);
 	g_signal_connect (G_OBJECT(rp), "project_stoped", G_CALLBACK(toolbar_project_stoped_handler), NULL);
+
+	g_signal_connect (G_OBJECT(rp), "project_started", G_CALLBACK(menus_project_started_handler), NULL);
+	g_signal_connect (G_OBJECT(rp), "project_stoped", G_CALLBACK(menus_project_stoped_handler), NULL);
 
 
 	app_window = gnome_app_new(GTT_APP_NAME, GTT_APP_TITLE " " VERSION);

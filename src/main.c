@@ -216,8 +216,6 @@ post_read_data(void)
 								gtt_project_list_get_list (master_list),
 								TRUE);
 	gtt_post_ctree_config();
-	menu_set_states();
-	toolbar_set_states();
 	init_timer(running_projects);
 
 	/* Plugins need to be added to the main menus dynamically,
