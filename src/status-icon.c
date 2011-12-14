@@ -61,7 +61,7 @@ gtt_status_icon_destroy()
 	g_object_unref (G_OBJECT (status_icon));
 }
 
-void
+static void
 gtt_status_icon_start_timer(GttProject *prj)
 {
 	gtk_status_icon_set_from_stock (status_icon, GNOME_STOCK_TIMER);
@@ -73,10 +73,23 @@ gtt_status_icon_start_timer(GttProject *prj)
 }
 
 
-void
+static void
 gtt_status_icon_stop_timer(GttProject *prj)
 {
 	gtk_status_icon_set_tooltip (status_icon, _("Timer is not running"));
 	gtk_status_icon_set_from_stock (status_icon, GNOME_STOCK_TIMER_STOP);
 	timer_active = FALSE;
+}
+
+void
+status_icon_project_stoped_handler (GttRunningProjects *rp, GttProject *prj)
+{
+	gtt_status_icon_stop_timer (prj);
+}
+
+
+void
+status_icon_project_started_handler (GttRunningProjects *rp, GttProject *prj)
+{
+	gtt_status_icon_start_timer (prj);
 }

@@ -497,6 +497,9 @@ app_new(int argc, char *argv[], const char *geometry_string, GttRunningProjects 
 	g_signal_connect (G_OBJECT(rp), "project_started", G_CALLBACK(menus_project_started_handler), NULL);
 	g_signal_connect (G_OBJECT(rp), "project_stoped", G_CALLBACK(menus_project_stoped_handler), NULL);
 
+	g_signal_connect (G_OBJECT(rp), "project_started", G_CALLBACK(status_icon_project_started_handler), NULL);
+	g_signal_connect (G_OBJECT(rp), "project_stoped", G_CALLBACK(status_icon_project_stoped_handler), NULL);
+
 
 	app_window = gnome_app_new(GTT_APP_NAME, GTT_APP_TITLE " " VERSION);
 	gtk_window_set_wmclass(GTK_WINDOW(app_window),

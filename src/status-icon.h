@@ -28,8 +28,10 @@
 
 #include <glib.h>
 #include "proj.h"
+#include "running-projects.h"
 
 void gtt_status_icon_create();
 void gtt_status_icon_destroy();
-void gtt_status_icon_start_timer(GttProject *prj);
-void gtt_status_icon_stop_timer(GttProject *prj);
+void status_icon_project_stoped_handler (GttRunningProjects *rp, GttProject *prj);
+void status_icon_project_started_handler (GttRunningProjects *rp, GttProject *prj);
+
