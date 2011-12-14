@@ -61,35 +61,60 @@ gtt_status_icon_destroy()
 	g_object_unref (G_OBJECT (status_icon));
 }
 
-static void
-gtt_status_icon_start_timer(GttProject *prj)
+
+/* Copies the pointer for the first project in the running projects structure */
+static gboolean
+copy_prj (gpointer key, gpointer value, gpointer data)
 {
-	gtk_status_icon_set_from_stock (status_icon, GNOME_STOCK_TIMER);
-	gchar *text = g_strdup_printf(_("Timer running for %s"),
-								  gtt_project_get_title(prj));
-	gtk_status_icon_set_tooltip(status_icon, text);
-	g_free (text);
-	timer_active = TRUE;
+	*(GttProject **)data = key;
+	return TRUE;
 }
 
 
+/* Update the status icon image and text according to the running projects object state */
 static void
-gtt_status_icon_stop_timer(GttProject *prj)
+gtt_status_icon_update (GttRunningProjects *rp)
 {
-	gtk_status_icon_set_tooltip (status_icon, _("Timer is not running"));
-	gtk_status_icon_set_from_stock (status_icon, GNOME_STOCK_TIMER_STOP);
-	timer_active = FALSE;
+	g_return_if_fail (status_icon != NULL);
+
+	if (gtt_running_projects_nprojects (rp) > 0)
+	{
+		gtk_status_icon_set_from_stock (status_icon, GNOME_STOCK_TIMER);
+		gchar *text;
+
+		if (gtt_running_projects_nprojects (rp) == 1)
+		{
+			GttProject *prj = NULL;
+			gtt_running_projects_foreach (rp, copy_prj, &prj);
+			*text = g_strdup_printf(_("Timer running for %s"),
+									gtt_project_get_title(prj));
+		}
+		else
+		{
+			*text = g_strdup_printf (_("Timer running for %d projects"),
+									 gtt_running_projects_nprojects (rp));
+		}
+		gtk_status_icon_set_tooltip(status_icon, text);
+		g_free (text);
+		timer_active = TRUE;
+	}
+	else
+	{
+		gtk_status_icon_set_tooltip (status_icon, _("Timer is not running"));
+		gtk_status_icon_set_from_stock (status_icon, GNOME_STOCK_TIMER_STOP);
+		timer_active = FALSE;
+	}
 }
 
 void
 status_icon_project_stoped_handler (GttRunningProjects *rp, GttProject *prj)
 {
-	gtt_status_icon_stop_timer (prj);
+	gtt_status_icon_update (rp);
 }
 
 
 void
 status_icon_project_started_handler (GttRunningProjects *rp, GttProject *prj)
 {
-	gtt_status_icon_start_timer (prj);
+	gtt_status_icon_update (rp);
 }
