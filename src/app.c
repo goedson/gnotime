@@ -407,32 +407,16 @@ cur_proj_set (GttProject *proj)
    running projects signals 
 
 	log_proj(NULL);
-	gtt_project_timer_stop (cur_proj);
-	gtt_status_icon_stop_timer (proj);
 	run_shell_command (cur_proj, FALSE);
 
 	GttProject *old_prj = cur_proj;
 	if (proj) 
 	{
-		if (timer_is_running ())
-		{
-			stop_main_timer ();
-		}
 		cur_proj = proj;
-		gtt_project_timer_start (proj);
-		gtt_status_icon_start_timer (proj);
 		run_shell_command (cur_proj, TRUE);
-		start_idle_timer ();
-		start_main_timer ();
 	}
 	else
 	{
-		if (timer_is_running ())
-		{
-			stop_main_timer ();
-		}
-		cur_proj = NULL;
-		start_no_project_timer ();
 	}
 	log_proj(proj);
 
