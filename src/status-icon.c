@@ -75,7 +75,7 @@ copy_prj (gpointer key, gpointer value, gpointer data)
 static void
 gtt_status_icon_update (GttRunningProjects *rp)
 {
-	g_return_if_fail (status_icon != NULL);
+	if (status_icon == NULL) return;
 
 	if (gtt_running_projects_nprojects (rp) > 0)
 	{
