@@ -1,5 +1,8 @@
 2011-12-13  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/status-icon.c (gtt_status_icon_update): Correctly handle the
+	possibility for more than one project to be running
+
 	* src/app.c (app_new): Connected the status icon signal handlers
 	to the project start/stop signals
 
