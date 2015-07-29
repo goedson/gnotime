@@ -46,7 +46,7 @@ dnl *****************************************
 LIBGNOME_REQUIRED=2.0.0
 LIBGNOMEUI_REQUIRED=2.0.3
 GLIB_REQUIRED=2.14
-GTK_REQUIRED=2.10
+GTK_REQUIRED=3.0
 LIBGNOMEVFS_REQUIRED=2.0.0
 LIBGLADE_REQUIRED=2.0.0
 LIBGTKHTML_REQUIRED=3.0.0
@@ -76,7 +76,7 @@ AC_SUBST(GLIB_LIBS)
 dnl *****************************************
 dnl Check for GTK+
 dnl *****************************************
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED)
+PKG_CHECK_MODULES(GTK, gtk+-3.0 >= $GTK_REQUIRED)
 AC_SUBST(GTK_FLAGS)
 AC_SUBST(GTK_LIBS)
 
