@@ -1,4 +1,4 @@
-2015-07-30  Goedson Teixeira Paixao  <goedson@zambs>
+2015-07-30  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/*.c: removed references to <gnome.h>
 
@@ -119,6 +119,64 @@
 	src/menus.c, src/menucmd.c, src/main.c, src/gconf-io.c, src/app.c:
 	Removed direct 	references to private GTK struct members in order
 	to make it buildable with the -DGSEAL_ENABLE option.
+
+2013-07-17  Linas Vepstas <linasvepstas@gmail.com>
+
+	* configure.in: Bump version number to 2.4.0
+	* git tag for release; publish 2.4.0 tarball to sourceforge.
+
+2012-11-29  Linas Vepstas <linasvepstas@gmail.com>
+
+	* configure.in: Bump version number to 2.3.1
+	* configure.in: Enable non-verbose build by default.
+	* fix assorted compiler warnings.
+	* timer.c: fix crash because timer was not initialized!
+	* Updated Czech translation from Petr Gajdusek <gajdusek.petr@centrum.cz>
+	* Updated Danish translation from Joe Hansen <joedalton2@yahoo.dk>
+	* ghtml.c: Port to guile-2.0
+
+2011-11-30  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/Makefile.am: Use detected X11 configurations
+
+	* configure.in: Check for presence of X11
+
+2011-10-24  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* Fixed bug #3372762
+
+	* src/props-invl.c (edit_interval_set_close_callback): Added
+	function to set the close dialog callback
+
+	* src/journal.c (edit_interval_close_cb): Added callback to handle
+	the destruction of interval editing dialog
+	(interval_new_clicked_cb,interval_edit_clicked_cb): set the close
+	callback in the edit interval dialog
+
+2011-10-04  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/dialog.c (gtt_help_popup): Added format string to
+	call to gtk_message_dialog_new
+
+	* src/export.c (export_show_error_message): Added format string to
+	call to gtk_message_dialog_format_secondary_text
+
+	* src/main.c (try_restoring_backup): Added format string to
+	call to gtk_message_dialog_new
+
+	* src/menucmd.c (menu_howto_edit_times): Added format string to
+	call to gtk_message_dialog_new
+
+2011-06-28  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* configure.in: Updated GTK_REQUIRED to 2.12, which is the minimum
+	version containing the gtk_tree_view_set_show_expanders method.
+
+2011-06-25  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/notes-area.c (notes_area_new): added custom cell renderer in
+	order to ellipsize long entries (Fixes #3310918). Thanks Petr
+	Gajdusek for the patch.
 
 2011-03-20  Goedson Teixeira Paixao  <goedson@debian.org>
 
@@ -253,8 +311,8 @@
 2008-11-28  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/idle-dialog.c (show_idle_dialog): mark the idle dialog as
-       visible before stopping the project timer so we don't start the no
-       project timeout timer when it's not needed.
+	visible before stopping the project timer so we don't start the no
+	project timeout timer when it's not needed.
 
 
 2008-11-27  Goedson Teixeira Paixao  <goedson@debian.org>

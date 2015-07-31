@@ -99,7 +99,7 @@ AM_CFLAGS = -g -Wall     \
 	${LIBGTKHTML_CFLAGS}  \
 	${LIBGLADE_CFLAGS}    \
 	${LIBXML2_CFLAGS} \
-	${GUILE_CFLAGS}
+	${GUILE_CFLAGS} ${X11_CFLAGS}
 
 INCLUDES =                                   \
 	$(LIBQOF_CFLAGS)                          \
@@ -136,7 +136,8 @@ gnotime_LDADD =          \
 	$(LIBXML2_LIBS)       \
 	${GUILE_LIBS}         \
 	$(INTLLIBS) \
-	${GUILE_LDFLAGS} -lX11
+	${GUILE_LDFLAGS} \
+    ${X11_LIBS}
 
 EXTRA_DIST =         \
 	down.xpm          \
@@ -147,7 +148,7 @@ EXTRA_DIST =         \
 LIBGTK_SRCS= dbus.c dbus.h
 BUILT_SOURCES=	dbus-glue.h
 dbus-glue.h : dbus.xml Makefile
-	dbus-binding-tool --mode=glib-server --output=$@ --prefix=gnotime_dbus dbus.xml
+	dbus-binding-tool --mode=glib-server --output=$@ --prefix=gnotime_dbus $(srcdir)/dbus.xml
 dbus.o:	dbus-glue.h
 
 

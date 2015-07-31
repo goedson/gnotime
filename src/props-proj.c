@@ -27,7 +27,7 @@
 #include "props-proj.h"
 #include "util.h"
 
-typedef struct _PropDlg 
+typedef struct _PropDlg
 {
 	GladeXML *gtxml;
 	GnomePropertyBox *dlg;
@@ -69,10 +69,10 @@ typedef struct _PropDlg
 })
 
 
-static void 
+static void
 prop_set(GnomePropertyBox * pb, gint page, PropDlg *dlg)
 {
-	int ivl;
+	long ivl;
 	const gchar *cstr;
 	gchar *str;
 	double rate;
@@ -84,11 +84,11 @@ prop_set(GnomePropertyBox * pb, gint page, PropDlg *dlg)
 	{
 		gtt_project_freeze (dlg->proj);
 		cstr = gtk_entry_get_text(dlg->title);
-		if (cstr && cstr[0]) 
+		if (cstr && cstr[0])
 		{
 			gtt_project_set_title(dlg->proj, cstr);
-		} 
-		else 
+		}
+		else
 		{
 			gtt_project_set_title(dlg->proj, _("empty"));
 			gtk_entry_set_text(dlg->title, _("empty"));
@@ -130,12 +130,12 @@ prop_set(GnomePropertyBox * pb, gint page, PropDlg *dlg)
 	{
 		gtt_project_freeze (dlg->proj);
 		
-		ivl = (int) GET_MENU (dlg->urgency, "urgency");
+		ivl = (long) GET_MENU (dlg->urgency, "urgency");
 		gtt_project_set_urgency (dlg->proj, (GttRank) ivl);
-		ivl = (int) GET_MENU (dlg->importance, "importance");
+		ivl = (long) GET_MENU (dlg->importance, "importance");
 		gtt_project_set_importance (dlg->proj, (GttRank) ivl);
 
-		ivl = (int) GET_MENU (dlg->status, "status");
+		ivl = (long) GET_MENU (dlg->status, "status");
 		gtt_project_set_status (dlg->proj, (GttProjectStatus) ivl);
 
 		tval = gnome_date_edit_get_time (dlg->start);
@@ -160,7 +160,7 @@ prop_set(GnomePropertyBox * pb, gint page, PropDlg *dlg)
 /* ============================================================== */
 
 
-static void 
+static void
 do_set_project(GttProject *proj, PropDlg *dlg)
 {
 	GttProjectStatus status;
@@ -171,7 +171,7 @@ do_set_project(GttProject *proj, PropDlg *dlg)
 
 	if (!dlg) return;
 
-	if (!proj) 
+	if (!proj)
 	{
 		/* We null these out, because old values may be left
 		 * over from an earlier project */
@@ -283,9 +283,9 @@ do_set_project(GttProject *proj, PropDlg *dlg)
 	        GTK_OBJECT(dlg->dlg));                                 \
 	GNOME_DATE_EDIT(widget); })
 
-static void wrapper (void * gobj, void * data) {   
-	gnome_property_box_changed (GNOME_PROPERTY_BOX(data)); 
-} 
+static void wrapper (void * gobj, void * data) {
+	gnome_property_box_changed (GNOME_PROPERTY_BOX(data));
+}
 
 #define TEXTED(NAME) ({                                          \
 	GtkWidget *widget;                                            \
@@ -319,7 +319,7 @@ static void wrapper (void * gobj, void * data) {
 
 /* ================================================================= */
 
-static void 
+static void
 help_cb (GnomePropertyBox *propertybox, gint page_num, gpointer data)
 {
 	gtt_help_popup (GTK_WIDGET(propertybox), data);
@@ -400,7 +400,7 @@ prop_dialog_new (void)
 
 /* ============================================================== */
 
-static void 
+static void
 redraw (GttProject *prj, gpointer data)
 {
 	PropDlg *dlg = data;
@@ -411,22 +411,22 @@ redraw (GttProject *prj, gpointer data)
 
 static PropDlg *dlog = NULL;
 
-void 
+void
 prop_dialog_show(GttProject *proj)
 {
 	if (!dlog) dlog = prop_dialog_new();
- 
+
 	gtt_project_remove_notifier (dlog->proj, redraw, dlog);
 	do_set_project(proj, dlog);
 	gtt_project_add_notifier (proj, redraw, dlog);
 	gtk_widget_show(GTK_WIDGET(dlog->dlg));
 }
 
-void 
+void
 prop_dialog_set_project(GttProject *proj)
 {
 	if (!dlog) return;
- 
+
 	gtt_project_remove_notifier (dlog->proj, redraw, dlog);
 	do_set_project(proj, dlog);
 	gtt_project_add_notifier (proj, redraw, dlog);

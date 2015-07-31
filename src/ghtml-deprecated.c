@@ -21,7 +21,7 @@
 #define _GNU_SOURCE
 #include <glib.h>
 #include <glib/gi18n.h>
-#include <guile/gh.h>
+#include <libguile.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -34,7 +34,7 @@
 #include "proj.h"
 #include "util.h"
 
-/* This file contains deprecated routines, which should go away 
+/* This file contains deprecated routines, which should go away
  * sometime in 2004 or 2005, around gnotime version 3.0 or so
  */
 
@@ -63,7 +63,7 @@ typedef enum {
 
 
 /* ============================================================== */
-/* This routine outputs a simple, hard-coded table showing the 
+/* This routine outputs a simple, hard-coded table showing the
  * project journal.  Its not terribly useful for use inside of
  * reports, but its a great place to understand how the other
  * code in this file works. */
@@ -77,10 +77,10 @@ do_show_journal (GttGhtml *ghtml, GttProject *prj)
 	char * ps;
 	gboolean show_links = ghtml->show_links;
 
-	if (NULL == ghtml->write_stream) return SCM_UNSPECIFIED;  
+	if (NULL == ghtml->write_stream) return SCM_UNSPECIFIED;
 
 	p = g_string_new(NULL);
-	g_string_append_printf (p, 
+	g_string_append_printf (p,
 		"<b>The use of this function is deprecated. "
 		" Please see the examples for the recommended style.</b>"
 		"<table border=1>\n"
@@ -97,10 +97,10 @@ do_show_journal (GttGhtml *ghtml, GttProject *prj)
 		time_t prev_stop = 0;
 		GList *in;
 		GttTask *tsk = node->data;
-		
+
 		p = g_string_truncate (p, 0);
 		p = g_string_append (p, "<tr><td colspan=4>");
-		if (show_links) 
+		if (show_links)
 		{
 			g_string_append_printf (p, "<a href=\"gtt:task:0x%lx\">", (long)tsk);
 		}
@@ -113,7 +113,7 @@ do_show_journal (GttGhtml *ghtml, GttProject *prj)
 
 		(ghtml->write_stream) (ghtml, p->str, p->len, ghtml->user_data);
 
-		
+
 		for (in=gtt_task_get_intervals(tsk); in; in=in->next)
 		{
 			GttInterval *ivl = in->data;
@@ -121,12 +121,12 @@ do_show_journal (GttGhtml *ghtml, GttProject *prj)
 			start = gtt_interval_get_start (ivl);
 			stop = gtt_interval_get_stop (ivl);
 			elapsed = stop - start;
-			
+
 			p = g_string_truncate (p, 0);
-			p = g_string_append (p, 
+			p = g_string_append (p,
 				"<tr><td> &nbsp; &nbsp; &nbsp; </td>\n"
 				"<td align=right> &nbsp; &nbsp; ");
-			if (show_links) 
+			if (show_links)
 			{
 				g_string_append_printf (p, "<a href=\"gtt:interval:0x%lx\">", (long)ivl);
 			}
@@ -146,7 +146,7 @@ do_show_journal (GttGhtml *ghtml, GttProject *prj)
 			/* print hour only or date too? */
 			prt_date = xxxqof_is_same_day(start, stop);
 			if (show_links) p = g_string_append (p, "</a>");
-			p = g_string_append (p, 
+			p = g_string_append (p,
 				" &nbsp; &nbsp; </td>\n"
 				"<td> &nbsp; &nbsp; ");
 			if (show_links)
@@ -172,14 +172,14 @@ do_show_journal (GttGhtml *ghtml, GttProject *prj)
 		}
 
 	}
-	
+
 	ps = "</table>\n";
 	(ghtml->write_stream) (ghtml, ps, strlen(ps), ghtml->user_data);
 
 	/* should the free-segment be false or true ??? */
 	g_string_free (p, FALSE);
 
-	return SCM_UNSPECIFIED;  
+	return SCM_UNSPECIFIED;
 }
 
 /* ============================================================== */
@@ -228,13 +228,13 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 	}
 	for (i=0; i<ghtml->ntask_cols; i++)
 	{
-		switch (ghtml->task_cols[i]) 
+		switch (ghtml->task_cols[i])
 		{
 			case MEMO:
 			{
 				int mcols;
 				mcols = ghtml->ninvl_cols - ghtml->ntask_cols;
-				if (0 >= mcols) mcols = 1; 
+				if (0 >= mcols) mcols = 1;
 				if (output_html) g_string_append_printf (p, "<th colspan=%d>", mcols);
 				TASK_COL_TITLE (_("Diary Entry"));
 				break;
@@ -271,7 +271,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 				if (output_html) p = g_string_append (p, "<th>");
 				TASK_COL_TITLE (_("No Default Value"));
 		}
-		p = g_string_append (p, ghtml->delim);	
+		p = g_string_append (p, ghtml->delim);
 		if (output_html) p = g_string_append (p, "</th>\n");
 	}
 
@@ -282,7 +282,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 	for (i=0; i<ghtml->ninvl_cols; i++)
 	{
 		if (output_html) p = g_string_append (p, "<th>");
-		switch (ghtml->invl_cols[i]) 
+		switch (ghtml->invl_cols[i])
 		{
 			case START_DATIME:
 				INVL_COL_TITLE (_("Start"));
@@ -320,7 +320,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 		GttTask *tsk = node->data;
 		int task_secs;
 		double hours, value=0.0, billable_value=0.0;
-		
+
 		/* set up data */
 		billstatus = gtt_task_get_billstatus (tsk);
 		billable = gtt_task_get_billable (tsk);
@@ -329,7 +329,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 		/* if we are in invoice mode, then skip anything not billable */
 		if (invoice)
 		{
-			if ((GTT_BILL != billstatus) || 
+			if ((GTT_BILL != billstatus) ||
 			    (GTT_NOT_BILLABLE == billable)) continue;
 		}
 
@@ -375,15 +375,15 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 		}
 		for (i=0; i<ghtml->ntask_cols; i++)
 		{
-			switch (ghtml->task_cols[i]) 
+			switch (ghtml->task_cols[i])
 			{
 				case MEMO:
 				{
 					int mcols;
 					mcols = ghtml->ninvl_cols - ghtml->ntask_cols;
-					if (0 >= mcols) mcols = 1; 
+					if (0 >= mcols) mcols = 1;
 					if (output_html) g_string_append_printf (p, "<td colspan=%d>", mcols);
-					if (show_links) 
+					if (show_links)
 					{
 						g_string_append_printf (p, "<a href=\"gtt:task:0x%lx\">", (long)tsk);
 					}
@@ -398,13 +398,13 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 					if (output_html) p = g_string_append (p, "<td align=left>");
 					pp = gtt_task_get_notes(tsk);
 					if (!pp || !pp[0]) pp = _("(empty)");
-					p = g_string_append (p, pp); 
+					p = g_string_append (p, pp);
 					break;
 
 				case TASK_TIME:
 					if (output_html) p = g_string_append (p, "<td align=right>");
 					xxxqof_print_hours_elapsed_buff (buff, 100, task_secs, TRUE);
-					p = g_string_append (p, buff); 
+					p = g_string_append (p, buff);
 					break;
 
 				case BILLSTATUS:
@@ -460,7 +460,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 
 				case VALUE:
 					if (output_html) p = g_string_append (p, "<td align=right>");
-					
+
 					/* hack alert should use i18n currency/monetary printing */
 					g_string_append_printf (p, "$%.2f", value+0.0049);
 					break;
@@ -485,7 +485,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 			p = g_string_append (p, "\n");
 			(ghtml->write_stream) (ghtml, p->str, p->len, ghtml->user_data);
 		}
-		
+
 		/* write out intervals */
 		for (in=gtt_task_get_intervals(tsk); in; in=in->next)
 		{
@@ -513,7 +513,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 			for (i=0; i<ghtml->ninvl_cols; i++)
 			{
 
-				switch (ghtml->invl_cols[i]) 
+				switch (ghtml->invl_cols[i])
 				{
 	case START_DATIME:
 	{
@@ -575,7 +575,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 
 			if (output_html && (0<ghtml->ninvl_cols)) p = g_string_append (p, "</tr>\n");
 			p = g_string_append (p, ghtml->delim);
-			if (0 < p->len) 
+			if (0 < p->len)
 			{
 				(ghtml->write_stream) (ghtml, p->str, p->len, ghtml->user_data);
 			}
@@ -585,7 +585,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 	}
 
 	g_string_free (p, FALSE);
-	
+
 	if (output_html)
 	{
 		char * ps = "</table>\n";
@@ -595,7 +595,7 @@ do_show_table (GttGhtml *ghtml, GttProject *prj, int invoice)
 
 /* ============================================================== */
 
-static SCM 
+static SCM
 gtt_hello (void)
 {
 	GttGhtml *ghtml = ghtml_guile_global_hack;
@@ -607,7 +607,7 @@ gtt_hello (void)
 	(ghtml->write_stream) (ghtml, p, strlen(p), ghtml->user_data);
 
 	/* maybe we should return something meaningful, like the string? */
-	return SCM_UNSPECIFIED;  
+	return SCM_UNSPECIFIED;
 }
 
 /* ============================================================== */
@@ -724,7 +724,7 @@ decode_scm_col_list (GttGhtml *ghtml, SCM col_list)
 	/* reset the parser */
 	ghtml->ninvl_cols = 0;
 	ghtml->ntask_cols = 0;
-		
+
 	while (!scm_is_null (col_list))
 	{
 		col_name = SCM_CAR (col_list);
@@ -779,24 +779,24 @@ static SCM
 show_export (SCM col_list)
 {
 	GttGhtml *ghtml = ghtml_guile_global_hack;
-	
+
 	SCM rc;
 	SCM_ASSERT ( scm_is_pair (col_list), col_list, SCM_ARG1, "gtt-show-export");
 	rc = decode_scm_col_list (ghtml, col_list);
-	
+
 	ghtml->show_html = FALSE;
 	ghtml->show_links = FALSE;
 	ghtml->delim = "\t";
-	
+
 	do_show_table (ghtml, ghtml->prj, FALSE);
-	
-	
+
+
 	return rc;
 }
 
 /* ============================================================== */
-/* Register callback handlers for various internally defined 
- * scheme forms. 
+/* Register callback handlers for various internally defined
+ * scheme forms.
  */
 
 static int depr_is_inited = 0;
@@ -809,7 +809,7 @@ depr_register_procs (void)
 	scm_c_define_gsubr("gtt-show-table",   1, 0, 0, show_table);
 	scm_c_define_gsubr("gtt-show-invoice", 1, 0, 0, show_invoice);
 	scm_c_define_gsubr("gtt-show-export",  1, 0, 0, show_export);
-	
+
 }
 
 

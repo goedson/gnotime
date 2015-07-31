@@ -35,7 +35,7 @@
 
 int config_no_project_timeout;
 
-struct GttActiveDialog_s 
+struct GttActiveDialog_s
 {
 	GladeXML    *gtxml;
 	GtkDialog   *dlg;
@@ -156,12 +156,12 @@ setup_menus (GttActiveDialog *dlg)
 	msg = _("You can credit this project with the time that you worked "
 	        "on it but were away from the keyboard.  Enter a time below, "
 	        "the project will be credited when you click 'Start'");
-						 
+
 	gtk_label_set_text (dlg->credit_label, msg);
 
 	list_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
 
-	/* Give user a list only of the unfinished projects, 
+	/* Give user a list only of the unfinished projects,
 	 * so that there isn't too much clutter ... */
 	prjlist = gtt_project_get_unfinished ();
 	for (node = prjlist; node; node=node->next)
@@ -234,7 +234,7 @@ active_dialog_new (void)
 
 /* =========================================================== */
 
-void 
+void
 show_active_dialog (GttActiveDialog *ad)
 {
 	g_return_if_fail(ad);
@@ -257,7 +257,7 @@ show_active_dialog (GttActiveDialog *ad)
 
 /* =========================================================== */
 
-void 
+void
 raise_active_dialog (GttActiveDialog *ad)
 {
 

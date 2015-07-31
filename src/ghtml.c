@@ -21,7 +21,6 @@
 #define _GNU_SOURCE
 #include <glib.h>
 #include <glib/gi18n.h>
-#include <guile/gh.h>
 #include <libguile.h>
 #include <libguile/backtrace.h>
 #include <limits.h>
@@ -242,24 +241,24 @@ static SCM
 do_apply_on_string (GttGhtml *ghtml, SCM strs,
              SCM (*func)(GttGhtml *, const char *))
 {
-   return do_apply_based_on_type (ghtml, strs,
-             GTT_NONE, func, NULL, NULL, NULL);
+	return do_apply_based_on_type (ghtml, strs,
+	             GTT_NONE, func, NULL, NULL, NULL);
 }
 
 static SCM
 do_apply_on_project (GttGhtml *ghtml, SCM project,
              SCM (*func)(GttGhtml *, GttProject *))
 {
-   return do_apply_based_on_type (ghtml, project,
-             GTT_PRJ, NULL, func, NULL, NULL);
+	return do_apply_based_on_type (ghtml, project,
+	             GTT_PRJ, NULL, func, NULL, NULL);
 }
 
 static SCM
 do_apply_on_task (GttGhtml *ghtml, SCM task,
              SCM (*func)(GttGhtml *, GttTask *))
 {
-   return do_apply_based_on_type (ghtml, task,
-             GTT_TASK, NULL, NULL, func, NULL);
+	return do_apply_based_on_type (ghtml, task,
+	             GTT_TASK, NULL, NULL, func, NULL);
 }
 
 
@@ -267,8 +266,8 @@ static SCM
 do_apply_on_interval (GttGhtml *ghtml, SCM invl,
              SCM (*func)(GttGhtml *, GttInterval *))
 {
-   return do_apply_based_on_type (ghtml, invl,
-             GTT_IVL, NULL, NULL, NULL, func);
+	return do_apply_based_on_type (ghtml, invl,
+	             GTT_IVL, NULL, NULL, NULL, func);
 }
 
 /* ============================================================== */
@@ -575,7 +574,7 @@ do_ret_project_list (GttGhtml *ghtml, GList *proj_list)
 	for (n= proj_list; n; n=n->prev)
 	{
 		GttProject *prj = n->data;
-      SCM node;
+		SCM node;
 #if 0
 		GList *subprjs;
 
@@ -835,7 +834,7 @@ GTT_GETTER##_scm (GttGhtml *ghtml, GttProject *prj)                 \
 {                                                                   \
 	const char * str = GTT_GETTER (prj);                             \
 	if (NULL == str) return SCM_EOL;                                 \
-	return scm_from_locale_string (str);                       \
+	return scm_from_locale_string (str);                             \
 }                                                                   \
 RET_PROJECT_SIMPLE(RET_FUNC,GTT_GETTER##_scm)
 
@@ -845,17 +844,17 @@ static SCM                                                          \
 GTT_GETTER##_scm (GttGhtml *ghtml, GttProject *prj)                 \
 {                                                                   \
 	long i = GTT_GETTER (prj);                                       \
-	return scm_from_long (i);                                         \
+	return scm_from_long (i);                                        \
 }                                                                   \
 RET_PROJECT_SIMPLE(RET_FUNC,GTT_GETTER##_scm)
 
-                                                                    
+
 #define RET_PROJECT_ULONG(RET_FUNC,GTT_GETTER)                      \
 static SCM                                                          \
 GTT_GETTER##_scm (GttGhtml *ghtml, GttProject *prj)                 \
 {                                                                   \
 	unsigned long i = GTT_GETTER (prj);                              \
-	return scm_from_ulong (i);                                        \
+	return scm_from_ulong (i);                                       \
 }                                                                   \
 RET_PROJECT_SIMPLE(RET_FUNC,GTT_GETTER##_scm)
 
@@ -972,7 +971,7 @@ static SCM                                                          \
 GTT_GETTER##_scm (GttGhtml *ghtml, GttTask *tsk)                    \
 {                                                                   \
 	const char * str = GTT_GETTER (tsk);                             \
-	return scm_from_locale_string (str);		 \
+	return scm_from_locale_string (str);                             \
 }                                                                   \
                                                                     \
 static SCM                                                          \
@@ -1101,7 +1100,8 @@ task_get_blocktime_str_scm (GttGhtml *ghtml, GttTask *tsk)
 	value = (time_t) (lround( ((double) task_secs) / bill_unit ) * bill_unit);
 
 	xxxqof_print_hours_elapsed_buff (buff, 100, value, TRUE);
-	return scm_mem2string (buff, strlen (buff));
+	// return scm_mem2string (buff, strlen (buff));
+	return scm_from_locale_string (buff);
 }
 
 static SCM
@@ -1110,12 +1110,14 @@ task_get_earliest_str_scm (GttGhtml *ghtml, GttTask *tsk)
 	char buff[100];
 
 	time_t task_date = gtt_task_get_secs_earliest(tsk);
-	size_t len;
-	
+	// size_t len;
+
 	if (task_date > 0) {
-	    len = xxxqof_print_date_time_buff (buff, 100, task_date);
+		// len = xxxqof_print_date_time_buff (buff, 100, task_date);
+		xxxqof_print_date_time_buff (buff, 100, task_date);
 	} else {
-        len = g_snprintf(buff, 100, "%s", _("No activity"));
+		// len = g_snprintf(buff, 100, "%s", _("No activity"));
+		g_snprintf(buff, 100, "%s", _("No activity"));
 	}
 	return scm_from_locale_string (buff);
 }
@@ -1126,12 +1128,14 @@ task_get_latest_str_scm (GttGhtml *ghtml, GttTask *tsk)
 	char buff[100];
 
 	time_t task_date = gtt_task_get_secs_latest(tsk);
-	size_t len;
+	// size_t len;
 
 	if (task_date > 0) {
-	    len = xxxqof_print_date_time_buff (buff, 100, task_date);
+		// len = xxxqof_print_date_time_buff (buff, 100, task_date);
+		xxxqof_print_date_time_buff (buff, 100, task_date);
 	} else {
-        len = g_snprintf(buff, 100, "%s", _("No activity"));
+		// len = g_snprintf(buff, 100, "%s", _("No activity"));
+		g_snprintf(buff, 100, "%s", _("No activity"));
 	}
 	return scm_from_locale_string (buff);
 }
@@ -1148,7 +1152,7 @@ task_get_value_str_scm (GttGhtml *ghtml, GttTask *tsk)
 	value = ((double) task_secs) / 3600.0;
 
 	prj = gtt_task_get_parent (tsk);
-	
+
 	switch (gtt_task_get_billrate (tsk))
 	{
 		case GTT_REGULAR: value *= gtt_project_get_billrate (prj); break;
@@ -1158,14 +1162,14 @@ task_get_value_str_scm (GttGhtml *ghtml, GttTask *tsk)
 		default: value = 0.0;
 	}
 
-    if (!config_currency_use_locale) {
-      setlocale(LC_MONETARY, "C");
-      setlocale(LC_NUMERIC, "C");
-      snprintf (buff, 100, "%s %.2f", config_currency_symbol, value+0.0049);
-    } else {
-      setlocale(LC_ALL, "");
-      strfmon(buff, 100, "%n", value);
-    }
+	if (!config_currency_use_locale) {
+		setlocale(LC_MONETARY, "C");
+		setlocale(LC_NUMERIC, "C");
+		snprintf (buff, 100, "%s %.2f", config_currency_symbol, value+0.0049);
+	} else {
+		setlocale(LC_ALL, "");
+		strfmon(buff, 100, "%n", value);
+	}
 
 	return scm_from_locale_string (buff);
 }
@@ -1185,7 +1189,7 @@ task_get_blockvalue_str_scm (GttGhtml *ghtml, GttTask *tsk)
 	value = (round( ((double) task_secs) / bill_unit ) * bill_unit) / 3600.0;
 
 	prj = gtt_task_get_parent (tsk);
-	
+
 	switch (gtt_task_get_billrate (tsk))
 	{
 		case GTT_REGULAR: value *= gtt_project_get_billrate (prj); break;
@@ -1195,16 +1199,17 @@ task_get_blockvalue_str_scm (GttGhtml *ghtml, GttTask *tsk)
 		default: value = 0.0;
 	}
 
-    if (!config_currency_use_locale) {
-      setlocale(LC_MONETARY, "C");
-      setlocale(LC_NUMERIC, "C");
-      snprintf (buff, 100, "%s %.2f", config_currency_symbol, value+0.0049);
-    } else {
-      setlocale(LC_ALL, "");
-      strfmon(buff, 100, "%n", value);
-    }
+	if (!config_currency_use_locale) {
+		setlocale(LC_MONETARY, "C");
+		setlocale(LC_NUMERIC, "C");
+		snprintf (buff, 100, "%s %.2f", config_currency_symbol, value+0.0049);
+	} else {
+		setlocale(LC_ALL, "");
+		strfmon(buff, 100, "%n", value);
+	}
 
-	return scm_mem2string (buff, strlen (buff));
+	// return scm_mem2string (buff, strlen (buff));
+	return scm_from_locale_string (buff);
 }
 
 RET_TASK_STR (ret_task_billstatus,      task_get_billstatus)
@@ -1274,22 +1279,21 @@ get_ivl_start_stop_common_str_scm (GttGhtml *ghtml, GttInterval *ivl,
 	if (prt_date) {
 		xxxqof_print_date_buff (buff, 100, starp);
 	} else {
-        switch (config_time_format) 
-        {
-            case TIME_FORMAT_AM_PM: {
-                strftime (buff, 100, "%r", localtime (&starp));
-                break;
-            }
-            case TIME_FORMAT_24_HS: {
-                strftime (buff, 100, "%T", localtime (&starp));
-                break;
-            }
-            case TIME_FORMAT_LOCALE: {
-                xxxqof_print_time_buff (buff, 100, starp);
-                break;
-            }
-
-        }
+		switch (config_time_format)
+		{
+			case TIME_FORMAT_AM_PM: {
+				strftime (buff, 100, "%r", localtime (&starp));
+				break;
+			}
+			case TIME_FORMAT_24_HS: {
+				strftime (buff, 100, "%T", localtime (&starp));
+				break;
+			}
+			case TIME_FORMAT_LOCALE: {
+				xxxqof_print_time_buff (buff, 100, starp);
+				break;
+			}
+		}
 	}
 
 	GString *str;
@@ -1395,25 +1399,50 @@ RET_IVL_SIMPLE (ret_ivl_fuzz_str, get_ivl_fuzz_str);
 
 /* ============================================================== */
 
+SCM captured_stack = SCM_BOOL_F;
+
+static SCM
+my_preunwind_handler (void *data, SCM tag, SCM throw_args)
+{
+	// We can only record the stack before it is unwound.
+	// The normal catch handler body runs only *after* the stack
+	// has been unwound.
+	captured_stack = scm_make_stack (SCM_BOOL_T, SCM_EOL);
+	return SCM_EOL;
+}
+
 static SCM
 my_catch_handler (void *data, SCM tag, SCM throw_args)
 {
 
 	printf ("Error: GnoTime caught an error during scheme parse\n");
 
-	SCM the_stack;
 	/* create string port into which we write the error message and
 	   stack. */
 	SCM port = scm_current_output_port();
 	/* throw args seem to be: (FN FORMAT ARGS #f). split the pieces into
 	   local vars. */
-	if (scm_list_p(throw_args) && (scm_length(throw_args) >= 4))
+	if (scm_is_true(scm_list_p(throw_args))
+	    && (scm_ilength(throw_args) >= 1))
 	{
+		long nargs = scm_ilength(throw_args);
 		SCM fn = scm_car(throw_args);
-		SCM format = scm_cadr(throw_args);
-		SCM args = scm_caddr(throw_args);
-		SCM other_data = scm_car(scm_cdddr(throw_args));
-		
+		SCM format = SCM_EOL;
+		if (nargs >= 2)
+			 format = scm_cadr(throw_args);
+
+		SCM parts = SCM_EOL;
+		if (nargs >= 3)
+			parts = scm_caddr(throw_args);
+
+		SCM rest = SCM_EOL;
+		if (nargs >= 4)
+			rest = scm_car(scm_cdddr(throw_args));
+
+#if OLD_GUILE_18_STUFF
+		/* This is some old code that mostly(?) worked under guile-1.8,
+		 * but uses a deprecated API's.  The new guile code below is
+		 * better, and it works with guile-2.0 */
 		if (fn != SCM_BOOL_F)
 		{ /* display the function name and tag */
 			scm_puts("Function: ", port);
@@ -1426,25 +1455,56 @@ my_catch_handler (void *data, SCM tag, SCM throw_args)
 		if (scm_string_p(format))
 		{ /* conditionally display the error message using format */
 			scm_puts("Error: ", port);
-			scm_display_error_message(format, args, port);
+			scm_display_error_message(format, parts, port);
 		}
-		if (other_data != SCM_BOOL_F)
+		if (rest != SCM_EOL)
 		{
 			scm_puts("Other Data: ", port);
-			scm_display(other_data, port);
+			scm_display(rest, port);
 			scm_newline(port);
 			scm_newline(port);
 		}
-    }
+	}
 
 	/* find the stack, and conditionally display it */
-	the_stack = scm_fluid_ref(SCM_CDR(scm_the_last_stack_fluid_var));
+	SCM the_stack = scm_fluid_ref(SCM_CDR(scm_the_last_stack_fluid_var));
 	if (the_stack != SCM_BOOL_F)
 	{
 		scm_display_backtrace(the_stack, port, SCM_UNDEFINED, SCM_UNDEFINED);
 	}
 
 	return SCM_EOL;
+#else /* OLD_GUILE_18_STUFF */
+		if (scm_is_true (captured_stack))
+		{
+			SCM highlights;
+
+			if (scm_is_eq (tag, scm_arg_type_key) ||
+				scm_is_eq (tag, scm_out_of_range_key))
+				highlights = rest;
+			else
+				highlights = SCM_EOL;
+
+			scm_puts ("Backtrace:\n", port);
+			scm_display_backtrace_with_highlights (captured_stack, port,
+													SCM_BOOL_F, SCM_BOOL_F,
+													highlights);
+			scm_newline (port);
+		}
+		scm_display_error (captured_stack, port, fn, format, parts, rest);
+	}
+	else
+	{
+		scm_puts ("ERROR: throw args are unexpectedly short!\n", port);
+	}
+	scm_puts("ABORT: ", port);
+	SCM re = scm_symbol_to_string(tag);
+	char * restr = scm_to_locale_string(re);
+	scm_puts(restr, port);
+	free(restr);
+
+	return SCM_BOOL_F;
+#endif
 }
 
 /* ============================================================== */
@@ -1612,9 +1672,13 @@ gtt_ghtml_display (GttGhtml *ghtml, const char *filepath,
 			}
 
 			/* dispatch and handle */
-			scmstart +=5;
-			scm_internal_stack_catch (SCM_BOOL_T, (scm_t_catch_body) scm_c_eval_string,
-				scmstart, (scm_t_catch_handler) my_catch_handler, scmstart);
+			scmstart += 5;
+			captured_stack = SCM_BOOL_F;
+			scm_c_catch (SCM_BOOL_T,
+			             (scm_t_catch_body) scm_c_eval_string,
+			             scmstart,
+			             my_catch_handler, NULL,
+			             my_preunwind_handler, NULL);
 
 			start = end;
 			continue;

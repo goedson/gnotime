@@ -22,6 +22,7 @@
 #include <glade/glade.h>
 
 #include "proj.h"
+#include "props-task.h"
 #include "notes-area.h"
 #include "util.h"
 #include "menus.h"
@@ -89,6 +90,7 @@ struct NotesArea_s
 	}                                            \
 
 
+#ifdef UNUSED_CODE_RIGHT_NOW
 static void
 task_memo_changed (GtkEntry *entry, NotesArea *na)
 {
@@ -97,6 +99,7 @@ task_memo_changed (GtkEntry *entry, NotesArea *na)
 	gtt_task_set_memo (tsk, str);
 	na->ignore_events = FALSE;
 }
+#endif /* UNUSED_CODE_RIGHT_NOW */
 
 /* ============================================================== */
 
@@ -321,7 +324,7 @@ enum {
 	entry = GTK_ENTRY(glade_xml_get_widget (gtxml, GLADE_NAME));    \
 	g_signal_connect (G_OBJECT (entry), "changed",                  \
 	                G_CALLBACK (CB), dlg);                          \
-   entry; })
+	entry; })
 
 #define CONNECT_TEXT(GLADE_NAME,CB)  ({                            \
 	GtkTextView *tv;                                                \
@@ -330,7 +333,7 @@ enum {
 	buff = gtk_text_view_get_buffer (tv);                           \
 	g_signal_connect (G_OBJECT (buff), "changed",                   \
 	                G_CALLBACK (CB), dlg);                          \
-   tv; })
+	tv; })
 
 
 NotesArea *
@@ -357,6 +360,11 @@ notes_area_new (void)
 	dlg->task_combo = GTK_COMBO_BOX (glade_xml_get_widget (gtxml, "diary_entry_combo"));
 
 	gtk_combo_box_set_model (dlg->task_combo, NULL);
+	GtkCellRenderer *cell;
+	cell = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(dlg->task_combo), cell, TRUE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT (dlg->task_combo), cell, "text", 0, NULL);
+	g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 
 	dlg->proj_notes = CONNECT_TEXT ("proj notes textview", proj_notes_changed);
 	dlg->task_notes = CONNECT_TEXT ("diary notes textview", task_notes_changed);
@@ -509,15 +517,15 @@ redraw (GttProject *prj, gpointer data)
 void
 notes_area_set_project (NotesArea *na, GttProject *proj)
 {
-  if (na->proj != NULL) {
-    gtt_project_remove_notifier (na->proj, redraw, na);
-    na->proj = NULL;
-  }
-  if (proj != NULL) {
-    gtt_project_add_notifier (proj, redraw, na);
-  }
+	if (na->proj != NULL) {
+		gtt_project_remove_notifier (na->proj, redraw, na);
+		na->proj = NULL;
+	}
+	if (proj != NULL) {
+		gtt_project_add_notifier (proj, redraw, na);
+	}
 
-  notes_area_do_set_project (na, proj);
+	notes_area_do_set_project (na, proj);
 }
 
 /* ============================================================== */
@@ -543,14 +551,14 @@ projects_tree_selection_changed (GtkTreeSelection *selection, gpointer user_data
 static int
 projects_tree_clicked (GtkWidget *ptree, GdkEvent *event, gpointer data)
 {
-    GdkEventButton *bevent = (GdkEventButton *) event;
-	GttProjectsTree *projects_tree = GTT_PROJECTS_TREE (ptree);
+	GdkEventButton *bevent = (GdkEventButton *) event;
+	// GttProjectsTree *projects_tree = GTT_PROJECTS_TREE (ptree);
 	GtkMenuShell *menu;
 
-    if (!(event->type == GDK_BUTTON_PRESS && bevent->button == 3))
-    {
+	if (!(event->type == GDK_BUTTON_PRESS && bevent->button == 3))
+	{
 		return FALSE;
-    }
+	}
 
 	menu = menus_get_popup ();
 	gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 3, bevent->time);
@@ -559,7 +567,7 @@ projects_tree_clicked (GtkWidget *ptree, GdkEvent *event, gpointer data)
 
 }
 
-void 
+void
 notes_area_add_projects_tree (NotesArea *nadlg, GttProjectsTree *ptree)
 {
 	if (!nadlg) return;

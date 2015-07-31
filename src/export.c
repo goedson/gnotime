@@ -34,7 +34,7 @@
 
 typedef struct export_format_s export_format_t;
 
-struct export_format_s 
+struct export_format_s
 {
 	GtkFileChooser *picker;    /* URI picker (file selection) */
 	const char       *uri;       /* aka filename */
@@ -67,13 +67,13 @@ export_show_error_message(GtkWindow *parent, char *msg)
 															GTK_MESSAGE_ERROR,
 															GTK_BUTTONS_OK,
 															_("<b>Gnotime export error</b>"));
-	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), msg);
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", msg);
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 }
 
 /* ======================================================= */
-/* 
+/*
  * Print out the projects using the standard guile-based
  * printing infrastructure.
  */

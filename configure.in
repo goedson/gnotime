@@ -1,5 +1,5 @@
 AC_INIT(src)
-AM_INIT_AUTOMAKE(gnotime, 2.3.0)
+AM_INIT_AUTOMAKE(gnotime, 2.4.0)
 
 dnl AC_PROG_INTLTOOL
 
@@ -8,6 +8,8 @@ IT_PROG_INTLTOOL([0.35.5])
 AM_CONFIG_HEADER(config.h)
 
 AM_MAINTAINER_MODE
+
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])], [AC_SUBST([AM_DEFAULT_VERBOSITY],1)])
 
 AC_ISC_POSIX
 AC_PROG_CXX
@@ -58,13 +60,19 @@ LIBDBUS_REQUIRED_MIN=0.74
 dnl *****************************************
 dnl Check for guile
 dnl *****************************************
-GUILE_FLAGS
 
-GUILE_VERSION=`$GUILE_CONFIG --version 2>&1 |/usr/bin/tr -d 'a-zA-Z -'`
-if test "$GUILE_VERSION" "<" "1.8"; then
-   AC_ERROR([We need guile version 1.8 or higher but found version $GUILE_VERSION])
-fi
+# The below checks for guile-1.8. It works, the code compile, works.
+# GUILE_FLAGS
+#
+# GUILE_VERSION=`$GUILE_CONFIG --version 2>&1 |/usr/bin/tr -d 'a-zA-Z -'`
+# if test "$GUILE_VERSION" "<" "1.8"; then
+#    AC_ERROR([We need guile version 1.8 or higher but found version $GUILE_VERSION])
+# fi
 
+# http://www.gnu.org/software/guile/manual/html_node/Autoconf-Macros.html
+PKG_CHECK_MODULES([GUILE], [guile-2.0])
+AC_SUBST(GUILE_CFLAGS)
+AC_SUBST(GUILE_LIBS)
 
 dnl *****************************************
 dnl Check for glib
@@ -94,6 +102,12 @@ PKG_CHECK_MODULES(LIBGNOMEUI, libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED)
 AC_SUBST(LIBGNOMEUI_CFLAGS)
 AC_SUBST(LIBGNOMEUI_LIBS)
 
+dnl *****************************************
+dnl Check for X11
+dnl *****************************************
+PKG_CHECK_MODULES(X11, x11)
+AC_SUBST(X11_CFLAGS)
+AC_SUBST(X11_LIBS)
 
 dnl *****************************************
 dnl need libglade
@@ -126,7 +140,7 @@ AC_SUBST(LIBQOF_CFLAGS)
 AC_SUBST(LIBQOF_LIBS)
 
 dnl **************************************************************
-dnl pkgconfig looks for xscrnsaver.pc, however, this is 
+dnl pkgconfig looks for xscrnsaver.pc, however, this is
 dnl packaged in unexpected ways for different OS'es:
 dnl called xscrnsaver in RedHat/SuSE
 dnl called libxss, libxss-dev in Debian/Ubuntu
@@ -183,7 +197,7 @@ AC_SUBST(LIBGTKHTML_LIBS)
 
 dnl ********************
 dnl libxml2
-dnl The libxml2 library is required 
+dnl The libxml2 library is required
 dnl ********************
 
 PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
@@ -202,10 +216,10 @@ fi
 AC_SUBST(SK_CONFIG)
 
 dnl *****************************
-dnl popt is needed 
+dnl popt is needed
 dnl *****************************
 
-# There is no popt under mac OSX but it still compiles ... 
+# There is no popt under mac OSX but it still compiles ...
 # so remove this check so that Mac OSX can work.
 #
 # AC_CHECK_LIB(popt, poptHelpOptions,, AC_MSG_ERROR([popt is required to build gnome-utils. You can download the latest version from ftp://people.redhat.com/sopwith/popt/]))
@@ -265,7 +279,7 @@ AC_SUBST(X_LIBS)
 
 dnl *******************************
 dnl Internationalization
-dnl ******************************* 
+dnl *******************************
 
 GETTEXT_PACKAGE=gnotime-2.0
 AC_SUBST(GETTEXT_PACKAGE)

@@ -37,7 +37,7 @@
 
 
 void
-about_box(GtkWidget *w, gpointer data)
+about_box(GtkWindow *w, gpointer data)
 {
 	const gchar *authors[] = {
 		"Goedson Teixeira Paixão <goedson@debian.org>",
@@ -85,7 +85,7 @@ about_box(GtkWidget *w, gpointer data)
 		  NULL
 	};
 
-	const gchar *copyright = 
+	const gchar *copyright =
 		"Copyright (C) 1997,98 Eckehard Berns\n"
 		"Copyright (C) 2001-2004 Linas Vepstas\n"
 		"Copyright (C) 2007-2008 Goedson Teixeira Paixão";
@@ -448,6 +448,7 @@ menu_howto_edit_times (GtkWidget *w,gpointer data)
 	         GTK_DIALOG_MODAL,
 	         GTK_MESSAGE_INFO,
 	         GTK_BUTTONS_OK,
+             "%s",
 		      msg);
 	gtk_dialog_run (GTK_DIALOG (mb));
 	gtk_widget_destroy (mb);

@@ -1,4 +1,4 @@
-/* Low-level timer callbacks & timeout handlers for GTimeTracker 
+/* Low-level timer callbacks & timeout handlers for GTimeTracker
  * Copyright (C) 1997,98 Eckehard Berns
  * Copyright (C) 2001,2002, 2003 Linas Vepstas <linas@linas.org>
  *
@@ -173,7 +173,7 @@ stop_main_timer (void)
 void
 init_timer(void)
 {
-	g_return_if_fail (!timer_inited);
+	if (timer_inited) return;   // prevent multiple initialization
 	timer_inited = TRUE;
 
 	idle_dialog = idle_dialog_new();
