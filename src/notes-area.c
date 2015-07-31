@@ -20,12 +20,12 @@
 #include <glib-object.h>
 
 #include <glade/glade.h>
-#include <gnome.h>
 
 #include "proj.h"
 #include "notes-area.h"
 #include "util.h"
 #include "menus.h"
+#include "props-task.h"
 
 struct NotesArea_s
 {

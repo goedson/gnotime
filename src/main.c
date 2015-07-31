@@ -30,6 +30,7 @@
 #include <libguile.h>
 #include <signal.h>
 #include <string.h>
+#include <popt.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -45,6 +46,7 @@
 #include "err-throw.h"
 #include "file-io.h"
 #include "gtt.h"
+#include "gconf-io.h"
 #include "log.h"
 #include "menus.h"
 #include "menucmd.h"
@@ -223,7 +225,7 @@ post_read_data(void)
 
 	/* Plugins need to be added to the main menus dynamically,
 	 * after the config file has been read */
-	menus_add_plugins (GNOME_APP(app_window));
+	menus_add_plugins (GTK_WINDOW(app_window));
 	log_start();
 	app_show();
 }
@@ -257,7 +259,8 @@ resolve_old_path (const char * pathfrag)
 		confpath = gtt_get_config_filepath ();
 		if (NULL == confpath || 0 == confpath[0])
 		{
-			fullpath = gnome_config_get_real_path (pathfrag);
+			/* Look for file at $HOME/.gnome2/gnotime.d/ */
+			fullpath = g_build_filename (g_getenv ("HOME"),".gnome2/gnotime.d", pathfrag, NULL);
 		}
 		else
 		{
@@ -269,8 +272,14 @@ resolve_old_path (const char * pathfrag)
 	}
 	else
 	{
-		/* I suppose we should look up $HOME if ~ */
-		fullpath = g_strdup (pathfrag);
+		if (pathfrag[0] == '~')
+		{
+			fullpath = g_build_filename (g_getenv ("HOME"), pathfrag + 1, NULL);
+		}
+		else
+		{
+			fullpath = g_strdup (pathfrag);
+		}
 	}
 
 	return fullpath;
@@ -286,12 +295,18 @@ resolve_path (const char * pathfrag)
 	{
 		/* If not an absolute filepath, look for the file in the current
 		 * gnome config dir ...*/
-		fullpath = gnome_config_get_real_path (pathfrag);
+		fullpath = g_build_filename (g_getenv ("HOME"),".gnome2/gnotime.d", pathfrag, NULL);
 	}
 	else
 	{
-		/* I suppose we should look up $HOME if ~ */
-		fullpath = g_strdup (pathfrag);
+		if (pathfrag[0] == '~')
+		{
+			fullpath = g_build_filename (g_getenv ("HOME"), pathfrag + 1, NULL);
+		}
+		else
+		{
+			fullpath = g_strdup (pathfrag);
+		}
 	}
 
 	return fullpath;

@@ -18,7 +18,6 @@
 
 #include <glib.h>
 #include <config.h>
-#include <gnome.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <libgnomevfs/gnome-vfs.h>

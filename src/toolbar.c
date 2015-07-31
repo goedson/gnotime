@@ -18,10 +18,11 @@
  */
 
 #include <config.h>
-#include <gnome.h>
 #include <string.h>
+#include <glib/gi18n.h>
 
 #include "app.h"
+#include "cur-proj.h"
 #include "dialog.h"
 #include "gtt.h"
 #include "journal.h"
@@ -92,8 +93,8 @@ toolbar_set_states(void)
 	{
 		gtk_image_set_from_stock (mytbar->timer_button_image,
 				 ((timer_is_running()) ?
-				     GNOME_STOCK_TIMER_STOP :
-				     GNOME_STOCK_TIMER),
+				  GTK_STOCK_MEDIA_STOP :       // TODO: replace these with timer icons
+				     GTK_STOCK_MEDIA_PLAY),
 				 GTK_ICON_SIZE_LARGE_TOOLBAR);
 	}
 }
@@ -157,7 +158,7 @@ build_toolbar(void)
 			mytbar->new_w = gtk_toolbar_insert_stock (mytbar->tbar,
 													  GTK_STOCK_NEW,
 													  _("Create a New Project..."), NULL,
-													  (GtkSignalFunc)new_project, NULL,
+													  (GCallback)new_project, NULL,
 													  position++);
 			gtk_toolbar_append_space(mytbar->tbar);
 			mytbar->spa = position;
@@ -168,17 +169,17 @@ build_toolbar(void)
 			mytbar->cut = gtk_toolbar_insert_stock (mytbar->tbar,
 													GTK_STOCK_CUT,
 													_("Cut Selected Project"), NULL,
-													(GtkSignalFunc)cut_project, NULL,
+													(GCallback)cut_project, NULL,
 													position ++);
 			mytbar->copy = gtk_toolbar_insert_stock (mytbar->tbar,
 													 GTK_STOCK_COPY,
 													 _("Copy Selected Project"), NULL,
-													 (GtkSignalFunc)copy_project, NULL,
+													 (GCallback)copy_project, NULL,
 													 position ++);
 			mytbar->paste = gtk_toolbar_insert_stock (mytbar->tbar,
 													  GTK_STOCK_PASTE,
 													  _("Paste Project"), NULL,
-													  (GtkSignalFunc)paste_project, NULL,
+													  (GCallback)paste_project, NULL,
 													  position ++);
 			gtk_toolbar_append_space(mytbar->tbar);
 			mytbar->spb = position;
@@ -194,7 +195,7 @@ build_toolbar(void)
 																 _("Activity Journal"),
 																 _("View and Edit Timestamp Logs"),
 																 GNOME_STOCK_BOOK_OPEN,
-																 (GtkSignalFunc) show_report, ACTIVITY_REPORT);
+																 (GCallback) show_report, ACTIVITY_REPORT);
 			position ++;
 		}
 		if (config_show_tb_prop)
@@ -202,7 +203,7 @@ build_toolbar(void)
 			mytbar->prop_w = gtk_toolbar_insert_stock (mytbar->tbar,
 													   GTK_STOCK_PROPERTIES,
 													   _("Edit Project Properties..."), NULL,
-													   (GtkSignalFunc) menu_properties, NULL,
+													   (GCallback) menu_properties, NULL,
 													   position ++);
 		}
 		if (config_show_tb_timer)
@@ -214,14 +215,14 @@ build_toolbar(void)
 			mytbar->timer_button_image = GTK_IMAGE(gtk_image_new());
 			gtk_image_set_from_stock (mytbar->timer_button_image,
 									  GNOME_STOCK_TIMER, GTK_ICON_SIZE_LARGE_TOOLBAR);
-			
+
 			mytbar->timer_button =
 				gtk_toolbar_append_item(mytbar->tbar,
 										_("Timer"),
 										_("Start/Stop Timer"),
 										NULL,
 										GTK_WIDGET(mytbar->timer_button_image),
-										(GtkSignalFunc) toolbar_toggle_timer, NULL);
+										(GCallback) toolbar_toggle_timer, NULL);
 			position ++;
 		}
 		if (config_show_tb_calendar)
@@ -230,7 +231,7 @@ build_toolbar(void)
 															 _("Calendar"),
 															 _("View Calendar"),
 															 GNOME_STOCK_TEXT_BULLETED_LIST,
-															 (GtkSignalFunc)edit_calendar, NULL);
+															 (GCallback)edit_calendar, NULL);
 			position ++;
 		}
 		if (((config_show_tb_timer)    ||
@@ -252,7 +253,7 @@ build_toolbar(void)
 			mytbar->pref = gtk_toolbar_insert_stock (mytbar->tbar,
 													 GTK_STOCK_PREFERENCES,
 													 _("Edit Preferences..."), NULL,
-													 (GtkSignalFunc)menu_options, NULL,
+													 (GCallback)menu_options, NULL,
 													 position ++);
 		}
 		if (config_show_tb_help)
@@ -260,7 +261,7 @@ build_toolbar(void)
 			mytbar->help = gtk_toolbar_insert_stock (mytbar->tbar,
 													 GTK_STOCK_HELP,
 													 _("User's Guide and Manual"), NULL,
-													 (GtkSignalFunc)gtt_help_popup, NULL,
+													 (GCallback)gtt_help_popup, NULL,
 													 position ++);
 		}
 		if (config_show_tb_exit)
@@ -268,7 +269,7 @@ build_toolbar(void)
 			mytbar->exit = gtk_toolbar_insert_stock (mytbar->tbar,
 													 GTK_STOCK_QUIT,
 													 _("Quit GnoTime"), NULL,
-													 (GtkSignalFunc)app_quit, NULL,
+													 (GCallback)app_quit, NULL,
 													 position ++);
 		}
 	}

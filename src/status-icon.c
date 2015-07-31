@@ -27,7 +27,6 @@
  ********************************************************************/
 
 #include <gtk/gtk.h>
-#include <gnome.h>
 #include "status-icon.h"
 #include "timer.h"
 

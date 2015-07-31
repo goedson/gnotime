@@ -20,7 +20,6 @@
 #define GTT_GCONF_GNOMEUI_H_
 
 #include <gconf/gconf-client.h>
-#include <gnome.h>
 
 /* These routines provide some simplisitic save/restore
  * functions for GnomeUIInfo structures, so that we can 

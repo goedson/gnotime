@@ -20,7 +20,6 @@
 
 #include <glade/glade.h>
 #include <glib.h>
-#include <gnome.h>
 #include <stdio.h>
 #include <string.h>
 

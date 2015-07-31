@@ -511,7 +511,7 @@ gtt_reports_menu_prepend_entry (GnomeApp *app, GnomeUIInfo *new_entry)
 /* ============================================================ */
 
 void
-menus_add_plugins (GnomeApp *app)
+menus_add_plugins (GtkWindow *app)
 {
 	gtt_set_reports_menu (app, reports_menu);
 }

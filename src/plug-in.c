@@ -19,7 +19,6 @@
 #include "config.h"
 #include <glade/glade.h>
 #include <glib.h>
-#include <gnome.h>
 #include <libgnomevfs/gnome-vfs.h>
 
 #include "app.h"

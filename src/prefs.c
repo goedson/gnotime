@@ -20,9 +20,9 @@
 #include "config.h"
 
 #include <glade/glade.h>
-#include <gnome.h>
 #include <qof.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "app.h"
 #include "cur-proj.h"

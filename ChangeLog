@@ -1,3 +1,11 @@
+2015-07-30  Goedson Teixeira Paixao  <goedson@zambs>
+
+	* src/*.c: removed references to <gnome.h>
+
+	* src/main.c: replace usage of some gnome API by their Glib equivalent
+
+	*src/toolbar.c: replaced GtkSignalFunc by GCallback
+
 2011-10-31  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/journal.c: replaced GtkObject by GtkWidget in Gtk event
@@ -40,7 +48,7 @@
 2011-08-10  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/main.c (lock_gtt): Replaced usage of GnomeMessageBox by
-	GtkMessageDialog 
+	GtkMessageDialog
 
 	* src/journal.c, src/idle-timer.c : replaced usage of gtk_timeout*
 	by g_timeout_* 	and g_source_* for timeout handling
@@ -393,7 +401,7 @@
 2008-01-22  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/*.c: fixed many compiler warnings.
-	
+
 	* src/main.c: removed references to ctree*.h
 
 	* src/timer.c (main_timer_func): fixed display update when timer
@@ -500,7 +508,7 @@
 	when it is collapsed or expanded.
 	(gtt_projects_tree_init): connect the "row-collapsed" and
 	"row-expanded" signals so we can update the row displays
-	correctly. 
+	correctly.
 
 2007-12-15  Goedson Teixeira Paixao  <goedson@debian.org>
 
@@ -636,9 +644,9 @@
 	* ghtml/C/query.ghtml: add today's date as the default to the form.
 	This uses code taken from sf patch 1595106
 	* ghtml/C/monthly-daily.ghtml: merge in sf patch 1595106
-	* src/main.c: call qof_date_init(); this is needed for newer 
+	* src/main.c: call qof_date_init(); this is needed for newer
 	  libqof versions (version libqof.so.1.0.8 and newer)
-	* src/util.c: copy deprecated qof date/time functions here, 
+	* src/util.c: copy deprecated qof date/time functions here,
 	  as they are still heavily used in gnotime.
 
 2007-12-04  Goedson Teixeira Paixao  <goedson@debian.org>
@@ -808,7 +816,7 @@
 2007-09-23  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* Released 2.2.3
-	
+
 	* NEWS: Added release notes for version 2.2.3
 
 	* doc/C/gnotime.xml: Removed notes about the manual being outdated
@@ -821,7 +829,7 @@
 
 2007-09-21  Goedson Teixeira Paixao  <goedson@debian.org>
 
-	* doc/C/gnotime.xml: 
+	* doc/C/gnotime.xml:
 	- Fixed some typos.
 	- Updated section about timeout dialogs
 	- Updated Free Software Foundation address
@@ -873,7 +881,7 @@
 2007-09-06  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* po/pt_BR.po: Update Brazilian Portuguese translation.
-	
+
 	* po/*.po: Updated with new messages.
 
 	* glade/plugin_editor.glade: Fixed some typos.
@@ -911,7 +919,7 @@
 	  configuration with some changes to allow for locale based
 	  formating of currency values. Details about the changed files
 	  below.
-	
+
 	* glade/prefs.glade: Added GUI elements for the currency formating
 	options.
 
@@ -1056,15 +1064,15 @@ Sat Sep 17, 2005 Toshio Kuratomi <toshio@tiki-lounge.com>
 Wed Aug 31, 2005 Linas Vepstas <linas@linas.org>
 
 	* Bump to version number 2.2.2
-	* Add partial support for sourceforge feature request 
+	* Add partial support for sourceforge feature request
 	  [ 1171211 ] possibility to turn off the toolbar
 	* Fix sourceforge bug [ 799077 ] projects blanked when first time user
 	  tries to sort
 	* query.c: fix broken leap-year calculation, leading to bugs
 	  sourceforge [ 983408 ]  and [ 1114205 ]
-	* journal.c: Fix crash due to hoverhelp timer popping after 
+	* journal.c: Fix crash due to hoverhelp timer popping after
 	  a report window is closed.
-	* activity.ghtml, ghtml.c:  Change activity report to display 
+	* activity.ghtml, ghtml.c:  Change activity report to display
 	  date/time in two distinct html table columns (prettier alignment)
 	* Bug fix: sourceforge bug report fixed
 	  [ 877193 ] toolbar won't go to/stay in text-only mode
@@ -1096,12 +1104,12 @@ Fri Aug 20, 2004 Linas Vepstas <linas@linas.org>
 	  This patch fixes the 'help' buttons in various dialogs
 	* Apply gnotime-idle.patch from Toshio Kuratomi <toshio@tiki-lounge.com>
 	  Fixes idle time so that it works with Linux 2.6 kernel /proc/interrupts
-	* Apply gnotime-fedora.patch from Toshio Kuratomi 
+	* Apply gnotime-fedora.patch from Toshio Kuratomi
 	  Fixes the fedora build specs (sourceforge patch 995568)
 	* Apply sourceforge patch 1001144 from igive@free.fr
 	  use %e to see the estimated sizing of a project in the logfiles
-	* Apply new pt_BR translation from Goedson Teixeira Paixao 
-	  <goedson@debian.org> sourceforege patch 995929 
+	* Apply new pt_BR translation from Goedson Teixeira Paixao
+	  <goedson@debian.org> sourceforege patch 995929
 	* Fix for Debian Bug #250776 per Goedson, change widget visibility
 	  in the edit interval dialog
 
@@ -1116,7 +1124,7 @@ Tue Apr 27, 2004 Linas Vepstas <linas@linas.org>
 	  enlarge the notes area, making it usable.
 	* gtt.scm, time-interval.ghtml:  add filter to make the
 	  HTML diary display resemble the plain-text diary markup.
-	* idle-dialog.c: if project names had a bare & ampersand in them, 
+	* idle-dialog.c: if project names had a bare & ampersand in them,
 	  then Pango would not display properly.  Change to escape & into &amp;
 	* journal.c: add to interval menu, to reparent intervals
 	  to tasks above or below.  Makes time management easier.
@@ -1129,7 +1137,7 @@ Sun Apr 25 2004 Linas Vepstas <linas@linas.org>
 
 Wed Apr 21 2004 Linas Vepstas <linas@linas.org>
 
-	* prefs.c, props-proj.c props-task.c: Fix core dump 
+	* prefs.c, props-proj.c props-task.c: Fix core dump
 	  when user clicks on 'help' button.
 	* journal.c: Fix coredump/hang due to double-free
 	* menus.c: Fix memory-corruption/core-dump bug.
@@ -1158,7 +1166,7 @@ Sat Apr 10 2004 Linas Vepstas <linas@linas.org>
 
 	* lib/libqofsql/*: All new SQL expression parsing code.
 	* lib/qof/*: Sync with QOF source trees.
-	* src/journal.c. ghtml/C/query.ghtml: Start using SQL and 
+	* src/journal.c. ghtml/C/query.ghtml: Start using SQL and
 	  SQL parser to construct user-defined report queries.
 	* src/menucmd.c, src/ctree.c: fix sourceforge bug
 	  [ 898481 ] inconsistency with Cut and Paste
@@ -1172,8 +1180,8 @@ Sat Apr 10 2004 Linas Vepstas <linas@linas.org>
 	  actually pop up.
 	* src/journal.c: implement flyover help in the html window.
 	* src/query.c: fix core dump when displaying daily totals.
-	* src/idle-timer.c: fix bug: use /proc/interrupts to detect 
-	  keyboard activity. Fixes excessive poping up of timeout 
+	* src/idle-timer.c: fix bug: use /proc/interrupts to detect
+	  keyboard activity. Fixes excessive poping up of timeout
 	  reminders.
 	* src/menucmd.c: add infinite undo for excessive cut errors.
 	  Implements sourceforge feature request
@@ -1183,13 +1191,13 @@ Sat Apr 10 2004 Linas Vepstas <linas@linas.org>
 	  [ 834919 ] Choice for start of week
 	* src/ctree.c: apply patch to exchange today/yesterday colums
 	  from Andrew Cowie <andrew@operationaldynamics.com>
-	* configure.in: Add improved Guile configure checks from 
+	* configure.in: Add improved Guile configure checks from
 	  Egil Kvaleberg <egil@kvaleberg.no>
 
 Sat Apr 3 2004 Linas Vepstas <linas@linas.org>
 
 	* Prep for 2.1.8 release: tag gnotime-2-1-8
-	* ghtml.c, main.c: port from deprecated guile gh_* interface to 
+	* ghtml.c, main.c: port from deprecated guile gh_* interface to
 	  new shiny scm_* interface.
 	* Apply patch from Toshio Kuratomi <toshio@tiki-lounge.com>
 	  sourceforge patch [ 871052 ] documentation build update
@@ -1229,7 +1237,7 @@ Thu Dec  18 2003 Toshio Kuratomi <toshio@tiki-lounge.com>
 
 	* doc: Major rewrite of the documentation building.  Uses a newer
 	  scrollkeeper omf format and uses and copies docbook XML rather than
-	  SGML=>HTML conversion. 
+	  SGML=>HTML conversion.
 	  - doc/C/Makefile.am: Adjusted to the GNOME2 doc build process.
 	  - doc/C/gnotime-C.omf: Updated to the new OMF format.
 	  - doc/C/gnotime.sgml: moved to doc/C/gnotime.xml and fixed up to be
@@ -1401,10 +1409,10 @@ Sat Dec 28 19:54:39 CST 2002 Linas Vepstas <linas@linas.org>
 	* ghtml.c: fix buffer overflow bug
 	* ghtml.c: vastly improve the project-list infrastructure
 	* menus.c, export.c: add export of tab-delim project list
-	
+
 Fri Dec 27 10:06:54 CST 2002 Linas Vepstas <linas@linas.org>
 
-	* app.c,log.c,prefs.c,file-io.c,prefs.glade: fix the 
+	* app.c,log.c,prefs.c,file-io.c,prefs.glade: fix the
 	  shell-command utility
 	* Makefile.am: include intltool-*.in files in make-dist
 	* app.c,ctree.c: update default column-width code.
@@ -1455,7 +1463,7 @@ Sat Dec 21 15:12:01 CST 2002 Linas Vepstas <linas@linas.org>
 	* src/gtt.h, file-io.h: modernize the file names
 	* src/*.c: autosave data; remove save/load from menu
 	* publish gnotime-2.0.1
-	
+
 Thu Nov  7 01:12:27 CST 2002 Linas Vepstas <linas@linas.org>
 
 	* glade/*.glade: convert to gnome2 from Egil Kvaleberg <egil@kvaleberg.no>
@@ -1495,7 +1503,7 @@ Wed Nov 28 12:12:44 CST 2001 Linas Vepstas <linas@linas.org>
 	* Makefile.am, src/journal.c: patch from Derek Atkins
 	  to search 'unusual' install paths for data directories.
 
-	* proj.c: remove conflicting libintl.h; bugfix for 
+	* proj.c: remove conflicting libintl.h; bugfix for
 	  clear_daily_counter.
 
 Tue Nov 27 15:59:57 2001  George Lebl <jirka@5z.com>
@@ -1511,7 +1519,7 @@ Fri Nov 23 17:18:14 CST 2001 Linas Vepstas <linas@linas.org>
 	* doc/C/gtt.sgml: update maintainer list, add warning
 	  about out-of-date documentation.
 
-	* src/*.c, glade/*.glade: rename "Task" to the more 
+	* src/*.c, glade/*.glade: rename "Task" to the more
 	  correct "Diary Entry"
 
 Thu Nov 15 14:51:04 CST 2001  Linas Vepstas <linas@linas.org>
@@ -1526,7 +1534,7 @@ Mon Nov  5 13:23:02 CST 2001  Linas Vepstas <linas@linas.org>
 Thu Oct 18 16:31:35 CDT 2001  Linas Vepstas <linas@linas.org>
 
 	* main.c, file-io.c patch from Jeff Putsch
-	  <putsch@fiber.mxim.com> to fix coredump on initial 
+	  <putsch@fiber.mxim.com> to fix coredump on initial
 	  startup.
 
 Fri Oct 12 14:01:25 CDT 2001  Linas Vepstas <linas@linas.org>
@@ -1539,15 +1547,15 @@ Fri Oct 12 14:01:25 CDT 2001  Linas Vepstas <linas@linas.org>
 		   bugfix: fix column titles, add tooltips.
 
 	* props-proj.c: bugfix: fix property box sensitivity.
-	  What's up with that anthrax shit?  That's some bad shit 
-	  comin down. 
+	  What's up with that anthrax shit?  That's some bad shit
+	  comin down.
 
 	* help/C/gtt.1: update the man page.
 
 Fri Oct 05 11:20:18 2001  George Lebl <jirka@5z.com>
 
 	* Makefile.am, journal.c, plug-in.c, prefs.c, props-invl.c,
-	  props-proj.c, props-task.c, util.[ch]:  Add a function for 
+	  props-proj.c, props-task.c, util.[ch]:  Add a function for
 	  getting the GladeXML from the right directory.
 
 	* glade/Makefile.am: dist all glade files
@@ -1566,26 +1574,26 @@ Wed Sep 26 18:45:32 CDT 2001  Linas Vepstas <linas@linas.org>
 	* proj.[ch], proj-props.c, xml-read.c xml-write.c:
 	  add support for a to-do list.
 
-	* proj.[ch], file-io.c, prefs.[ch], ctree.c: add weekly, 
+	* proj.[ch], file-io.c, prefs.[ch], ctree.c: add weekly,
 	  monthly time totals
 
-	* proj.[ch], xml-read.c, xml-write.c, ghtml.c: : add 
+	* proj.[ch], xml-read.c, xml-write.c, ghtml.c: : add
 	  billing status field
 
 Sun Sep 23 15:17:30 CDT 2001  Linas Vepstas <linas@linas.org>
 
-	* menucmd.c, toolbar.c: use the focus row, not the 
+	* menucmd.c, toolbar.c: use the focus row, not the
 	  current project, as the target of menu operations.
 
-	* err-throw.c: add canonical error messages 
+	* err-throw.c: add canonical error messages
 
-	* main.c: modify order of intialization, in prep for 
+	* main.c: modify order of intialization, in prep for
 	  SQL and other data sources.
 
-	* file-io.c: add support for alternate data sources 
+	* file-io.c: add support for alternate data sources
 	  (e.g. sql work being done by Thomas Lang?s)
 
-	* ctree.c, menus.c: add support for showing & editing 
+	* ctree.c, menus.c: add support for showing & editing
 	  the task memo from the main window
 
 Wed Sep 19 10:17:58 CDT 2001  Linas Vepstas <linas@linas.org>
@@ -1601,15 +1609,15 @@ Thu Sep 13 13:11:19 CDT 2001  Linas Vepstas <linas@linas.org>
 
 Mon Sep 10 14:29:50 CDT 2001  Linas Vepstas <linas@linas.org>
 
-	* idle-timer.[ch], timers.c: detect system idleness, 
+	* idle-timer.[ch], timers.c: detect system idleness,
 	  stop current project after an inactivity timeout.
 	* ctree.c: make the arrow keys, the enter key work.
-	* journal.c, proj.c: implement cut & paste of memos 
+	* journal.c, proj.c: implement cut & paste of memos
 	  in the journal report.
 
 Sat Sep  8 13:05:24 CDT 2001  Linas Vepstas <linas@linas.org>
 
-	* phtml.[ch], ghtml.[ch], journal.c: reimplement reports 
+	* phtml.[ch], ghtml.[ch], journal.c: reimplement reports
 	  with guile interpreter.
 	* ghtml.c: provide configurable column titles.
 	* journal.c: i18n'ize the paths to the reports
@@ -1639,7 +1647,7 @@ Mon Sep  3 22:01:48 CDT 2001  Linas Vepstas <linas@linas.org>
 
 	* proj.c: implement auto-merge of intervals
 
-	* proj.c, journal.c: add ability to insert new 
+	* proj.c, journal.c: add ability to insert new
 	  memos into journal.
 
 	* journal.c: add ability to save html to file.
@@ -1670,7 +1678,7 @@ Sat Sep  1 15:51:53 CDT 2001  Linas Vepstas <linas@linas.org>
 	  glade, add all the missing bits of the project properties.
 
 	* util.[ch]: clairify date utilities
-	* phtml.c: Beautify table layout slightly, add crude 
+	* phtml.c: Beautify table layout slightly, add crude
 	  ability to edit intervals.
 
 Fri Aug 31 20:16:55 2001  George Lebl <jirka@5z.com>
@@ -1680,19 +1688,19 @@ Fri Aug 31 20:16:55 2001  George Lebl <jirka@5z.com>
 
 Fri Aug 31 09:33:13 CDT 2001  Linas Vepstas <linas@linas.org>
 
-	* proj.[ch], xml-read, write: add more billing rates/types, 
+	* proj.[ch], xml-read, write: add more billing rates/types,
 	  add min intervals
 
 	* *.[ch] fix miscellaneous bugs
-	
+
 Thu Aug 30 17:00:24 CDT 2001  Linas Vepstas <linas@linas.org>
-	
-	* design.txt: begin a rudimentary overview of the 
+
+	* design.txt: begin a rudimentary overview of the
 	  internals of GTT
-	
-	* journal.[ch]: add ability to view & edit journal of 
+
+	* journal.[ch]: add ability to view & edit journal of
 	  annotated timestamps (via gtkhtml window)
-	  
+
 	* phtml.[ch]: add ability to parse gtt-style html markup,
 	  and output to aribtrary stream.
 
@@ -1721,7 +1729,7 @@ Fri Aug 24 23:05:16 CDT 2001  Linas Vepstas <linas@linas.org>
 	* app.c main.c proj.c: bug fix, sometimes timer doesn't start right.
 
 	* file-io.c, proj.c: split out i/o routines to its own file
-	
+
 	* app.c, file-io.c: save and restore the window size and placement
 
 	* file-io.c: save and restore the current project
@@ -1737,7 +1745,7 @@ Fri Aug 17 10:56:14 CDT 2001  Linas Vepstas <linas@linas.org>
 Tue Aug 14 19:46:21 CDT 2001  Linas Vepstas <linas@linas.org>
 
 	* *.[ch]: add C structs for storing/maniuplating log data
-	  in memory. This includes heirarchical project trees, 
+	  in memory. This includes heirarchical project trees,
 	  and memo strings attached to time intervals.
 
 	* proj.c, clist.c: get rid of home-grown linked list, use glib routines.
@@ -1760,7 +1768,7 @@ Sat Aug 11 13:56:44 2001  George Lebl <jirka@5z.com>
 
 	* options.c - the preferences help button was pointing
 	at the wrong file
-	
+
 Sat Jun 30 00:19:21 2001  George Lebl <jirka@5z.com>
 
 	* proj.c, menus.c, menucmd.[ch], gtt.h:  Add export current state
@@ -1795,19 +1803,19 @@ Wed Jun 13 21:49:51 2001  George Lebl <jirka@5z.com>
 	number, changed bugzilla reference
 
 2000-11-19 John Fleck <jfleck@inkstain.net>
-	
+
 	* updated doc/C/Makefile.am to install sgml in help directory
 
 2000-11-17 John Fleck <jfleck@inkstain.net>
 
 	*gtt/doc/C/gtt.sgml: updating for Nautilus
-	
+
 2000-10-07  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* options.c: Use gnome_help_pbox_display() as the
 	help callback.
 	* props.c: Same here
-		
+
 2000-06-28 - John Fleck <jfleck@inkstain.net>
 	* fixed gtt.sgml version number
 
@@ -1841,7 +1849,7 @@ Sun Jun 18 15:59:39 2000  George Lebl <jirka@5z.com>
 	of default browser
 
 2000-04-22  Fatih Demir	<kabalak@gmx.net>
-	
+
 	* gtt.desktop : Added [tr] .
 
 2000-04-19 John Fleck <jfleck@inkstain.net>
@@ -1968,9 +1976,9 @@ Wed Jan 06 23:07:20 1999  George Lebl  <jirka@5z.com>
 
 1998-12-02  Sebastian Wilhelmi  <wilhelmi@ira.uka.de>
 
-	* options.c (options_dialog): 
-	* prop.c (prop_dialog): 
-	s/gtk_container_border_width/gtk_container_set_border_width/ 
+	* options.c (options_dialog):
+	* prop.c (prop_dialog):
+	s/gtk_container_border_width/gtk_container_set_border_width/
 
 1998-11-23  Miguel de Icaza  <miguel@nuclecu.unam.mx>
 
@@ -2095,8 +2103,8 @@ Mon Apr 27 15:37:03 CEST 1998  Eckehard Berns  <eb@berns.prima.de>
 
 Sun Apr 26 18:45:55 1998  Havoc Pennington  <hp@pobox.com>
 
-	* prop.c: Project properties dialog is now a property box. 
-	* dialog.c: removed _set_default() call in msgbox_ok since 
+	* prop.c: Project properties dialog is now a property box.
+	* dialog.c: removed _set_default() call in msgbox_ok since
 	there's only one button in the created box.
 
 Sun Apr 26 12:07:51 1998  Havoc Pennington  <hp@pobox.com>
@@ -2156,7 +2164,7 @@ Tue Mar 10 14:27:35 1998  Eckehard Berns  <eb@berns.prima.de>
 	* main.c (main): added "--geometry" to argp options, moved geometry
 	processing to main.c (I was a bit braindead and am to lazy to move
 	it back :) ).
-	
+
 	* removed some bogus HAS_GNOME stuff.
 
 Mon Mar  9 23:25:58 1998  Eckehard Berns  <eb@berns.prima.de>
@@ -2333,7 +2341,7 @@ Tue Jan 27 08:31:01 1998  Eckehard Berns  <eb@berns.prima.de>
 
 	* Makefile.am (LDADD): added $(DL_LIB) since these are now
 	required for any user of libgnome.a.
-	
+
 Mon Jan 26 14:25:17 1998  Eckehard Berns  <eb@berns.prima.de>
 
 	* {options,prop}.c: used gnome_stock_button for the dialogs.
@@ -2403,7 +2411,7 @@ Mon Jan 19 22:24:13 1998  Eckehard Berns  <eb@berns.prima.de>
 Mon Jan 19 15:52:46 1998 MET  Eckehard Berns  <eb@berns.prima.de>
 
 	* made gtt use gnome-stock.[ch]
-	
+
 Mon Jan 19 01:34:13 1998  Eckehard Berns  <eb@berns.prima.de>
 
 	* dialog.c (new_dialog): included GtkDialog support when
@@ -2413,7 +2421,7 @@ Mon Jan 19 01:34:13 1998  Eckehard Berns  <eb@berns.prima.de>
 
 	* toolbar.c: revamped completely. when using GtkToolbar, widgets
 	  get updated now.
-	  
+
 	  Added support for gnome-stock.[ch], which I'm develeping at this
 	  time.
 
