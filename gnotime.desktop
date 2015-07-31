@@ -6,5 +6,5 @@ Exec=gnotime
 Icon=gnome-cromagnon.png
 Terminal=false
 Type=Application
-Categories=Office;ProjectManagement;
+Categories=Application;Office;ProjectManagement;GNOME;
 StartupNotify=true
