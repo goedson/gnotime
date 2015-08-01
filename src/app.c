@@ -421,9 +421,9 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	GtkWidget *vpane;
 	GtkWidget *separator;
 	GtkLabel *filler;
-	GtkHBox *labels;
-	GtkVBox *status_vbox;
-	GtkVBox *top_vbox;
+	GtkBox *labels;
+	GtkBox *status_vbox;
+	GtkBox *top_vbox;
 	GtkWidget *menubar;
 	GtkStatusbar *grip;
 
@@ -440,7 +440,7 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	/* build menus */
 	menubar = menus_create(app_window);
 
-	top_vbox = GTK_VBOX (gtk_vbox_new (FALSE, 0));
+	top_vbox = GTK_BOX (gtk_box_new (GTK_ORIENTATION_VERTICAL, 0));
 	gtk_container_add (GTK_CONTAINER (app_window), GTK_WIDGET (top_vbox));
 	gtk_box_pack_start (GTK_BOX (top_vbox), menubar, FALSE, FALSE, 0);
 
@@ -451,19 +451,19 @@ app_new(int argc, char *argv[], const char *geometry_string)
 	gtk_box_pack_start (GTK_BOX (top_vbox), widget, FALSE, FALSE, 0);
 
 	/* container holds status bar, main ctree widget */
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
 	/* build statusbar */
 
-	status_vbox = GTK_VBOX(gtk_vbox_new(FALSE, 0));
+	status_vbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
 	gtk_widget_show(GTK_WIDGET(status_vbox));
 
-	labels = GTK_HBOX(gtk_hbox_new(FALSE, 0));
+	labels = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
 	gtk_widget_show(GTK_WIDGET(labels));
 
-	status_bar = gtk_hbox_new(FALSE, 0);
+	status_bar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show(status_bar);
-	separator = gtk_hseparator_new();
+	separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_show(separator);
 	gtk_box_pack_start(GTK_BOX(status_vbox), separator, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(status_vbox), GTK_WIDGET (labels), TRUE, TRUE, 0);
@@ -494,8 +494,8 @@ app_new(int argc, char *argv[], const char *geometry_string)
 
 	/* put timer icon into statusbar */
 	// TODO replace by a custom timer icon
-	status_timer = gtk_image_new_from_stock (GTK_STOCK_MEDIA_PLAY,
-	                                           GTK_ICON_SIZE_MENU);
+	status_timer = gtk_image_new_from_icon_name ("media-playback-start",
+						     GTK_ICON_SIZE_MENU);
 	gtk_widget_show(status_timer);
 	gtk_box_pack_end(GTK_BOX(status_bar), GTK_WIDGET(status_timer),
 	                   FALSE, FALSE, 1);

@@ -1,3 +1,9 @@
+2015-08-01  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/app.c (app_new): removed use of deprecated APIs (gtk_hseparator_new, gtk_vbox_new,
+	                       gtk_hbox_new, and gtk_image_new_from_stock).
+
+
 2015-07-30  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/*.c: removed references to <gnome.h>
