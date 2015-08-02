@@ -680,8 +680,8 @@ on_save_clicked_cb (GtkWidget *w, gpointer data)
 	dialog = gtk_file_chooser_dialog_new(_("Save HTML To File"),
 	                                     GTK_WINDOW(wig->top),
 	                                     GTK_FILE_CHOOSER_ACTION_SAVE,
-	                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-	                                     GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+	                                     "_Cancel", GTK_RESPONSE_CANCEL,
+	                                     "_Save", GTK_RESPONSE_ACCEPT,
 	                                     NULL);
 
 	gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
@@ -895,13 +895,23 @@ hover_kill_func(gpointer data)
 	return 0;
 }
 
+static void
+get_device_position_for_widget(GtkWidget *widget, int *x, int *y)
+{
+  	GdkWindow *window = gtk_widget_get_window (widget);
+	GdkDisplay *display = gdk_window_get_display (window);
+	GdkDeviceManager *device_manager = gdk_display_get_device_manager (display);
+	GdkDevice *pointer_device = gdk_device_manager_get_client_pointer (device_manager);
+	gdk_window_get_device_position (window, pointer_device, x, y, NULL);
+}
+
 static gint
 hover_timer_func(gpointer data)
 {
 	Wiggy *wig = data;
 
 	gint px=0, py=0, rx=0, ry=0;
-	gtk_widget_get_pointer (wig->hover_help_window, &px, &py);
+	get_device_position_for_widget(wig->hover_help_window, &px, &py);
 	gtk_window_get_position (GTK_WINDOW(wig->hover_help_window), &rx, &ry);
 	rx += px;
 	ry += py;
@@ -976,7 +986,7 @@ html_on_url_cb(GtkHTML *doc, const gchar * url, gpointer data)
 
 		/* Set up in initial default, so later move works. */
 		int px=0, py=0, rx=0, ry=0;
-		gtk_widget_get_pointer (GTK_WIDGET(wig->top), &px, &py);
+		get_device_position_for_widget(GTK_WIDGET(wig->top), &px, &py);
 		gtk_window_get_position (GTK_WINDOW(wig->top), &rx, &ry);
 		gtk_window_move (wino, rx+px, ry+py);
 	}
@@ -985,7 +995,6 @@ html_on_url_cb(GtkHTML *doc, const gchar * url, gpointer data)
 	{
 		char * msg = get_hover_msg (url);
 		gtk_label_set_markup (wig->hover_label, msg);
-		gtk_container_resize_children (GTK_CONTAINER(wig->hover_help_window));
 		gtk_container_check_resize (GTK_CONTAINER(wig->hover_help_window));
 		g_free (msg);
 	}

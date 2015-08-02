@@ -1,4 +1,19 @@
+2015-08-02  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/journal.c (get_device_position_for_widget): Added, to replace usage ofgtk_widget_get_pointer
+	in various functions.
+	(hover_timer_func): replaced usage of gtk_widget_get_pointer by get_device_position_for_widget.
+	(html_on_url_cb): replaced usage of gtk_widget_get_pointer by get_device_position_for_widget.
+	(html_on_url_cb): removed call to deprecated gtk_container_resize_children
+
 2015-08-01  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/journal.c (on_save_clicked_cb): removed use of deprecated GTK_STOCK_* constants.
+	(hover_timer_func): removed usage of deprecated function gtk_widget_get_pointer.
+
+	* src/export.c (export_file_picker): removed use of deprecaded GTK_STOCK_* constants.
+
+	* src/idle-dialog.c (idle_dialog_new): removed use of the deprecate gdk_get_display function.
 
 	* src/app.c (app_new): removed use of deprecated APIs (gtk_hseparator_new, gtk_vbox_new,
 	                       gtk_hbox_new, and gtk_image_new_from_stock).
@@ -10,7 +25,7 @@
 
 	* src/main.c: replace usage of some gnome API by their Glib equivalent
 
-	*src/toolbar.c: replaced GtkSignalFunc by GCallback
+	* src/toolbar.c: replaced GtkSignalFunc by GCallback
 
 2011-10-31  Goedson Teixeira Paixao  <goedson@debian.org>
 

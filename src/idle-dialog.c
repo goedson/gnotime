@@ -387,7 +387,7 @@ idle_dialog_new (void)
 
 	id->gtxml = NULL;
 
-	gchar *display_name = gdk_get_display ();
+	const gchar *display_name = gdk_display_get_name (gdk_display_get_default ());
 	id->display = XOpenDisplay (display_name);
 	if (id->display == NULL)
 	{
@@ -411,8 +411,7 @@ idle_dialog_new (void)
 						 "The idle timeout functionality will not be available."));
 		}
 	}
-	g_free(display_name);
-	
+
 	return id;
 }
 

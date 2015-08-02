@@ -177,8 +177,8 @@ export_file_picker (GtkWidget *widget, gpointer data)
 	dialog = gtk_file_chooser_dialog_new (_("Tab-Delimited Export"),
 										  GTK_WINDOW(app_window),
 										  GTK_FILE_CHOOSER_ACTION_SAVE,
-										  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-										  GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+										  "_Cancel", GTK_RESPONSE_CANCEL,
+										  "_Save", GTK_RESPONSE_ACCEPT,
 										  NULL);
 
 	gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
