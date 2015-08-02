@@ -82,8 +82,7 @@ static char *build_lock_fname(void)
 
 	if (fname != NULL) return fname;
 
-	/* note it will handle unset "HOME" fairly gracefully */
-	str = g_string_new (g_getenv ("HOME"));
+	str = g_string_new (g_get_home_dir  ());
 	g_string_append (str, "/.gnotime");
 #ifdef DEBUG
 	g_string_append (str, "-" VERSION);
@@ -262,7 +261,7 @@ resolve_old_path (const char * pathfrag)
 		if (NULL == confpath || 0 == confpath[0])
 		{
 			/* Look for file at $HOME/.gnome2/gnotime.d/ */
-			fullpath = g_build_filename (g_getenv ("HOME"),".gnome2/gnotime.d", pathfrag, NULL);
+			fullpath = g_build_filename (g_get_home_dir  (), ".gnome2/gnotime.d", pathfrag, NULL);
 		}
 		else
 		{
@@ -276,7 +275,7 @@ resolve_old_path (const char * pathfrag)
 	{
 		if (pathfrag[0] == '~')
 		{
-			fullpath = g_build_filename (g_getenv ("HOME"), pathfrag + 1, NULL);
+			fullpath = g_build_filename (g_get_home_dir  (), pathfrag + 1, NULL);
 		}
 		else
 		{
@@ -297,13 +296,13 @@ resolve_path (const char * pathfrag)
 	{
 		/* If not an absolute filepath, look for the file in the current
 		 * gnome config dir ...*/
-		fullpath = g_build_filename (g_getenv ("HOME"),".gnome2/gnotime.d", pathfrag, NULL);
+		fullpath = g_build_filename (g_get_home_dir  (), ".gnome2/gnotime.d", pathfrag, NULL);
 	}
 	else
 	{
 		if (pathfrag[0] == '~')
 		{
-			fullpath = g_build_filename (g_getenv ("HOME"), pathfrag + 1, NULL);
+			fullpath = g_build_filename (g_get_home_dir  (), pathfrag + 1, NULL);
 		}
 		else
 		{

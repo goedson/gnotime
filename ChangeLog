@@ -1,5 +1,13 @@
 2015-08-02  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/log.c (log_write): Use g_build_filename and g_get_home_dir instead of
+	gnome_util_prepend_user_home when build the log filename.
+
+	* src/main.c (build_lock_fname): Use g_get_home_dir instead of g_get_env("HOME") to get the home
+	directory.
+	(resolve_old_path):  Use g_get_home_dir instead of g_get_env("HOME") to get the home
+	directory.
+
 	* src/journal.c (get_device_position_for_widget): Added, to replace usage ofgtk_widget_get_pointer
 	in various functions.
 	(hover_timer_func): replaced usage of gtk_widget_get_pointer by get_device_position_for_widget.

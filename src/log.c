@@ -17,6 +17,7 @@
  */
 
 #include <glib.h>
+#include <glib/gi18n.h>
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,8 +47,7 @@ log_write(time_t t, const char *logstr)
 	    (config_logfile_name[1] == '/') &&
 	    (config_logfile_name[2] != 0))
 	{
-		filename = gnome_util_prepend_user_home(&config_logfile_name[2]);
-
+		filename = g_build_filename(g_get_home_dir (), &config_logfile_name[2], NULL);
 		result = gnome_vfs_create (&handle, filename,
 		                          GNOME_VFS_OPEN_WRITE, FALSE, 0644);
 		g_free (filename);
