@@ -26,6 +26,7 @@
  * Modified by:   Goedson Teixeira Paixao <goedson@debian.org>
  ********************************************************************/
 
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include "status-icon.h"
 #include "timer.h"
@@ -72,8 +73,8 @@ status_icon_popup_menu(GtkStatusIcon *status_icon, guint button, guint activate_
 void
 gtt_status_icon_create()
 {
-	status_icon = gtk_status_icon_new_from_stock (GNOME_STOCK_TIMER_STOP);
-	gtk_status_icon_set_tooltip (status_icon, _("Timer is not running"));
+	status_icon = gtk_status_icon_new_from_icon_name ("gnome-stock-timer-stop");
+	gtk_status_icon_set_tooltip_text (status_icon, _("Timer is not running"));
 	g_signal_connect (G_OBJECT(status_icon), "activate", G_CALLBACK(status_icon_activated), NULL);
 	g_signal_connect (G_OBJECT(status_icon), "popup-menu", G_CALLBACK(status_icon_popup_menu), NULL);
 }
@@ -87,10 +88,9 @@ gtt_status_icon_destroy()
 void
 gtt_status_icon_start_timer(GttProject *prj)
 {
-	gtk_status_icon_set_from_stock (status_icon, GNOME_STOCK_TIMER);
-	gchar *text = g_strdup_printf(_("Timer running for %s"),
-								  gtt_project_get_title(prj));
-	gtk_status_icon_set_tooltip(status_icon, text);
+	gtk_status_icon_set_from_icon_name (status_icon, "gnome-stock-timer");
+	gchar *text = g_strdup_printf(_("Timer running for %s"), gtt_project_get_title(prj));
+	gtk_status_icon_set_tooltip_text (status_icon, text);
 	g_free (text);
 	timer_active = TRUE;
 }
@@ -99,7 +99,7 @@ gtt_status_icon_start_timer(GttProject *prj)
 void
 gtt_status_icon_stop_timer(GttProject *prj)
 {
-	gtk_status_icon_set_tooltip (status_icon, _("Timer is not running"));
-	gtk_status_icon_set_from_stock (status_icon, GNOME_STOCK_TIMER_STOP);
+	gtk_status_icon_set_tooltip_text (status_icon, _("Timer is not running"));
+	gtk_status_icon_set_from_icon_name (status_icon, "gnome-stock-timer-stop");
 	timer_active = FALSE;
 }
