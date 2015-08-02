@@ -180,16 +180,18 @@ new_project(GtkWidget *widget, gpointer data)
 
 	/* Create new dialog box */
 	w = gtk_dialog_new_with_buttons (
-	             _("New Project..."),
-	            // GTK_WINDOW (widget),
-	            NULL,
-		         GTK_DIALOG_MODAL,
-		         NULL);
+			_("New Project..."),
+			// GTK_WINDOW (widget),
+			NULL,
+			GTK_DIALOG_MODAL,
+			_("_OK"),
+			GTK_RESPONSE_ACCEPT,
+			_("_Cancel"),
+			GTK_RESPONSE_REJECT,
+			NULL);
 	g_signal_connect (G_OBJECT(w), "response",
 	         G_CALLBACK (project_name_desc), entries);
 	dlg = GTK_DIALOG(w);
-	gtk_dialog_add_button (dlg, GTK_STOCK_OK, GTK_RESPONSE_OK);
-	gtk_dialog_add_button (dlg, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 
 	vbox = GTK_BOX(gtk_dialog_get_content_area (dlg));
 
@@ -197,15 +199,16 @@ new_project(GtkWidget *widget, gpointer data)
 	t = gtk_label_new(_("Project Title"));
 	d = gtk_label_new(_("Description"));
 
-	table = gtk_table_new(2,2, FALSE);
-	gtk_table_attach(GTK_TABLE(table), t,     0,1, 0,1,
-			    GTK_FILL|GTK_EXPAND, GTK_FILL|GTK_EXPAND, 2, 1);
-	gtk_table_attach(GTK_TABLE(table), title, 1,2, 0,1,
-			    GTK_FILL|GTK_EXPAND, GTK_FILL|GTK_EXPAND, 2, 1);
-	gtk_table_attach(GTK_TABLE(table), d,     0,1, 1,2,
-			    GTK_FILL|GTK_EXPAND, GTK_FILL|GTK_EXPAND, 2, 1);
-	gtk_table_attach(GTK_TABLE(table), desc,  1,2, 1,2,
-			    GTK_FILL|GTK_EXPAND, GTK_FILL|GTK_EXPAND, 2, 1);
+	table = gtk_grid_new ();
+	gtk_grid_insert_row (GTK_GRID(table), 0);
+	gtk_grid_insert_row (GTK_GRID(table), 0);
+	gtk_grid_insert_column (GTK_GRID(table), 0);
+	gtk_grid_insert_column (GTK_GRID(table), 0);
+
+	gtk_grid_attach(GTK_GRID(table), t,     0, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(table), title, 1, 0, 1 ,1);
+	gtk_grid_attach(GTK_GRID(table), d,     0, 1, 1, 1);
+	gtk_grid_attach(GTK_GRID(table), desc,  1, 1, 1, 1);
 
 	gtk_box_pack_start(vbox, table, FALSE, FALSE, 2);
 	gtk_widget_show(t);

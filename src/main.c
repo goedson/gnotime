@@ -321,9 +321,9 @@ choose_backup_file (char *data_filepath) {
 	GtkWidget * dialog = gtk_file_chooser_dialog_new ("Choose a backup file",
 											NULL,
 											GTK_FILE_CHOOSER_ACTION_OPEN,
-											GTK_STOCK_OPEN,
+											"_Open",
 											GTK_RESPONSE_ACCEPT,
-											GTK_STOCK_CANCEL,
+											"_Cancel",
 											GTK_RESPONSE_REJECT,
 											NULL);
 

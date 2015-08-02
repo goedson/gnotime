@@ -1,5 +1,10 @@
 2015-08-02  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/menucmd.c (new_project): Fix creation of dialog.
+	(new_project): Replace usage of GtkTable by GtkGrid.
+
+	* src/main.c (choose_backup_file): remove usage of deprecated GTK_STOCK_* constants.
+
 	* src/log.c (log_write): Use g_build_filename and g_get_home_dir instead of
 	gnome_util_prepend_user_home when build the log filename.
 
