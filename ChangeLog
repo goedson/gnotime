@@ -1,3 +1,10 @@
+2016-07-29  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/gconf-io.c: Remove usage of gconf-gnomeui.
+	  TODO: implement saving/restoring reports menu.
+	  (gtt_gconf_save): Remove usage of deprecated APIs.
+	  (gtt_gconf_load): Remove usage of deprecated APIs.
+
 2015-08-02  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/status-icon.c (gtt_status_icon_create): Replaced usage of deprecated function

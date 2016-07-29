@@ -21,10 +21,11 @@
 #include <gconf/gconf-client.h>
 #include <gconf/gconf.h>
 #include <glib.h>
+#include <glib/gi18n.h>
+#include <stdlib.h>
 
 #include "app.h"
 #include "cur-proj.h"
-#include "gconf-gnomeui.h"
 #include "gconf-io.h"
 #include "gconf-io-p.h"
 #include "gtt.h"
@@ -48,39 +49,43 @@ extern int run_timer;
 
 /* ======================================================= */
 
+// TODO: Implement saving reports menu
 void
-gtt_save_reports_menu (void)
+gtt_save_reports_menu_ (void) {}
+
+void
+xxx_gtt_save_reports_menu (void)
 {
-	int i;
-	char s[120], *p;
-	GnomeUIInfo * reports_menu;
-	GConfClient *client;
+	/* int i; */
+	/* char s[120], *p; */
+	/* GnomeUIInfo * reports_menu; */
+	/* GConfClient *client; */
 
-	client = gconf_client_get_default ();
-	reports_menu = gtt_get_reports_menu();
-	
-	/* Write out the customer report info */
-	for (i=0; GNOME_APP_UI_ENDOFINFO != reports_menu[i].type; i++)
-	{
-		GttPlugin *plg = reports_menu[i].user_data;
-		g_snprintf(s, sizeof (s), GTT_GCONF"/Reports/%d/", i);
-		p = s + strlen(s);
-		strcpy (p, "Name");
-		F_SETSTR (s, plg->name);
-		
-		strcpy (p, "Path");
-		F_SETSTR (s, plg->path);
+	/* client = gconf_client_get_default (); */
+	/* reports_menu = gtt_get_reports_menu(); */
 
-		strcpy (p, "Tooltip");
-		F_SETSTR (s, plg->tooltip);
+	/* /\* Write out the customer report info *\/ */
+	/* for (i=0; GNOME_APP_UI_ENDOFINFO != reports_menu[i].type; i++) */
+	/* { */
+	/* 	GttPlugin *plg = reports_menu[i].user_data; */
+	/* 	g_snprintf(s, sizeof (s), GTT_GCONF"/Reports/%d/", i); */
+	/* 	p = s + strlen(s); */
+	/* 	strcpy (p, "Name"); */
+	/* 	F_SETSTR (s, plg->name); */
 
-		strcpy (p, "LastSaveURL");
-		F_SETSTR (s, plg->last_url);
+	/* 	strcpy (p, "Path"); */
+	/* 	F_SETSTR (s, plg->path); */
 
-		*p = 0;
-		gtt_save_gnomeui_to_gconf (client, s, &reports_menu[i]);
-	}
-	SETINT ("/Misc/NumReports", i);
+	/* 	strcpy (p, "Tooltip"); */
+	/* 	F_SETSTR (s, plg->tooltip); */
+
+	/* 	strcpy (p, "LastSaveURL"); */
+	/* 	F_SETSTR (s, plg->last_url); */
+
+	/* 	*p = 0; */
+	/* 	gtt_save_gnomeui_to_gconf (client, s, &reports_menu[i]); */
+	/* } */
+	/* SETINT ("/Misc/NumReports", i); */
 }
 
 /* ======================================================= */
@@ -93,7 +98,7 @@ gtt_gconf_save (void)
 	char s[120];
 	int x, y, w, h;
 	const char *xpn;
-	
+
 	GConfEngine* gengine;
 	GConfClient *client;
 
@@ -103,8 +108,11 @@ gtt_gconf_save (void)
 
 	/* ------------- */
 	/* save the window location and size */
-	gdk_window_get_origin(gtk_widget_get_window (app_window), &x, &y);
-	gdk_window_get_size(gtk_widget_get_window (app_window), &w, &h);
+	GdkWindow* gdk_window = gtk_widget_get_window (GTK_WIDGET (app_window));
+	gdk_window_get_origin(gdk_window, &x, &y);
+	w = gdk_window_get_width (gdk_window);
+	h = gdk_window_get_height (gdk_window);
+
 	SETINT ("/Geometry/Width", w);
 	SETINT ("/Geometry/Height", h);
 	SETINT ("/Geometry/X", x);
@@ -176,13 +184,13 @@ gtt_gconf_save (void)
 	} else {
 		UNSET ("/LogFile/Filename");
 	}
-		
+
 	if (config_logfile_start) {
 		SETSTR ("/LogFile/EntryStart", config_logfile_start);
 	} else {
 		SETSTR ("/LogFile/EntryStart", "");
 	}
-		
+
 	if (config_logfile_stop) {
 		SETSTR ("/LogFile/EntryStop", config_logfile_stop);
 	} else {
@@ -278,53 +286,57 @@ gtt_gconf_exists (void)
 
 /* ======================================================= */
 
+// TODO: Implement restoring reports menu
 void
-gtt_restore_reports_menu (GnomeApp *app)
+gtt_restore_reports_menu (GtkApplicationWindow *app) {}
+
+void
+xxx_gtt_restore_reports_menu (/*GnomeApp *app*/)
 {
-	int i, num;
-	char s[120], *p;
-	GnomeUIInfo * reports_menu;
-	GConfClient *client;
+	/* int i, num; */
+	/* char s[120], *p; */
+	/* GnomeUIInfo * reports_menu; */
+	/* GConfClient *client; */
 
-	client = gconf_client_get_default ();
-	
-	/* Read in the user-defined report locations */
-	num = GETINT ("/Misc/NumReports", 0);
-	reports_menu =  g_new0 (GnomeUIInfo, num+1);
-	
-	for (i = 0; i < num; i++)
-	{
-		GttPlugin *plg;
-		const char * name, *path, *tip, *url;
+	/* client = gconf_client_get_default (); */
 
-		g_snprintf(s, sizeof (s), GTT_GCONF"/Reports/%d/", i);
-		p = s + strlen(s);
-		
-		strcpy (p, "Name");
-		name = F_GETSTR (s, "");
-		
-		strcpy (p, "Path");
-		path = F_GETSTR(s, "");
-		
-		strcpy (p, "Tooltip");
-		tip = F_GETSTR(s, "");
+	/* /\* Read in the user-defined report locations *\/ */
+	/* num = GETINT ("/Misc/NumReports", 0); */
+	/* reports_menu =  g_new0 (GnomeUIInfo, num+1); */
 
-		strcpy (p, "LastSaveURL");
-		url = F_GETSTR(s, "");
+	/* for (i = 0; i < num; i++) */
+	/* { */
+	/* 	GttPlugin *plg; */
+	/* 	const char * name, *path, *tip, *url; */
 
-		plg = gtt_plugin_new (name, path);
-		plg->tooltip = g_strdup (tip);
-		plg->last_url = g_strdup (url);
+	/* 	g_snprintf(s, sizeof (s), GTT_GCONF"/Reports/%d/", i); */
+	/* 	p = s + strlen(s); */
 
-		*p = 0;
-		gtt_restore_gnomeui_from_gconf (client, s, &reports_menu[i]);
+	/* 	strcpy (p, "Name"); */
+	/* 	name = F_GETSTR (s, ""); */
 
-		/* fixup */
-		reports_menu[i].user_data = plg;
-	}
-	reports_menu[i].type = GNOME_APP_UI_ENDOFINFO;
+	/* 	strcpy (p, "Path"); */
+	/* 	path = F_GETSTR(s, ""); */
 
-	gtt_set_reports_menu (app, reports_menu);
+	/* 	strcpy (p, "Tooltip"); */
+	/* 	tip = F_GETSTR(s, ""); */
+
+	/* 	strcpy (p, "LastSaveURL"); */
+	/* 	url = F_GETSTR(s, ""); */
+
+	/* 	plg = gtt_plugin_new (name, path); */
+	/* 	plg->tooltip = g_strdup (tip); */
+	/* 	plg->last_url = g_strdup (url); */
+
+	/* 	*p = 0; */
+	/* 	gtt_restore_gnomeui_from_gconf (client, s, &reports_menu[i]); */
+
+	/* 	/\* fixup *\/ */
+	/* 	reports_menu[i].user_data = plg; */
+	/* } */
+	/* reports_menu[i].type = GNOME_APP_UI_ENDOFINFO; */
+
+	/* gtt_set_reports_menu (app, reports_menu); */
 }
 
 /* ======================================================= */
@@ -377,7 +389,7 @@ gtt_gconf_load (void)
 		int x, y;
 		x = GETINT ("/Geometry/X", 10);
 		y = GETINT ("/Geometry/Y", 10);
-		gtk_widget_set_uposition(GTK_WIDGET(app_window), x, y);
+		gtk_window_move (GTK_WINDOW(app_window), x, y);
 	}
 	if (!geom_size_override)
 	{
@@ -470,9 +482,9 @@ gtt_gconf_load (void)
 			}
 		}
 	}
-	
+
 	/* Read in the user-defined report locations */
-	gtt_restore_reports_menu(GNOME_APP(app_window));
+	gtt_restore_reports_menu(GTK_APPLICATION_WINDOW(app_window));
 
 	run_timer = GETINT ("/Misc/TimerRunning", 0);
 	/* Use string for time, to avoid unsigned-long problems */
