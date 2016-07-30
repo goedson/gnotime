@@ -1,5 +1,8 @@
 2016-07-30  Goedson Teixeira Paixao  <goedson@debian.org>
 
+	* src/main.c (resolve_old_path): Remove usage of deprecated old config files.
+	(read_config): Remove support for old file-based config.
+
 	* src/file-io.h: Removed.
 
 	* src/menucmd.c: Do not include unnecessary file-io.h.

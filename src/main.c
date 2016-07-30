@@ -65,15 +65,6 @@ static gboolean first_time_ever = FALSE;  /* has gtt ever run before? */
 
 GttProjectList *master_list = NULL;
 
-const char *
-gtt_gettext(const char *s)
-{
-	g_return_val_if_fail(s != NULL, NULL);
-	if (0 == strncmp(s, "[GTT]", 5))
-		return &s[5];
-	return s;
-}
-
 static char *build_lock_fname(void)
 {
 	GString *str;
@@ -92,8 +83,6 @@ static char *build_lock_fname(void)
 	g_string_free (str, FALSE);
 	return fname;
 }
-
-
 
 static void lock_gtt(void)
 {
@@ -117,7 +106,7 @@ static void lock_gtt(void)
 		}
 		fclose(f);
 	}
-	
+
 	if (warn)
 	{
 		GtkWidget *warning;
@@ -209,14 +198,10 @@ create_data_dir (const char * fpath)
 static void
 post_read_data(void)
 {
-	gtt_post_data_config();
-
 	err_init();
-//	ctree_setup(global_ptw, master_list);
 	gtt_projects_tree_populate (projects_tree,
 								gtt_project_list_get_list (master_list),
 								TRUE);
-	gtt_post_ctree_config();
 	menu_set_states();
 	toolbar_set_states();
 	init_timer();
@@ -249,28 +234,8 @@ static char *
 resolve_old_path (const char * pathfrag)
 {
 	char * fullpath;
-	const char * confpath;
 
-	if (('~' != pathfrag[0]) &&
-	    ('/' != pathfrag[0]))
-	{
-		/* If not an absolute filepath, look for the file in the same dir
-		 * where the gtt config file was found. */
-		confpath = gtt_get_config_filepath ();
-		if (NULL == confpath || 0 == confpath[0])
-		{
-			/* Look for file at $HOME/.gnome2/gnotime.d/ */
-			fullpath = g_build_filename (g_get_home_dir  (), ".gnome2/gnotime.d", pathfrag, NULL);
-		}
-		else
-		{
-			fullpath = g_strconcat ( confpath,
-			                    "/",
-			                    pathfrag,
-			                    NULL);
-		}
-	}
-	else
+	if (('~' == pathfrag[0]) || ('/' == pathfrag[0]))
 	{
 		if (pathfrag[0] == '~')
 		{
@@ -400,7 +365,7 @@ try_restoring_backup (char *xml_filepath) {
 	gtk_dialog_add_button (GTK_DIALOG(mb),
 						   _("Quit"),
 						   GTK_RESPONSE_CANCEL);
-	
+
 	gint response = gtk_dialog_run (GTK_DIALOG(mb));
 	gtk_widget_destroy (mb);
 	g_free (qmsg);
@@ -519,57 +484,12 @@ post_read_config(void)
 }
 
 static void
-read_config_err_run_or_abort (GtkDialog *w, gint response_id)
-{
-	if ((GTK_RESPONSE_OK == response_id) ||
-	    (GTK_RESPONSE_YES == response_id))
-	{
-		gtk_widget_destroy (GTK_WIDGET(w));
-		first_time_ever = TRUE;
-		post_read_config();
-	}
-	else
-	{
-		gtk_main_quit();
-	}
-}
-
-static void
 read_config(void)
 {
-	GttErrCode conf_errcode;
-
-	/* Try ... */
 	gtt_err_set_code (GTT_NO_ERR);
 	gtt_gconf_load ();
 
-	/* Catch ... */
-	conf_errcode = gtt_err_get_code();
-	if (GTT_NO_ERR != conf_errcode)
-	{
-		const char *fp;
-		char *errmsg, *qmsg;
-		fp = gtt_get_config_filepath();
-		errmsg = gtt_err_to_string (conf_errcode, fp);
-		qmsg = g_strconcat (errmsg,
-			_("Shall I setup a new configuration?"),
-			NULL);
-
-		GtkWidget *mb;
-		mb = gtk_message_dialog_new (NULL,
-		         GTK_DIALOG_MODAL,
-		         GTK_MESSAGE_ERROR,
-		         GTK_BUTTONS_YES_NO,
-                 "%s",
-		         qmsg);
-		g_signal_connect (G_OBJECT(mb), "response",
-		         G_CALLBACK (read_config_err_run_or_abort),
-		         NULL);
-		gtk_widget_show (mb);
-		g_free (qmsg);
-		g_free (errmsg);
-	}
-	else
+	if (GTT_NO_ERR == gtt_err_get_code())
 	{
 		post_read_config();
 	}
@@ -700,7 +620,6 @@ save_all (void)
 
 	/* Try ... */
 	gtt_err_set_code (GTT_NO_ERR);
-	gtt_save_config ();
 
 	/* Catch */
 	errcode = gtt_err_get_code();
@@ -721,7 +640,6 @@ save_properties (void)
 
 	/* Try ... */
 	gtt_err_set_code (GTT_NO_ERR);
-	gtt_save_config ();
 
 	/* Catch */
 	errcode = gtt_err_get_code();
@@ -889,8 +807,6 @@ main(int argc, char *argv[])
 		                   GNOME_PARAM_POPT_TABLE, geo_options,
 		                   GNOME_PROGRAM_STANDARD_PROPERTIES, NULL);
 	gnome_window_icon_set_default_from_file (GNOME_ICONDIR"/gnome-cromagnon.png");
-
-	gnome_vfs_init ();
 
 	bindtextdomain(GETTEXT_PACKAGE, GNOMELOCALEDIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
