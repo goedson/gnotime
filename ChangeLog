@@ -1,3 +1,9 @@
+2016-07-30  Goedson Teixeira Paixao  <goedson@debian.org>
+
+	* src/file-io.h: Removed.
+
+	* src/menucmd.c: Do not include unnecessary file-io.h.
+
 2016-07-29  Goedson Teixeira Paixao  <goedson@debian.org>
 
 	* src/gconf-io.c: Remove usage of gconf-gnomeui.

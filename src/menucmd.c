@@ -23,7 +23,6 @@
 #include "app.h"
 #include "cur-proj.h"
 #include "err-throw.h"
-#include "file-io.h"
 #include "gtt.h"
 #include "journal.h"
 #include "menucmd.h"
