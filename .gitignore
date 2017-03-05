@@ -30,3 +30,4 @@ TAGS
 gnotime.desktop
 omf_timestamp
 gnotime-*.omf.out
+*.o
