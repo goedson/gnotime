@@ -19,8 +19,6 @@
 #ifndef GTT_FILEIO_H_
 #define GTT_FILEIO_H_
 
-#include <glib.h>
-
 /* file-io.c and file-io.h is mostly involved in saving and restoring
  * user preference data to the default user config file (in .gnome2/gnotime)
  */

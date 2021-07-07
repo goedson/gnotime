@@ -19,7 +19,7 @@
 #ifndef GTT_MENUCMD_H_
 #define GTT_MENUCMD_H_
 
-#include "proj.h"
+#include <gtk/gtk.h>
 
 void about_box(GtkWindow *, gpointer);
 

@@ -15,7 +15,6 @@
 #ifndef GTT_IDLE_TIMER_H_
 #define GTT_IDLE_TIMER_H_
 
-#include <glib.h>
 #include <sys/time.h>
 
 typedef struct IdleTimeout_s IdleTimeout;

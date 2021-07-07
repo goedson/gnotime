@@ -19,7 +19,6 @@
 #ifndef GTT_QUERY_H_
 #define GTT_QUERY_H_
 
-#include <glib.h>
 #include "proj.h"
 
 /* This file contains routines that return various info about

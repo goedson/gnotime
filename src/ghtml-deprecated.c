@@ -18,6 +18,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #define _GNU_SOURCE
 #include <glib.h>
 #include <libguile.h>

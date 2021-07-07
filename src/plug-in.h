@@ -19,7 +19,6 @@
 #ifndef GTT_PLUG_IN_H_
 #define GTT_PLUG_IN_H_
 
-#include <glib.h>
 #include <gtk/gtk.h>
 
 /**
