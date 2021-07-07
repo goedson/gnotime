@@ -26,8 +26,8 @@
  * Modified by:   Goedson Teixeira Paixao <goedson@debian.org>
  ********************************************************************/
 
-#ifndef __PROJECTS_TREE_H__
-#define __PROJECTS_TREE_H__
+#ifndef GTT_PROJECTS_TREE_H_
+#define GTT_PROJECTS_TREE_H_
 
 #include <gtk/gtk.h>
 
@@ -96,4 +96,4 @@ GtkTreeViewColumn *gtt_projects_tree_get_column_by_name (GttProjectsTree *gpt, g
 
 void gtt_projects_tree_set_sorted_column (GttProjectsTree *gpt, GtkTreeViewColumn *column);
 
-#endif // __PROJECTS_TREE_H__
+#endif /* GTT_PROJECTS_TREE_H_ */

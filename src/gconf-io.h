@@ -53,4 +53,3 @@ void gtt_save_reports_menu (void);
 char *gtt_gconf_get_expander (void);
 
 #endif /* GTT_GCONF_IO_H_ */
-

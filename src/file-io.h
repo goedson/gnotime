@@ -16,8 +16,8 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __GTT_FILEIO_H__
-#define __GTT_FILEIO_H__
+#ifndef GTT_FILEIO_H_
+#define GTT_FILEIO_H_
 
 #include <glib.h>
 
@@ -57,4 +57,4 @@ void gtt_post_ctree_config (void);
 /* Returns the 'real path' to the config file that was/would be used */
 const char * gtt_get_config_filepath (void);
 
-#endif /* __GTT_FILEIO_H__ */
+#endif /* GTT_FILEIO_H_ */

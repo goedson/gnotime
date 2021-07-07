@@ -39,4 +39,4 @@ void gtt_save_gnomeui_to_gconf (GConfClient *client,
 void gtt_restore_gnomeui_from_gconf (GConfClient *client,
                 const char * path, GnomeUIInfo *gui);
 
-#endif
+#endif /* GTT_GCONF_GNOMEUI_H_ */

@@ -16,8 +16,8 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef GTT_NOTES_AREA_H
-#define GTT_NOTES_AREA_H
+#ifndef GTT_NOTES_AREA_H_
+#define GTT_NOTES_AREA_H_
 
 #include <gnome.h>
 #include "projects-tree.h"
@@ -50,4 +50,4 @@ void notes_area_set_pane_sizes (NotesArea *na, int vp, int hp);
  */
 void gtt_notes_timer_callback (NotesArea *na);
 
-#endif /* GTT_NOTES_AREA_H */
+#endif /* GTT_NOTES_AREA_H_ */

@@ -17,8 +17,8 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __GTT_APP_H__
-#define __GTT_APP_H__
+#ifndef GTT_APP_H_
+#define GTT_APP_H_
 
 #include <gnome.h>
 #include "notes-area.h"
@@ -59,4 +59,4 @@ void run_shell_command (GttProject *, gboolean do_start);
 /** Run the shell command. */
 void do_run_shell_command (const char * str);
 
-#endif /* __GTT_APP_H__ */
+#endif /* GTT_APP_H_ */
