@@ -496,8 +496,8 @@ read_data(gboolean reloading) {
 	}
 
 	post_read_data ();
-	g_free (xml_filepath);
-	return;
+	// TODO: Remove this superbly ugly hack introduced to prevent crash on startup
+	// g_free (xml_filepath);
 }
 
 static void
