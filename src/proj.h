@@ -17,10 +17,9 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __GTT_PROJ_H__
-#define __GTT_PROJ_H__
+#ifndef GTT_PROJ_H_
+#define GTT_PROJ_H_
 
-#include <glib.h>
 #include <qof.h>
 
 /* The data structures for GnoTime are written in a quasi-object-oriented
@@ -638,4 +637,4 @@ GttTask *       gtt_interval_get_parent (GttInterval *);
 gboolean        gtt_interval_is_first_interval (GttInterval *);
 gboolean        gtt_interval_is_last_interval (GttInterval *);
 
-#endif /* __GTT_PROJ_H__ */
+#endif /* GTT_PROJ_H_ */

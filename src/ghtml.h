@@ -16,10 +16,8 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __GTT_GHTML_H__
-#define __GTT_GHTML_H__
-
-#include <qof.h>
+#ifndef GTT_GHTML_H_
+#define GTT_GHTML_H_
 
 #include "proj.h"
 
@@ -128,5 +126,4 @@ void gtt_ghtml_show_links (GttGhtml *, gboolean);
  */
 char * gtt_ghtml_resolve_path (const char *path_frag, const char *reference_path);
 
-#endif /* __GTT_GHTML_H__ */
-
+#endif /* GTT_GHTML_H_ */

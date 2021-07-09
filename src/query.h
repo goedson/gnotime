@@ -16,10 +16,9 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __GTT_QUERY_H__
-#define __GTT_QUERY_H__
+#ifndef GTT_QUERY_H_
+#define GTT_QUERY_H_
 
-#include <glib.h>
 #include "proj.h"
 
 /* This file contains routines that return various info about
@@ -90,4 +89,4 @@ time_t   gtt_project_get_earliest_start (GttProject *proj,
 time_t   gtt_project_get_latest_stop (GttProject *proj,
 					      gboolean include_subprojects);
 
-#endif /* __GTT_QUERY_H__ */
+#endif /* GTT_QUERY_H_ */

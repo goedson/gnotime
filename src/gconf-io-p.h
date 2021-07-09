@@ -22,7 +22,6 @@
 #define GTT_GCONF_IO_P_H_
 
 #include <gconf/gconf-client.h>
-#include <glib.h>
 
 /* ======================================================= */
 /* XXX Should use GConfChangesets */

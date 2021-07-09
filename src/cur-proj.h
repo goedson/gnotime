@@ -16,14 +16,14 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __CUR_PROJ_H__
-#define __CUR_PROJ_H__
+#ifndef GTT_CUR_PROJ_H_
+#define GTT_CUR_PROJ_H_
 
-#include <proj.h>
+#include "proj.h"
 
 extern GttProject *cur_proj;
 void cur_proj_set(GttProject *p);
 
 extern GttProjectList *master_list;
 
-#endif /* __CUR_PROJ_H__ */
+#endif /* GTT_CUR_PROJ_H_ */

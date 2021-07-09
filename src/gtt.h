@@ -16,11 +16,10 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __GTT_H__
-#define __GTT_H__
+#ifndef GTT_GTT_H__
+#define GTT_GTT_H__
 
-
-#include <gnome.h>
+#include <glib.h>
 
 #define GTT_APP_TITLE        "Gnome Time Tracker"
 #define GTT_APP_PROPER_NAME  "GnoTime"
@@ -59,5 +58,4 @@ void read_data (gboolean);
 void unlock_gtt(void);
 const char *gtt_gettext(const char *s);
 
-
-#endif /* __GTT_H__ */
+#endif /* GTT_GTT_H__ */
