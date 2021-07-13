@@ -26,7 +26,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include <libgnomevfs/gnome-vfs.h>
 
 #include <qof.h>
 
@@ -43,6 +42,7 @@
 #include "query.h"
 #include "util.h"
 
+#include <gio/gio.h>
 
 /* Design problems:
  * The way this is currently defined, there is no type safety, and
@@ -1547,11 +1547,15 @@ gtt_ghtml_display (GttGhtml *ghtml, const char *filepath,
 	}
 
 	/* Try to get the ghtml file ... */
-	GnomeVFSResult    result;
-	GnomeVFSHandle   *handle;
-	result = gnome_vfs_open (&handle, filepath, GNOME_VFS_OPEN_READ);
-	if ((GNOME_VFS_OK != result) && (0==ghtml->open_count))
+	GError *error = NULL;
+	GFile *ifile = g_file_new_for_path(filepath);
+	GFileInputStream *istream = g_file_read(ifile, NULL, &error);
+	if ((NULL == istream) && (0 == ghtml->open_count))
 	{
+		g_warning("Failed to open HTML display file \"%s\": %s\n", filepath,
+		          error->message);
+		g_clear_error(&error);
+		g_clear_object(&ifile);
 		if (ghtml->error)
 		{
 			(ghtml->error) (ghtml, 404, filepath, ghtml->user_data);
@@ -1562,17 +1566,33 @@ gtt_ghtml_display (GttGhtml *ghtml, const char *filepath,
 
 	/* Read in the whole file.  Hopefully its not huge */
 	template = g_string_new (NULL);
-	while (GNOME_VFS_OK == result)
+	gssize bytes_read = 0;
+	while (0 <= bytes_read)
 	{
 #define BUFF_SIZE 4000
 		char buff[BUFF_SIZE+1];
-		GnomeVFSFileSize  bytes_read;
-		result = gnome_vfs_read (handle, buff, BUFF_SIZE, &bytes_read);
-		if (0 >= bytes_read) break;  /* EOF I presume */
+		bytes_read = g_input_stream_read(G_INPUT_STREAM(istream), buff, BUFF_SIZE,
+		                                 NULL, &error);
+		if (0 == bytes_read)
+		{
+			break; // EOF I presume
+		}
+		if (0 > bytes_read)
+		{
+			g_warning("Failed to read HTML display file: %s\n", error->message);
+			g_clear_error(&error);
+			break;
+		}
 		buff[bytes_read] = 0x0;
 		g_string_append (template, buff);
 	}
-	gnome_vfs_close (handle);
+	if (!g_input_stream_close(G_INPUT_STREAM(istream), NULL, &error))
+	{
+		g_warning("Failed to close HTML display file: %s\n", error->message);
+		g_clear_error(&error);
+	}
+	g_clear_object(&istream);
+	g_clear_object(&ifile);
 
 	/* ugh. gag. choke. puke. */
 	ghtml_guile_global_hack = ghtml;
