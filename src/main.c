@@ -427,13 +427,13 @@ try_restoring_backup (char *xml_filepath) {
 }
 
 static gboolean
-read_data_file(char *xml_filepath, GError **error) {
+read_data_file(char **xml_filepath, GError **error) {
 	GttErrCode xml_errcode;
 	gboolean read_is_ok;
 
 	/* Try ... */
 	gtt_err_set_code (GTT_NO_ERR);
-	gtt_xml_read_file (xml_filepath);
+	gtt_xml_read_file (*xml_filepath);
 
 	/* Catch ... */
 	xml_errcode = gtt_err_get_code();
@@ -457,7 +457,7 @@ read_data_file(char *xml_filepath, GError **error) {
 		/* If the create directory succeeded, its not an error
 		 * if GTT is being run for the first time.
 		 */
-		if (create_data_dir (xml_filepath))
+		if (create_data_dir (*xml_filepath))
 		{
 			read_is_ok |= first_time_ever;
 		}
@@ -466,10 +466,11 @@ read_data_file(char *xml_filepath, GError **error) {
 	if (read_is_ok)
 	{
 		post_read_data ();
-		g_free (xml_filepath);
+		g_free (*xml_filepath);
+		*xml_filepath = NULL;
 		return TRUE;
 	} else {
-		*error = g_error_new (g_quark_from_string ("gtt"), GTT_CANT_OPEN_FILE, "Could not read data file \"%s\"", xml_filepath);
+		*error = g_error_new (g_quark_from_string ("gtt"), GTT_CANT_OPEN_FILE, "Could not read data file \"%s\"", *xml_filepath);
 	}
 	return FALSE;
 }
@@ -487,7 +488,7 @@ read_data(gboolean reloading) {
 
 	xml_filepath = resolve_old_path (config_data_url);
 
-	while (!read_data_file (xml_filepath, &error)) {
+	while (!read_data_file (&xml_filepath, &error)) {
 		if (error != NULL) {
 			if (!try_restoring_backup (xml_filepath)) {
 				break;
@@ -496,7 +497,11 @@ read_data(gboolean reloading) {
 	}
 
 	post_read_data ();
-	g_free (xml_filepath);
+	if (NULL != xml_filepath)
+	{
+		g_free (xml_filepath);
+		xml_filepath = NULL;
+	}
 	return;
 }
 
