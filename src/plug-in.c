@@ -20,7 +20,6 @@
 #include <glade/glade.h>
 #include <glib.h>
 #include <gnome.h>
-#include <libgnomevfs/gnome-vfs.h>
 
 #include "app.h"
 #include "gconf-io.h"
@@ -28,6 +27,8 @@
 #include "menus.h"
 #include "plug-in.h"
 #include "util.h"
+
+#include <gio/gio.h>
 
 struct NewPluginDialog_s
 {
@@ -103,10 +104,9 @@ new_plugin_create_cb (GtkWidget * w, gpointer data)
 	tip = gtk_entry_get_text (dlg->plugin_tooltip);
 
 	/* Do a basic sanity check */
-	GnomeVFSURI *parsed_uri;
-	parsed_uri = gnome_vfs_uri_new (path);
-	gboolean exists = gnome_vfs_uri_exists (parsed_uri);
-	gnome_vfs_uri_unref (parsed_uri);
+	GFile *plug_in_file = g_file_new_for_uri (path);
+	const gboolean exists = g_file_query_exists (plug_in_file, NULL);
+	g_clear_object (&plug_in_file);
 	if (!exists)
 	{
 		gchar *msg;
