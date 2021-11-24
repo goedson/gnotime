@@ -26,7 +26,6 @@
 #include <gio/gio.h>
 #include <gnome.h>
 #include <libgnomeui/gnome-window-icon.h>
-#include <libgnomevfs/gnome-vfs.h>
 #include <libguile.h>
 #include <signal.h>
 #include <string.h>
@@ -161,11 +160,6 @@ unlock_gtt(void)
 	/* Perform a clean shutdown of QOF subsystem. */
 	qof_close();
 	// qof_log_shutdown();
-
-	/* gnome shutdown */
-#if 0
-	gnome_vfs_shutdown ();
-#endif
 }
 
 /* Return a 1 if the indicated directory did not exist, and
@@ -877,8 +871,6 @@ main(int argc, char *argv[])
 		                   GNOME_PARAM_POPT_TABLE, geo_options,
 		                   GNOME_PROGRAM_STANDARD_PROPERTIES, NULL);
 	gnome_window_icon_set_default_from_file (GNOME_ICONDIR"/gnome-cromagnon.png");
-
-	gnome_vfs_init ();
 
 	bindtextdomain(GETTEXT_PACKAGE, GNOMELOCALEDIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
